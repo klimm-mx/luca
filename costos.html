@@ -381,12 +381,25 @@ function seccionCandidatos(){
   for (const c of candidatosActuales) {
     const fila = document.createElement('div');
     fila.className = 'fila';
+
+    const tieneUrl = c.url_sugerida && c.url_sugerida.trim();
+    const infoSugerencia = tieneUrl
+      ? '<div class="cambio-precio">Sugerencia: <a href="' + escaparHtml(c.url_sugerida) + '" target="_blank" rel="noopener">ver producto en el sitio</a> · similitud ' + Number(c.score_similitud).toFixed(0) + '%</div>'
+      : '<div class="cambio-precio" style="color:var(--texto-tenue)">No encontrado en la tienda &middot; asigna la URL manualmente si existe</div>';
+
+    const botonConfirmar = tieneUrl
+      ? '<button class="boton boton-secundario boton-chico" onclick="confirmarCandidato(' + c.odoo_product_id + ',' + c.proveedor_id + ', \'' + escaparHtml(c.url_sugerida) + '\')">Confirmar match</button>'
+      : '';
+
     fila.innerHTML =
       '<div class="info">' +
         '<div class="nombre-prod">' + escaparHtml(c.nombre_producto) + '</div>' +
-        '<div class="cambio-precio">Sugerencia: <a href="' + escaparHtml(c.url_sugerida) + '" target="_blank" rel="noopener">ver producto en el sitio</a> · similitud ' + Number(c.score_similitud).toFixed(0) + '%</div>' +
+        infoSugerencia +
       '</div>' +
-      '<button class="boton boton-secundario boton-chico" onclick="confirmarCandidato(' + c.odoo_product_id + ',' + c.proveedor_id + ', \'' + escaparHtml(c.url_sugerida) + '\')">Confirmar match</button>';
+      '<div style="display:flex;gap:8px;align-items:center">' +
+        botonConfirmar +
+        '<button class="boton boton-chico" style="background:transparent;border:1px solid var(--borde);color:var(--texto-tenue)" onclick="marcarNoAplica(' + c.odoo_product_id + ',' + c.proveedor_id + ')">No aplica</button>' +
+      '</div>';
     cuerpo.appendChild(fila);
   }
   return sec;
@@ -462,6 +475,28 @@ async function confirmarCandidato(productId, proveedorId, url){
     mostrarMensaje('exito', 'Producto mapeado. Se incluirá en la próxima revisión automática.');
   } catch(err){
     mostrarMensaje('error', 'No se pudo guardar el mapeo: ' + err.message);
+  }
+}
+
+async function marcarNoAplica(productId, proveedorId){
+  if (!confirm('Se marcará este producto como "No aplica" — no volverá a aparecer como candidato, pero quedará en la lista de actualización manual. ¿Continuar?')) return;
+  try {
+    await llamar('/luca/costos/mapeo', {
+      method: 'POST',
+      body: JSON.stringify({
+        odoo_product_id: productId,
+        proveedor_id: proveedorId,
+        estado: 'manual',
+        url_variante: null,
+        metodo_match: 'url_manual'
+      })
+    });
+    candidatosActuales = candidatosActuales.filter(c => !(c.odoo_product_id === productId && c.proveedor_id === proveedorId));
+    await cargarManuales();
+    pintarTodo();
+    mostrarMensaje('exito', 'Producto marcado como "No aplica". Visible en la lista de actualización manual.');
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo guardar: ' + err.message);
   }
 }
 
