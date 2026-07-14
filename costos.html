@@ -346,7 +346,9 @@ function seccionCambios(titulo, lista, esAtencion){
       '<input type="checkbox" data-cambio-id="' + c.id + '" onchange="actualizarBarra()">' +
       '<div class="info">' +
         '<div class="nombre-prod">' + escaparHtml(c.nombre_producto) + '</div>' +
-        '<div class="cambio-precio">$' + Number(c.costo_anterior).toFixed(2) + ' → $' + Number(c.costo_nuevo).toFixed(2) + '</div>' +
+        '<div class="cambio-precio">$' + Number(c.costo_anterior).toFixed(2) + ' → $' + Number(c.costo_nuevo).toFixed(2) +
+          (c.url_variante ? ' · <a href="' + escaparHtml(c.url_variante) + '" target="_blank" rel="noopener">ver en tienda</a>' : '') +
+        '</div>' +
       '</div>' +
       '<span class="chip ' + chipClase + '">' + signo + pct.toFixed(1) + '%</span>';
     cuerpo.appendChild(fila);
