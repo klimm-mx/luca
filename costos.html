@@ -398,6 +398,7 @@ function seccionCandidatos(){
       '</div>' +
       '<div style="display:flex;gap:8px;align-items:center">' +
         botonConfirmar +
+        '<button class="boton boton-secundario boton-chico" onclick="asignarUrlManual(' + c.odoo_product_id + ',' + c.proveedor_id + ')">Asignar URL</button>' +
         '<button class="boton boton-chico" style="background:transparent;border:1px solid var(--borde);color:var(--texto-tenue)" onclick="marcarNoAplica(' + c.odoo_product_id + ',' + c.proveedor_id + ')">No aplica</button>' +
       '</div>';
     cuerpo.appendChild(fila);
@@ -475,6 +476,33 @@ async function confirmarCandidato(productId, proveedorId, url){
     mostrarMensaje('exito', 'Producto mapeado. Se incluirá en la próxima revisión automática.');
   } catch(err){
     mostrarMensaje('error', 'No se pudo guardar el mapeo: ' + err.message);
+  }
+}
+
+async function asignarUrlManual(productId, proveedorId){
+  const url = prompt('Pega la URL exacta del producto en la tienda del proveedor:\n(incluye la variante si aplica)');
+  if (!url) return;
+  const urlLimpia = url.trim();
+  if (!/^https?:\/\//i.test(urlLimpia)) {
+    mostrarMensaje('error', 'La URL debe empezar con http:// o https://');
+    return;
+  }
+  try {
+    await llamar('/luca/costos/mapeo', {
+      method: 'POST',
+      body: JSON.stringify({
+        odoo_product_id: productId,
+        proveedor_id: proveedorId,
+        estado: 'automatico',
+        url_variante: urlLimpia,
+        metodo_match: 'url_manual'
+      })
+    });
+    candidatosActuales = candidatosActuales.filter(c => !(c.odoo_product_id === productId && c.proveedor_id === proveedorId));
+    pintarTodo();
+    mostrarMensaje('exito', 'URL asignada. El producto se actualizará automáticamente en la próxima revisión.');
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo guardar: ' + err.message);
   }
 }
 
