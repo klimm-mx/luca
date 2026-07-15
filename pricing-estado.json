@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "parametros": {
+    "margenes": {
+      "higienicos": 0.15,
+      "fabricacion_pro": 0.5,
+      "fabricacion_smart": 0.3,
+      "resto": 0.2
+    },
+    "pisos": {
+      "higienicos": 0.1,
+      "fabricacion_pro": 0.3,
+      "fabricacion_smart": 0.2,
+      "resto": 0.14
+    },
+    "coherencia_min_desc_litro": 0.12,
+    "benchmark_dias_vigencia": 45,
+    "max_experimentos": 3,
+    "tolerancia_cambio_precio": 0.005
+  },
+  "sensibilidad": {
+    "Toalla Interdoblada Dalitas (Ti19800) 20 Paquetes Psf Pro": "kvi_concentracion",
+    "Papel Higiénico Dalia (Hd200) Hb19320": "kvi_concentracion",
+    "Bolsas Jumbo Para Basura Anguiplast 90X120 Cm. Rollo": "kvi_estandar",
+    "Bolsas Grandes Para Basura Anguiplast 60 X 90 Cm Rollo": "kvi_estandar",
+    "Cloro Al 5.5% 20 Litros Klimm": "kvi_estandar",
+    "Cloro Al 5.5% 10 Litros Klimm": "kvi_estandar",
+    "Toalla Fapsa (Tr03610) 6 Rollos Psf Pro": "kvi_estandar",
+    "Papel Higiénico Pétalo Jumbo Jr. (90553) 6 Rollos Kc": "critico_cuenta",
+    "Papel higiénico Pétalo Jumbo Sr (90552) 6 rollos KC": "critico_cuenta",
+    "Toallas Interdobladas Kimberly-Clark Sanitas 20 Fajillas Con 100 Pzas C/U": "critico_cuenta",
+    "Lavatrastes líquido Axión limón 900 ml": "ganador_silencioso",
+    "Windex Original Limpiador De Vidrios 640 Ml Scj": "ganador_silencioso",
+    "Fibra Scotch-Brite P94 3M": "ganador_silencioso",
+    "Bolsas Camiseta Vitabag Chica (1 Kg)": "ganador_silencioso",
+    "Bolsas Camiseta Vitabag Grande (1 Kg)": "ganador_silencioso",
+    "Bolsas Camiseta Vitabag Mediana (1 Kg)": "ganador_silencioso",
+    "Bolsas Cesteras Vitabag 43 X 51 Cm": "ganador_silencioso",
+    "Cuchara Cafetera Natural Eden Vitabag Biodegradable 280 pzas": "ganador_silencioso",
+    "Cuchara Natural Eden Vitabag Biodegradable 280 pzas": "ganador_silencioso",
+    "Limpiador multisuperficies Pledge 378 ml SCJ": "ganador_silencioso",
+    "Pledge aerosol cuidado de muebles 333 g SCJ": "ganador_silencioso",
+    "Detergente Roma De 10 Kg La Corona": "ganador_silencioso",
+    "Detergente Roma de 1 kg La Corona": "ganador_silencioso",
+    "Detergente Roma de 250 gr La Corona": "ganador_silencioso",
+    "Detergente Roma de 5 kg La Corona": "ganador_silencioso",
+    "Detergente Roma de 500gr La Corona": "ganador_silencioso",
+    "Detergente líquido Roma 1 litro La Corona": "ganador_silencioso",
+    "Jabón Líquido Para Manos Klimm Aroma Almendra 5 Litros PRO": "cosecha",
+    "Jabón Líquido Para Manos Klimm Aroma Durazno 5 Litros": "cosecha",
+    "Bolsas Grandes Para Basura Anguiplast 60 X 90 Cm Rollo Transparente": "cosecha",
+    "Bolsas Jumbo Para Basura Anguiplast 90X120 Cm. Rollo Transparente": "cosecha",
+    "Bolsas Para Basura Anguiplast 50X70 Cm. Rollo": "cosecha",
+    "Microfibra Klimm Color Amarillo": "cosecha",
+    "Microfibra Klimm Color Azul": "cosecha",
+    "Microfibra Klimm Color Blanco": "cosecha",
+    "Microfibra Klimm Color Café": "cosecha",
+    "Microfibra Klimm Color Gris": "cosecha",
+    "Microfibra Klimm Color Morado": "cosecha",
+    "Microfibra Klimm Color Naranja": "cosecha",
+    "Microfibra Klimm Color Rojo": "cosecha",
+    "Microfibra Klimm Color Rosa": "cosecha",
+    "Microfibra Klimm Color Verde": "cosecha",
+    "Microfibra Klimm Grande 50 x 80 cm.": "cosecha"
+  },
+  "fuente": {
+    "Papel Higiénico Pétalo Jumbo Jr. (90553) 6 Rollos Kc": "intermediario_riesgo",
+    "Papel higiénico Pétalo Jumbo Sr (90552) 6 rollos KC": "intermediario_riesgo",
+    "Toallas Interdobladas Kimberly-Clark Sanitas 20 Fajillas Con 100 Pzas C/U": "intermediario_riesgo",
+    "Papel Higiénico Marli Jr. (90531) 12 Rollos Kc": "intermediario_riesgo",
+    "Papel Higiénico Marli Jumbo Jr. (90509) 12 rollos KC": "intermediario_riesgo",
+    "Papel higiénico Marli Jumbo 400 metros (90510) 6 rollos KC": "intermediario_riesgo",
+    "Papel Higiénico Dalia (Hd200) Hb19320": "intermediario_riesgo"
+  },
+  "excepciones": {
+    "Microfibra Klimm Color Amarillo": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Azul": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Blanco": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Café": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Gris": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Morado": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Naranja": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Rojo": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Rosa": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Color Verde": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Microfibra Klimm Grande 50 x 80 cm.": {
+      "tipo": "margen",
+      "valor": 0.353,
+      "motivo": "Reventa con marca propia, no fabricación real"
+    },
+    "Cloro Al 5.5% 20 Litros Klimm": {
+      "tipo": "tope",
+      "precio": 240.0,
+      "motivo": "Topado por mercado — granelero vende 20L muy por debajo de nuestro costo de producción"
+    },
+    "Cloro Al 5.5% 10 Litros Klimm": {
+      "tipo": "tope",
+      "precio": 137.5,
+      "motivo": "Topado por mercado, presentación menor"
+    }
+  },
+  "solo_licitacion": [],
+  "experimentos": [],
+  "historial": [],
+  "benchmark": []
+}
