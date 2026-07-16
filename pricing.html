@@ -916,14 +916,26 @@ function pintarBenchmark(){
   }
   cuerpo.innerHTML = html;
 }
-async function actualizarFuentes(){
+async function actualizarFuentes(fuentes){
+  const boton = document.querySelector('[onclick="actualizarFuentes()"]');
+  if (boton) { boton.disabled = true; boton.textContent = 'Actualizando…'; }
   try {
-    const r = await llamar('/luca/pricing/benchmark/actualizar', { method:'POST', body:'{}' });
+    // Llama al nuevo endpoint de scraping real
+    const body = fuentes ? JSON.stringify({ fuentes }) : JSON.stringify({});
+    const r = await llamar('/luca/pricing/benchmark/scraper', { method:'POST', body });
     SHA = r.sha;
-    ESTADO.benchmark_fuentes = r.fuentes;
+    // Refrescar estado completo para que el benchmark quede actualizado en memoria
+    const est = await llamar('/luca/pricing/estado');
+    ESTADO = est.estado; SHA = est.sha;
+    // Mostrar resumen por fuente
+    const ok  = r.resumen.filter(x=>x.ok).map(x=>x.fuente+' ('+x.actualizados+' precios)').join(', ');
+    const err = r.resumen.filter(x=>!x.ok).map(x=>x.fuente+': '+x.error).join(' | ');
+    if (err && !ok) aviso('error', 'Falló: '+err);
+    else if (err)   aviso('error', 'Parcial — OK: '+ok+' | Error: '+err);
+    else            aviso('exito', 'Benchmark actualizado: '+ok);
     pintarBenchmark(); pintarAtencion();
-    aviso('exito','Fuentes verificadas');
   } catch(e) { aviso('error', e.message); }
+  if (boton) { boton.disabled = false; boton.textContent = 'Actualizar automáticos'; }
 }
 function abrirCapturaBenchmark(){
   document.getElementById('benchCompetidor').value='';
