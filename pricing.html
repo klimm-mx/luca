@@ -922,17 +922,12 @@ async function actualizarFuentes(fuentes){
   try {
     // Llama al nuevo endpoint de scraping real
     const body = fuentes ? JSON.stringify({ fuentes }) : JSON.stringify({});
-    const r = await llamar('/luca/pricing/benchmark/scraper', { method:'POST', body });
-    SHA = r.sha;
-    // Refrescar estado completo para que el benchmark quede actualizado en memoria
+    await llamar('/luca/pricing/benchmark/scraper', { method:'POST', body });
+    aviso('exito', 'Scraping iniciado — actualizando en 35 segundos…');
+    await new Promise(resolve => setTimeout(resolve, 35000));
     const est = await llamar('/luca/pricing/estado');
     ESTADO = est.estado; SHA = est.sha;
-    // Mostrar resumen por fuente
-    const ok  = r.resumen.filter(x=>x.ok).map(x=>x.fuente+' ('+x.actualizados+' precios)').join(', ');
-    const err = r.resumen.filter(x=>!x.ok).map(x=>x.fuente+': '+x.error).join(' | ');
-    if (err && !ok) aviso('error', 'Falló: '+err);
-    else if (err)   aviso('error', 'Parcial — OK: '+ok+' | Error: '+err);
-    else            aviso('exito', 'Benchmark actualizado: '+ok);
+    aviso('exito', 'Benchmark actualizado');
     pintarBenchmark(); pintarAtencion();
   } catch(e) { aviso('error', e.message); }
   if (boton) { boton.disabled = false; boton.textContent = 'Actualizar automáticos'; }
