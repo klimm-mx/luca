@@ -16,7 +16,9 @@
     "coherencia_min_desc_litro": 0.12,
     "benchmark_dias_vigencia": 45,
     "max_experimentos": 3,
-    "tolerancia_cambio_precio": 0.005
+    "tolerancia_cambio_precio": 0.005,
+    "max_posiciones": 15,
+    "posicion_dias_estancada": 45
   },
   "sensibilidad": {
     "Toalla Interdoblada Dalitas (Ti19800) 20 Paquetes Psf Pro": "kvi_concentracion",
@@ -130,7 +132,7 @@
     },
     "Cloro Al 5.5% 20 Litros Klimm": {
       "tipo": "tope",
-      "precio": 240.0,
+      "precio": 240,
       "motivo": "Topado por mercado — granelero vende 20L muy por debajo de nuestro costo de producción"
     },
     "Cloro Al 5.5% 10 Litros Klimm": {
@@ -142,5 +144,330 @@
   "solo_licitacion": [],
   "experimentos": [],
   "historial": [],
-  "benchmark": []
+  "benchmark": [],
+  "posiciones": [
+    {
+      "id": "pos-1",
+      "nombre": "Papel higiénico económico",
+      "sku": "Papel Higiénico Dalia (HD200)",
+      "sku_historial": [],
+      "estado": "en_negociacion",
+      "objetivo": "Conseguir costo directo con PSF / Papel Oro; hoy el costo vía Chrisalim está invertido",
+      "demanda_anual": 3377278,
+      "clientes": 149,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-2",
+      "nombre": "Toalla en rollo económica",
+      "sku": "Toalla Fapsa TR03610",
+      "sku_historial": [],
+      "estado": "pendiente",
+      "objetivo": "Encontrar bobina que compita con Marli (~$0.28/m) — proveedor alternativo o negociación PSF",
+      "demanda_anual": 2239265,
+      "clientes": 101,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-3",
+      "nombre": "Multiusos líquido a granel (20L)",
+      "sku": "Multiusos Klimm Smart (3 aromas)",
+      "sku_historial": [],
+      "estado": "esperando_datos",
+      "objetivo": "Calibrar margen de combate con precios de graneleros y arrancar experimento",
+      "demanda_anual": 1767708,
+      "clientes": 158,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-4",
+      "nombre": "Jabón para manos a granel (20L)",
+      "sku": "Jabón Klimm Smart Cereza 20L",
+      "sku_historial": [],
+      "estado": "esperando_datos",
+      "objetivo": "Calibrar margen de combate con graneleros",
+      "demanda_anual": 1746946,
+      "clientes": 122,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-5",
+      "nombre": "Cloro",
+      "sku": "Cloro Al 5.5% 20L Klimm",
+      "sku_historial": [],
+      "estado": "estable",
+      "objetivo": "Topado por mercado; validar que el tope siga vigente con benchmark de granelero",
+      "demanda_anual": 1441103,
+      "clientes": 157,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-6",
+      "nombre": "Desengrasante a granel (20L)",
+      "sku": "Desengrasante Klimm Smart 20L",
+      "sku_historial": [],
+      "estado": "esperando_datos",
+      "objetivo": "Calibrar margen de combate con graneleros",
+      "demanda_anual": 1122196,
+      "clientes": 49,
+      "kvi_imagen": false,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-7",
+      "nombre": "Toalla interdoblada económica",
+      "sku": "Toalla Interdoblada Dalitas (TI19800)",
+      "sku_historial": [],
+      "estado": "en_negociacion",
+      "objetivo": "Compra directa PSF (pedido programado); corregir margen a regla tras el nuevo costo",
+      "demanda_anual": 956311,
+      "clientes": 104,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-8",
+      "nombre": "Detergente en polvo económico",
+      "sku": "Detergente Útil 10 kg",
+      "sku_historial": [],
+      "estado": "pendiente",
+      "objetivo": "Resolver el costo del Útil o proponer Roma por defecto",
+      "demanda_anual": 896352,
+      "clientes": 129,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-9",
+      "nombre": "Mechudos y mops",
+      "sku": "Mechudo pabilo 500 gr San José",
+      "sku_historial": [],
+      "estado": "pendiente",
+      "objetivo": "Definir el SKU económico de la posición y validar precio",
+      "demanda_anual": 610539,
+      "clientes": 130,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-10",
+      "nombre": "Bolsas de basura",
+      "sku": "Bolsas Anguiplast (jumbo y grandes)",
+      "sku_historial": [],
+      "estado": "estable",
+      "objetivo": "Ya competitivo; negociar volumen con Anguiplast cuando el crecimiento lo permita",
+      "demanda_anual": 576976,
+      "clientes": 115,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-11",
+      "nombre": "Sanitizantes",
+      "sku": "Sanitizante Klimm Smart",
+      "sku_historial": [],
+      "estado": "pendiente",
+      "objetivo": "Validar demanda real post-pandemia antes de invertir esfuerzo",
+      "demanda_anual": 558020,
+      "clientes": 52,
+      "kvi_imagen": false,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-12",
+      "nombre": "Limpiavidrios a granel (20L)",
+      "sku": "Limpiavidrios Klimm Smart 20L",
+      "sku_historial": [],
+      "estado": "esperando_datos",
+      "objetivo": "Calibrar con graneleros (misma ronda que multiusos)",
+      "demanda_anual": 527039,
+      "clientes": 73,
+      "kvi_imagen": false,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-13",
+      "nombre": "Cubetas",
+      "sku": "Cubeta con prensa Gorilla 20L",
+      "sku_historial": [],
+      "estado": "pendiente",
+      "objetivo": "Revisar costo vs mercado; conversión baja con margen en regla",
+      "demanda_anual": 526947,
+      "clientes": 93,
+      "kvi_imagen": false,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-14",
+      "nombre": "Fibras y discos",
+      "sku": "Fibra Scotch-Brite P94 / P96",
+      "sku_historial": [],
+      "estado": "estable",
+      "objetivo": "Canal licitación — el precio de combate se decide por cotización, no en lista",
+      "demanda_anual": 412817,
+      "clientes": 158,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    },
+    {
+      "id": "pos-15",
+      "nombre": "Escobas",
+      "sku": "Escoba Perico Normal P-140",
+      "sku_historial": [],
+      "estado": "pendiente",
+      "objetivo": "Primera candidata a experimento de reventa en cuanto haya lugar libre",
+      "demanda_anual": 365381,
+      "clientes": 142,
+      "kvi_imagen": true,
+      "notas": [],
+      "experimento_id": null,
+      "creada": "2026-07-16"
+    }
+  ],
+  "posiciones_reserva": [
+    {
+      "nombre": "Guantes",
+      "demanda": 362336
+    },
+    {
+      "nombre": "Textiles de limpieza (jerga/franela)",
+      "demanda": 321072
+    },
+    {
+      "nombre": "Aromatizantes",
+      "demanda": 287756
+    },
+    {
+      "nombre": "Quitasarro / ácido",
+      "demanda": 263647
+    },
+    {
+      "nombre": "Jaladores",
+      "demanda": 223711
+    },
+    {
+      "nombre": "Lavatrastes",
+      "demanda": 138568
+    },
+    {
+      "nombre": "Recogedores",
+      "demanda": 136417
+    },
+    {
+      "nombre": "Accesorios / despachadores",
+      "demanda": 103329
+    },
+    {
+      "nombre": "Servilletas",
+      "demanda": 102140
+    }
+  ],
+  "benchmark_fuentes": [
+    {
+      "id": "mesones",
+      "nombre": "Mesones",
+      "tipo": "Scraper automático",
+      "estatus": "pendiente_construccion",
+      "mensaje": "Scraper en construcción — siguiente fase técnica",
+      "ultima_verificacion": null
+    },
+    {
+      "id": "chrisalim",
+      "nombre": "Chrisalim",
+      "tipo": "Herramienta de costos",
+      "estatus": "pendiente_construccion",
+      "mensaje": "Conexión con la herramienta de costos en construcción",
+      "ultima_verificacion": null
+    }
+  ],
+  "benchmark_tareas": [
+    {
+      "id": "gran-jabon",
+      "etiqueta": "Jabón para manos 20L — granelero",
+      "claves": [
+        "jabón",
+        "20"
+      ]
+    },
+    {
+      "id": "gran-multiusos",
+      "etiqueta": "Multiusos 20L — granelero",
+      "claves": [
+        "multiusos",
+        "20"
+      ]
+    },
+    {
+      "id": "gran-desengrasante",
+      "etiqueta": "Desengrasante 20L (con y libre de sosa) — granelero",
+      "claves": [
+        "desengrasante",
+        "20"
+      ]
+    },
+    {
+      "id": "gran-cloro",
+      "etiqueta": "Cloro 5.5% y 13% 20L — granelero",
+      "claves": [
+        "cloro",
+        "20"
+      ]
+    },
+    {
+      "id": "gran-lavatrastes",
+      "etiqueta": "Lavatrastes 20L — granelero",
+      "claves": [
+        "lavatrastes",
+        "20"
+      ]
+    },
+    {
+      "id": "gran-quitasarro",
+      "etiqueta": "Quitasarro / ácido — granelero",
+      "claves": [
+        "quitasarro"
+      ]
+    },
+    {
+      "id": "gran-sanitizante",
+      "etiqueta": "Sanitizante 20L — granelero",
+      "claves": [
+        "sanitizante",
+        "20"
+      ]
+    }
+  ]
 }
