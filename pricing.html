@@ -15,8 +15,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--tinta);font-size:15px;line-height:1.5;padding-bottom:110px}
 .contenedor{max-width:980px;margin:0 auto;padding:0 20px}
-
-/* Encabezado */
 header{background:var(--superficie);border-bottom:1px solid var(--borde);padding:14px 0;margin-bottom:28px}
 header .contenedor{display:flex;align-items:baseline;justify-content:space-between}
 .marca{font-size:20px;font-weight:700;letter-spacing:-.3px}
@@ -24,40 +22,30 @@ header .contenedor{display:flex;align-items:baseline;justify-content:space-betwe
 .sistema{font-size:12px;color:var(--tinta-suave);letter-spacing:.8px;text-transform:uppercase;display:flex;align-items:center;gap:14px}
 .boton-ayuda{width:24px;height:24px;border-radius:50%;border:1px solid var(--borde);background:var(--superficie);color:var(--tinta-suave);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1}
 .boton-ayuda:hover{border-color:var(--agua);color:var(--agua-oscuro)}
-
-/* Tarjetas y secciones */
 .paso{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:22px;margin-bottom:18px}
 label{display:block;font-size:13px;font-weight:600;color:var(--tinta-suave);margin-bottom:6px}
 input[type=text],input[type=password],input[type=number],input[type=date],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--agua);outline-offset:-1px;border-color:var(--agua)}
 textarea{resize:vertical;min-height:64px}
-
-/* Encabezado de la herramienta */
-.encabezado-tool{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.encabezado-tool{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
 .encabezado-tool .titulo{font-size:19px;font-weight:700;letter-spacing:-.3px}
 .encabezado-tool .titulo span{color:var(--agua)}
 .encabezado-tool .sub{font-size:11px;color:var(--tinta-suave);letter-spacing:.6px;text-transform:uppercase;margin-top:2px}
-
-/* Tarjetas resumen */
 .tarjetas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
 .tarjeta{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:12px 14px}
 .tarjeta .etiqueta{font-size:11px;color:var(--tinta-suave);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
 .tarjeta .valor{font-size:22px;font-weight:700;margin-top:2px}
 .tarjeta.atencion{background:var(--revision-bg);border-color:var(--revision)}
 .tarjeta.atencion .etiqueta,.tarjeta.atencion .valor{color:var(--revision)}
-
-/* Secciones colapsables */
 .seccion{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);margin-bottom:8px;overflow:hidden}
 .seccion.atencion{border-color:var(--revision);border-left:4px solid var(--revision)}
 .seccion-cabeza{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
 .seccion-cabeza:hover{background:var(--fondo)}
-.seccion-cabeza .izq{display:flex;align-items:center;gap:10px}
+.seccion-cabeza .izq{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .seccion-cabeza .nombre{font-size:14px;font-weight:600}
 .seccion-cabeza .conteo{font-size:13px;color:var(--tinta-suave)}
 .seccion-cuerpo{display:none;border-top:1px solid var(--borde)}
 .seccion.abierta .seccion-cuerpo{display:block}
-
-/* Chips */
 .chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.3px;white-space:nowrap}
 .chip-revision{background:var(--revision-bg);color:var(--revision);border:1px solid var(--revision)}
 .chip-info{background:var(--agua-claro);color:var(--agua-oscuro)}
@@ -65,27 +53,28 @@ textarea{resize:vertical;min-height:64px}
 .chip-baja{background:var(--ok-bg);color:var(--ok)}
 .chip-neutro{background:var(--fondo);color:var(--tinta-suave);border:1px solid var(--borde)}
 .chip-ok{background:var(--ok-bg);color:var(--ok)}
-
-/* Filas de producto */
-.fila{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--borde)}
+.chip-alerta{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
+.fila{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--borde)}
 .fila:last-child{border-bottom:none}
-.fila input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer}
+.fila input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer;margin-top:3px}
 .fila .info{flex:1;min-width:0}
 .fila .nombre-prod{font-size:14px}
 .fila .detalle{font-size:12px;color:var(--tinta-suave);margin-top:2px}
 .fila .detalle strong{color:var(--tinta)}
-.fila .derecha{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.fila .derecha{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
 .fila.clicable{cursor:pointer}
 .fila.clicable:hover{background:var(--fondo)}
-.fila-acciones{padding:10px 16px;display:flex;justify-content:flex-end;gap:10px;background:var(--fondo);border-top:1px solid var(--borde)}
-.enlace{background:none;border:none;color:var(--agua-oscuro);cursor:pointer;font-size:13px;font-weight:600;text-decoration:underline;font-family:inherit}
-
-/* Buscador dentro de sección */
+.fila.resaltada{background:var(--agua-claro);transition:background 1.5s}
+.editor-precio{display:flex;gap:10px;margin-top:8px;align-items:flex-end;flex-wrap:wrap}
+.editor-precio .campo-mini{width:130px}
+.editor-precio .campo-mini label{font-size:11px;margin-bottom:3px}
+.editor-precio .campo-mini input{padding:7px 10px;font-size:13px}
+.editor-precio .resultado{font-size:12px;color:var(--tinta-suave);padding-bottom:8px}
+.editor-precio .resultado.rojo{color:var(--alerta);font-weight:600}
+.subtitulo-bloque{padding:10px 16px;background:var(--fondo);border-bottom:1px solid var(--borde);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--tinta-suave)}
 .buscador{padding:12px 16px;border-bottom:1px solid var(--borde);display:flex;gap:10px;align-items:center}
 .buscador input{flex:1}
 .buscador select{width:auto}
-
-/* Botones */
 .boton{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
 .boton-principal{background:var(--agua);color:#fff}
 .boton-principal:hover{background:var(--agua-oscuro)}
@@ -93,15 +82,11 @@ textarea{resize:vertical;min-height:64px}
 .boton-secundario{background:var(--superficie);color:var(--tinta);border:1px solid var(--borde)}
 .boton-peligro{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
 .boton-chico{padding:9px 14px;font-size:13px}
-
-/* Barra fija inferior */
 .barra-final{position:fixed;bottom:0;left:0;right:0;background:var(--superficie);border-top:1px solid var(--borde);padding:14px 0;box-shadow:0 -4px 20px rgba(22,50,59,.08);display:none;z-index:30}
 .barra-final.visible{display:block}
 .barra-final .contenedor{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .resumen-texto{font-size:14px}
 .resumen-texto strong{font-size:16px}
-
-/* Estados y mensajes */
 .mensaje{padding:14px 16px;border-radius:var(--radio);margin-bottom:16px;font-size:14px}
 .mensaje-error{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
 .mensaje-exito{background:var(--ok-bg);border:1px solid var(--ok);color:var(--ok)}
@@ -110,24 +95,30 @@ textarea{resize:vertical;min-height:64px}
 @keyframes girar{to{transform:rotate(360deg)}}
 .nota-pie{font-size:12px;color:var(--tinta-suave);text-align:center;margin-top:8px}
 .vacio{padding:16px;font-size:13px;color:var(--tinta-suave);text-align:center}
-
-/* Comparación de experimento */
 .comparacion{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
 .comparacion .col{background:var(--fondo);border:1px solid var(--borde);border-radius:8px;padding:12px}
 .comparacion .col h4{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--tinta-suave);margin-bottom:8px}
 .comparacion .dato{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
 .comparacion .dato strong{font-size:14px}
-
-/* Modales */
+.pos-tarjeta{border-bottom:1px solid var(--borde);padding:14px 16px;cursor:pointer}
+.pos-tarjeta:hover{background:var(--fondo)}
+.pos-tarjeta:last-child{border-bottom:none}
+.pos-cabeza{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pos-nombre{font-size:14px;font-weight:600}
+.pos-detalle{font-size:12px;color:var(--tinta-suave);margin-top:3px}
+.pos-detalle strong{color:var(--tinta)}
+.pos-nota{font-size:12px;color:var(--tinta-suave);margin-top:5px;font-style:italic}
+.nota-item{padding:8px 10px;background:var(--fondo);border:1px solid var(--borde);border-radius:8px;margin-bottom:6px;font-size:13px}
+.nota-item .fecha{font-size:11px;color:var(--tinta-suave)}
+.fuente-tarjeta{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
 .velo{position:fixed;inset:0;background:rgba(22,50,59,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;overflow-y:auto}
 .velo.visible{display:flex}
 .modal{background:var(--superficie);border-radius:var(--radio);padding:26px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto}
+.modal.ancho{max-width:860px}
 .modal h3{margin-bottom:6px}
 .modal p{font-size:13px;color:var(--tinta-suave);margin-bottom:16px}
 .modal .campo{margin-bottom:14px}
-.modal .acciones{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
-
-/* Diccionario */
+.modal .acciones{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
 .dicc-grupo{margin-bottom:18px}
 .dicc-grupo h4{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--agua-oscuro);margin-bottom:8px}
 .dicc-termino{padding:10px 12px;background:var(--fondo);border:1px solid var(--borde);border-radius:8px;margin-bottom:8px}
@@ -138,7 +129,7 @@ textarea{resize:vertical;min-height:64px}
 .dicc-lista{font-size:12.5px;color:var(--tinta);margin-top:6px;display:none;padding-left:4px}
 .dicc-lista.visible{display:block}
 .dicc-lista div{padding:2px 0;border-bottom:1px dashed var(--borde)}
-
+.enlace{background:none;border:none;color:var(--agua-oscuro);cursor:pointer;font-size:13px;font-weight:600;text-decoration:underline;font-family:inherit}
 @media(max-width:640px){.tarjetas{grid-template-columns:repeat(2,1fr)}.barra-final .contenedor{flex-direction:column;align-items:stretch}.comparacion{grid-template-columns:1fr}}
 </style>
 </head>
@@ -160,7 +151,8 @@ textarea{resize:vertical;min-height:64px}
       <div class="titulo">Pricing <span>· precios de venta</span></div>
       <div class="sub" id="subtitulo">Cargando…</div>
     </div>
-    <div style="display:flex;gap:10px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="boton boton-secundario boton-chico" onclick="abrirCatalogo()">Catálogo</button>
       <button class="boton boton-secundario boton-chico" onclick="abrirConfig()">Conexión</button>
       <button class="boton boton-principal" id="botonCargar" onclick="cargarTodo()">Actualizar datos</button>
     </div>
@@ -179,7 +171,6 @@ textarea{resize:vertical;min-height:64px}
       <div class="tarjeta"><div class="etiqueta">Benchmark vencido</div><div class="valor" id="numBenchViejo">—</div></div>
     </div>
 
-    <!-- Requiere atención hoy -->
     <div class="seccion atencion abierta" id="secAtencion">
       <div class="seccion-cabeza" onclick="alternar('secAtencion')">
         <div class="izq"><span class="nombre">Requiere atención hoy</span><span class="conteo" id="conteoAtencion"></span></div>
@@ -188,7 +179,6 @@ textarea{resize:vertical;min-height:64px}
       <div class="seccion-cuerpo" id="cuerpoAtencion"></div>
     </div>
 
-    <!-- Experimentos -->
     <div class="seccion" id="secExperimentos">
       <div class="seccion-cabeza" onclick="alternar('secExperimentos')">
         <div class="izq"><span class="nombre">Experimentos de precio</span><span class="conteo" id="conteoExperimentos"></span></div>
@@ -197,7 +187,6 @@ textarea{resize:vertical;min-height:64px}
       <div class="seccion-cuerpo" id="cuerpoExperimentos"></div>
     </div>
 
-    <!-- Revisión de precios -->
     <div class="seccion" id="secPendientes">
       <div class="seccion-cabeza" onclick="alternar('secPendientes')">
         <div class="izq"><span class="nombre">Revisión de precios pendiente</span><span class="conteo" id="conteoPendientes"></span></div>
@@ -206,35 +195,28 @@ textarea{resize:vertical;min-height:64px}
       <div class="seccion-cuerpo" id="cuerpoPendientes"></div>
     </div>
 
-    <!-- Benchmark -->
     <div class="seccion" id="secBenchmark">
       <div class="seccion-cabeza" onclick="alternar('secBenchmark')">
         <div class="izq"><span class="nombre">Benchmark de competidores</span><span class="conteo" id="conteoBenchmark"></span></div>
-        <button class="boton boton-secundario boton-chico" onclick="event.stopPropagation();abrirCapturaBenchmark()">Capturar precio</button>
+        <div style="display:flex;gap:8px">
+          <button class="boton boton-secundario boton-chico" onclick="event.stopPropagation();actualizarFuentes()">Actualizar automáticos</button>
+          <button class="boton boton-secundario boton-chico" onclick="event.stopPropagation();abrirCapturaBenchmark()">Capturar precio</button>
+        </div>
       </div>
       <div class="seccion-cuerpo" id="cuerpoBenchmark"></div>
     </div>
 
-    <!-- Catálogo -->
-    <div class="seccion" id="secCatalogo">
-      <div class="seccion-cabeza" onclick="alternar('secCatalogo')">
-        <div class="izq"><span class="nombre">Catálogo y clasificación</span><span class="conteo" id="conteoCatalogo"></span></div>
+    <div class="seccion" id="secPosiciones">
+      <div class="seccion-cabeza" onclick="alternar('secPosiciones')">
+        <div class="izq"><span class="nombre">Posiciones activas</span><span class="conteo" id="conteoPosiciones"></span></div>
+        <span class="chip chip-info" id="chipPosiciones"></span>
       </div>
-      <div class="seccion-cuerpo">
-        <div class="buscador">
-          <input type="text" id="busqueda" placeholder="Buscar producto…" oninput="pintarCatalogo()">
-          <select id="filtroSensibilidad" onchange="pintarCatalogo()">
-            <option value="">Todas las clasificaciones</option>
-          </select>
-        </div>
-        <div id="cuerpoCatalogo"></div>
-      </div>
+      <div class="seccion-cuerpo" id="cuerpoPosiciones"></div>
     </div>
 
   </div>
 </div>
 
-<!-- Barra de aplicación -->
 <div class="barra-final" id="barraFinal">
   <div class="contenedor">
     <div class="resumen-texto" id="resumenBarra"></div>
@@ -242,7 +224,6 @@ textarea{resize:vertical;min-height:64px}
   </div>
 </div>
 
-<!-- Modal: configuración de conexión -->
 <div class="velo" id="veloConfig">
   <div class="modal">
     <h3>Conexión al backend</h3>
@@ -257,7 +238,6 @@ textarea{resize:vertical;min-height:64px}
   </div>
 </div>
 
-<!-- Modal: diccionario -->
 <div class="velo" id="veloDiccionario">
   <div class="modal">
     <h3>Diccionario de términos</h3>
@@ -267,12 +247,12 @@ textarea{resize:vertical;min-height:64px}
   </div>
 </div>
 
-<!-- Modal: nuevo experimento -->
 <div class="velo" id="veloExperimento">
   <div class="modal">
     <h3>Nuevo experimento de precio</h3>
     <p>Un cambio de precio con hipótesis y fecha de revisión. La herramienta guarda la foto inicial y crea el recordatorio en Odoo.</p>
     <div class="campo"><label>Producto</label><select id="expProducto" onchange="expActualizarContexto()"></select></div>
+    <div class="campo"><label>Posición relacionada (opcional)</label><select id="expPosicion"><option value="">Ninguna</option></select></div>
     <div class="campo"><label>Precio de prueba (sin IVA)</label><input type="number" step="0.01" id="expPrecio" oninput="expActualizarContexto()"></div>
     <div id="expContexto" class="mensaje" style="display:none;background:var(--agua-claro);border:1px solid var(--agua);color:var(--tinta)"></div>
     <div class="campo"><label>Hipótesis — qué esperas que pase y en cuánto tiempo</label><textarea id="expHipotesis" placeholder="Ej. Con este precio, los pedidos suben de 3 a 5 en 60 días"></textarea></div>
@@ -286,14 +266,13 @@ textarea{resize:vertical;min-height:64px}
   </div>
 </div>
 
-<!-- Modal: decidir experimento -->
 <div class="velo" id="veloDecidir">
   <div class="modal">
     <h3 id="decidirTitulo">Revisar experimento</h3>
     <p id="decidirHipotesis"></p>
-    <div id="decidirComparacion"><div class="cargando"><div class="girador"></div><span>Trayendo resultados…</span></div></div>
+    <div id="decidirComparacion"></div>
     <div class="campo"><label>Motivo de la decisión (obligatorio)</label><textarea id="decidirMotivo" placeholder="Ej. El volumen respondió por encima de la meta"></textarea></div>
-    <div class="acciones" style="flex-wrap:wrap">
+    <div class="acciones">
       <button class="boton boton-secundario" onclick="cerrarVelo('veloDecidir')">Cerrar</button>
       <button class="boton boton-secundario" onclick="decidirExperimento('extender')">Extender 30 días</button>
       <button class="boton boton-peligro" onclick="decidirExperimento('revertir')">Revertir precio</button>
@@ -303,7 +282,6 @@ textarea{resize:vertical;min-height:64px}
   </div>
 </div>
 
-<!-- Modal: editar clasificación de producto -->
 <div class="velo" id="veloProducto">
   <div class="modal">
     <h3 id="prodTitulo">Producto</h3>
@@ -331,11 +309,10 @@ textarea{resize:vertical;min-height:64px}
   </div>
 </div>
 
-<!-- Modal: captura manual de benchmark -->
 <div class="velo" id="veloBenchmark">
   <div class="modal">
     <h3>Capturar precio de competidor</h3>
-    <p>Para precios que no vienen del scraper: graneleros, Abasto Básico y productos manuales de Chrisalim.</p>
+    <p>Para precios que no vienen de fuentes automáticas: graneleros, Abasto Básico y productos manuales.</p>
     <div class="campo"><label>Producto de Klimm al que corresponde</label><select id="benchProducto"></select></div>
     <div class="campo"><label>Competidor</label><input type="text" id="benchCompetidor" placeholder="Ej. Granelero X, Abasto Básico"></div>
     <div class="campo"><label>Precio sin IVA</label><input type="number" step="0.01" id="benchPrecio"></div>
@@ -347,15 +324,51 @@ textarea{resize:vertical;min-height:64px}
   </div>
 </div>
 
+<div class="velo" id="veloCatalogo">
+  <div class="modal ancho">
+    <h3>Catálogo y clasificación</h3>
+    <p id="catalogoSub">Consulta y edita la clasificación de cualquier producto. Los cambios de clasificación no tocan precios en Odoo.</p>
+    <div class="buscador" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:10px">
+      <input type="text" id="busqueda" placeholder="Buscar producto…" oninput="pintarCatalogo()">
+      <select id="filtroSensibilidad" onchange="pintarCatalogo()"></select>
+    </div>
+    <div id="cuerpoCatalogo" style="border:1px solid var(--borde);border-radius:8px;max-height:55vh;overflow-y:auto"></div>
+    <div class="acciones"><button class="boton boton-secundario" onclick="cerrarVelo('veloCatalogo')">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="velo" id="veloPosicion">
+  <div class="modal">
+    <h3 id="posTitulo">Posición</h3>
+    <p id="posDatos"></p>
+    <div id="posBenchmark"></div>
+    <div class="campo"><label>SKU que llena la posición hoy</label><input type="text" id="posSku"></div>
+    <div class="campo"><label>Estado</label><select id="posEstado">
+      <option value="pendiente">Pendiente — sin trabajo iniciado</option>
+      <option value="en_negociacion">En negociación con proveedor</option>
+      <option value="esperando_datos">Esperando datos (benchmark, graneleros…)</option>
+      <option value="en_experimento">En experimento de precio</option>
+      <option value="estable">Estable — funcionando, solo monitorear</option>
+    </select></div>
+    <div class="campo"><label>Objetivo</label><textarea id="posObjetivo"></textarea></div>
+    <div class="campo"><label>Agregar nota</label><textarea id="posNotaNueva" placeholder="Qué pasó, con fecha automática"></textarea></div>
+    <div id="posNotas"></div>
+    <div id="posHistorialSku" class="nota-pie" style="text-align:left"></div>
+    <div class="acciones">
+      <button class="boton boton-peligro boton-chico" onclick="cerrarPosicion()">Marcar resuelta</button>
+      <button class="boton boton-secundario" onclick="cerrarVelo('veloPosicion')">Cancelar</button>
+      <button class="boton boton-principal" onclick="guardarPosicion()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================ Conexión
-let BACKEND = localStorage.getItem('luca_backend') || localStorage.getItem('solon_backend') || '';
-let CLAVE = localStorage.getItem('luca_clave') || localStorage.getItem('solon_clave') || '';
+let BACKEND = localStorage.getItem('luca_backend') || '';
+let CLAVE = localStorage.getItem('luca_clave') || '';
 let USUARIO = localStorage.getItem('luca_usuario') || '';
-let SHA = null;            // sha del estado en GitHub
-let ESTADO = null;         // estado completo
-let PRODUCTOS = [];        // catálogo clasificado
-let EXP_ACTUAL = null;     // experimento abierto en el modal de decisión
+let SHA = null, ESTADO = null, PRODUCTOS = [], EXP_ACTUAL = null, POS_ACTUAL = null;
+let COTIZACIONES_90 = {}; // tmpl_id → nº cotizaciones últimos 90 días
 
 function abrirConfig(){
   document.getElementById('confBackend').value = BACKEND;
@@ -374,10 +387,8 @@ function guardarConfig(){
   cargarTodo();
 }
 async function llamar(ruta, opciones={}){
-  const resp = await fetch(BACKEND + ruta, {
-    ...opciones,
-    headers: { 'Content-Type':'application/json', 'x-backend-key': CLAVE, ...(opciones.headers||{}) }
-  });
+  const resp = await fetch(BACKEND + ruta, { ...opciones,
+    headers: { 'Content-Type':'application/json', 'x-backend-key': CLAVE, ...(opciones.headers||{}) } });
   const data = await resp.json().catch(()=>({ok:false,error:'Respuesta no válida del backend'}));
   if(!resp.ok || data.ok === false) throw new Error(data.error || ('Error '+resp.status));
   return data;
@@ -388,57 +399,115 @@ function abrirVelo(id){ document.getElementById(id).classList.add('visible'); }
 function cerrarVelo(id){ document.getElementById(id).classList.remove('visible'); }
 function alternar(id){ document.getElementById(id).classList.toggle('abierta'); }
 function dinero(n){ return '$' + Number(n).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function dineroCorto(n){ return n>=1e6 ? '$'+(n/1e6).toFixed(1)+'M' : '$'+Math.round(n/1000)+'k'; }
 function pct(n){ return (n*100).toFixed(1) + '%'; }
 function esc(t){ const d=document.createElement('div'); d.textContent=t??''; return d.innerHTML; }
 function aviso(tipo, texto){
-  document.getElementById('avisoGlobal').innerHTML =
-    '<div class="mensaje mensaje-'+tipo+'">'+esc(texto)+'</div>';
-  setTimeout(()=>{ document.getElementById('avisoGlobal').innerHTML=''; }, 8000);
+  document.getElementById('avisoGlobal').innerHTML = '<div class="mensaje mensaje-'+tipo+'">'+esc(texto)+'</div>';
+  setTimeout(()=>{ document.getElementById('avisoGlobal').innerHTML=''; }, 9000);
 }
-function diasEntre(iso){
-  return Math.floor((Date.now() - new Date(iso+'T00:00:00').getTime()) / 86400000);
-}
+function diasEntre(iso){ return Math.floor((Date.now() - new Date(iso+'T00:00:00').getTime()) / 86400000); }
+function hoyISO(){ return new Date().toISOString().slice(0,10); }
 
 const NOMBRES_SENS = {
-  kvi_concentracion: 'KVI de concentración',
-  kvi_estandar: 'KVI estándar',
-  critico_cuenta: 'Crítico de cuenta',
-  kvi_licitacion: 'KVI condicional (licitación)',
-  ganador_silencioso: 'Ganador silencioso',
-  cosecha: 'Cosecha',
-  acompanamiento: 'Acompañamiento'
+  kvi_concentracion:'KVI de concentración', kvi_estandar:'KVI estándar',
+  critico_cuenta:'Crítico de cuenta', kvi_licitacion:'KVI condicional (licitación)',
+  ganador_silencioso:'Ganador silencioso', cosecha:'Cosecha', acompanamiento:'Acompañamiento'
 };
 const NOMBRES_FUENTE = {
-  directa: 'Compra directa',
-  transicion: 'En transición',
-  intermediario: 'Intermediario',
-  intermediario_riesgo: 'Intermediario — atención requerida'
+  directa:'Compra directa', transicion:'En transición',
+  intermediario:'Intermediario', intermediario_riesgo:'Intermediario — atención requerida'
+};
+const NOMBRES_POS_ESTADO = {
+  pendiente:'Pendiente', en_negociacion:'En negociación', esperando_datos:'Esperando datos',
+  en_experimento:'En experimento', estable:'Estable', resuelta:'Resuelta'
+};
+const CHIP_POS_ESTADO = {
+  pendiente:'chip-neutro', en_negociacion:'chip-info', esperando_datos:'chip-revision',
+  en_experimento:'chip-info', estable:'chip-ok', resuelta:'chip-ok'
 };
 
-// ============================================================ Clasificación
+// ============================================================ Semillas (se aplican una sola vez si el estado no las tiene)
+const POSICIONES_SEED = [
+ {nombre:'Papel higiénico económico', sku:'Papel Higiénico Dalia (HD200)', estado:'en_negociacion', objetivo:'Conseguir costo directo con PSF / Papel Oro; hoy el costo vía Chrisalim está invertido', demanda:3377278, clientes:149, kvi:true},
+ {nombre:'Toalla en rollo económica', sku:'Toalla Fapsa TR03610', estado:'pendiente', objetivo:'Encontrar bobina que compita con Marli (~$0.28/m) — proveedor alternativo o negociación PSF', demanda:2239265, clientes:101, kvi:true},
+ {nombre:'Multiusos líquido a granel (20L)', sku:'Multiusos Klimm Smart (3 aromas)', estado:'esperando_datos', objetivo:'Calibrar margen de combate con precios de graneleros y arrancar experimento', demanda:1767708, clientes:158, kvi:true},
+ {nombre:'Jabón para manos a granel (20L)', sku:'Jabón Klimm Smart Cereza 20L', estado:'esperando_datos', objetivo:'Calibrar margen de combate con graneleros', demanda:1746946, clientes:122, kvi:true},
+ {nombre:'Cloro', sku:'Cloro Al 5.5% 20L Klimm', estado:'estable', objetivo:'Topado por mercado; validar que el tope siga vigente con benchmark de granelero', demanda:1441103, clientes:157, kvi:true},
+ {nombre:'Desengrasante a granel (20L)', sku:'Desengrasante Klimm Smart 20L', estado:'esperando_datos', objetivo:'Calibrar margen de combate con graneleros', demanda:1122196, clientes:49, kvi:false},
+ {nombre:'Toalla interdoblada económica', sku:'Toalla Interdoblada Dalitas (TI19800)', estado:'en_negociacion', objetivo:'Compra directa PSF (pedido programado); corregir margen a regla tras el nuevo costo', demanda:956311, clientes:104, kvi:true},
+ {nombre:'Detergente en polvo económico', sku:'Detergente Útil 10 kg', estado:'pendiente', objetivo:'Resolver el costo del Útil o proponer Roma por defecto', demanda:896352, clientes:129, kvi:true},
+ {nombre:'Mechudos y mops', sku:'Mechudo pabilo 500 gr San José', estado:'pendiente', objetivo:'Definir el SKU económico de la posición y validar precio', demanda:610539, clientes:130, kvi:true},
+ {nombre:'Bolsas de basura', sku:'Bolsas Anguiplast (jumbo y grandes)', estado:'estable', objetivo:'Ya competitivo; negociar volumen con Anguiplast cuando el crecimiento lo permita', demanda:576976, clientes:115, kvi:true},
+ {nombre:'Sanitizantes', sku:'Sanitizante Klimm Smart', estado:'pendiente', objetivo:'Validar demanda real post-pandemia antes de invertir esfuerzo', demanda:558020, clientes:52, kvi:false},
+ {nombre:'Limpiavidrios a granel (20L)', sku:'Limpiavidrios Klimm Smart 20L', estado:'esperando_datos', objetivo:'Calibrar con graneleros (misma ronda que multiusos)', demanda:527039, clientes:73, kvi:false},
+ {nombre:'Cubetas', sku:'Cubeta con prensa Gorilla 20L', estado:'pendiente', objetivo:'Revisar costo vs mercado; conversión baja con margen en regla', demanda:526947, clientes:93, kvi:false},
+ {nombre:'Fibras y discos', sku:'Fibra Scotch-Brite P94 / P96', estado:'estable', objetivo:'Canal licitación — el precio de combate se decide por cotización, no en lista', demanda:412817, clientes:158, kvi:true},
+ {nombre:'Escobas', sku:'Escoba Perico Normal P-140', estado:'pendiente', objetivo:'Primera candidata a experimento de reventa en cuanto haya lugar libre', demanda:365381, clientes:142, kvi:true}
+];
+const RESERVA_SEED = [
+ {nombre:'Guantes', demanda:362336},{nombre:'Textiles de limpieza (jerga/franela)', demanda:321072},
+ {nombre:'Aromatizantes', demanda:287756},{nombre:'Quitasarro / ácido', demanda:263647},
+ {nombre:'Jaladores', demanda:223711},{nombre:'Lavatrastes', demanda:138568},
+ {nombre:'Recogedores', demanda:136417},{nombre:'Accesorios / despachadores', demanda:103329},
+ {nombre:'Servilletas', demanda:102140}
+];
+const TAREAS_BENCH_SEED = [
+ {id:'gran-jabon', etiqueta:'Jabón para manos 20L — granelero', claves:['jabón','20']},
+ {id:'gran-multiusos', etiqueta:'Multiusos 20L — granelero', claves:['multiusos','20']},
+ {id:'gran-desengrasante', etiqueta:'Desengrasante 20L (con y libre de sosa) — granelero', claves:['desengrasante','20']},
+ {id:'gran-cloro', etiqueta:'Cloro 5.5% y 13% 20L — granelero', claves:['cloro','20']},
+ {id:'gran-lavatrastes', etiqueta:'Lavatrastes 20L — granelero', claves:['lavatrastes','20']},
+ {id:'gran-quitasarro', etiqueta:'Quitasarro / ácido — granelero', claves:['quitasarro']},
+ {id:'gran-sanitizante', etiqueta:'Sanitizante 20L — granelero', claves:['sanitizante','20']}
+];
+
+function sembrarEstadoSiFalta(){
+  let cambio = false;
+  if (!Array.isArray(ESTADO.posiciones)) {
+    ESTADO.posiciones = POSICIONES_SEED.map((p,i)=>({
+      id:'pos-'+(i+1), nombre:p.nombre, sku:p.sku, sku_historial:[],
+      estado:p.estado, objetivo:p.objetivo, demanda_anual:p.demanda,
+      clientes:p.clientes, kvi_imagen:p.kvi, notas:[], experimento_id:null,
+      creada:hoyISO()
+    }));
+    cambio = true;
+  }
+  if (!Array.isArray(ESTADO.posiciones_reserva)) { ESTADO.posiciones_reserva = RESERVA_SEED.slice(); cambio = true; }
+  if (!Array.isArray(ESTADO.benchmark_fuentes)) {
+    ESTADO.benchmark_fuentes = [
+      {id:'mesones', nombre:'Mesones', tipo:'Scraper automático', estatus:'pendiente_construccion', mensaje:'Scraper en construcción — siguiente fase técnica', ultima_verificacion:null},
+      {id:'chrisalim', nombre:'Chrisalim', tipo:'Herramienta de costos', estatus:'pendiente_construccion', mensaje:'Conexión con la herramienta de costos en construcción', ultima_verificacion:null}
+    ];
+    cambio = true;
+  }
+  if (!Array.isArray(ESTADO.benchmark_tareas)) { ESTADO.benchmark_tareas = TAREAS_BENCH_SEED.slice(); cambio = true; }
+  if (!ESTADO.parametros.max_posiciones) { ESTADO.parametros.max_posiciones = 15; cambio = true; }
+  if (!ESTADO.parametros.posicion_dias_estancada) { ESTADO.parametros.posicion_dias_estancada = 45; cambio = true; }
+  return cambio;
+}
+async function guardarEstadoCompleto(mensaje){
+  const r = await llamar('/luca/pricing/estado', { method:'POST',
+    body: JSON.stringify({ estado: ESTADO, sha: SHA, mensaje }) });
+  SHA = r.sha;
+}
+
+// ============================================================ Clasificación y reglas
 function clasificar(p){
-  const cat = (p.categoria_odoo||'');
-  const nom = p.nombre;
+  const cat = (p.categoria_odoo||''); const nom = p.nombre;
   let categoria;
   if (/insumos de papel/i.test(cat)) categoria = 'higienicos';
   else if (/producto terminado klimm/i.test(cat)) categoria = 'fabricacion';
   else categoria = 'resto';
   let linea = null;
-  if (categoria === 'fabricacion') {
-    if (/\bsmart\b/i.test(nom)) linea = 'smart';
-    else linea = 'pro'; // PRO explícito o sin línea → regla PRO
-  }
+  if (categoria === 'fabricacion') linea = /\bsmart\b/i.test(nom) ? 'smart' : 'pro';
   const sensibilidad = (ESTADO.sensibilidad||{})[nom] || 'acompanamiento';
   let fuente = (ESTADO.fuente||{})[nom];
-  if (!fuente) {
-    if (categoria === 'fabricacion') fuente = 'directa';
-    else fuente = p.proveedor ? 'intermediario' : 'intermediario';
-  }
+  if (!fuente) fuente = categoria === 'fabricacion' ? 'directa' : 'intermediario';
   const excepcion = (ESTADO.excepciones||{})[nom] || null;
   const soloLic = (ESTADO.solo_licitacion||[]).includes(nom);
   return { ...p, categoria, linea, sensibilidad, fuente, excepcion, soloLic };
 }
-
 function margenRegla(p){
   const m = ESTADO.parametros.margenes;
   if (p.excepcion && p.excepcion.tipo === 'margen') return p.excepcion.valor;
@@ -453,51 +522,32 @@ function pisoDe(p){
   return pi.resto;
 }
 function margenActual(p){ return p.precio > 0 ? 1 - p.costo/p.precio : null; }
-
-/** Precio que dictan las reglas y si procede proponerlo, según la política
- *  asimétrica de costo-baja. Devuelve {sugerido, proponer, motivo, esCosecha} */
 function evaluar(p){
   if (p.soloLic || p.costo <= 0 || p.precio <= 0) return { proponer:false };
   const tol = ESTADO.parametros.tolerancia_cambio_precio || 0.005;
-
-  // Tope de mercado: el precio sugerido ES el tope
   if (p.excepcion && p.excepcion.tipo === 'tope') {
     const sugerido = p.excepcion.precio;
     const cambia = Math.abs(sugerido - p.precio)/p.precio > tol;
-    return { sugerido, proponer: cambia,
-      motivo: 'Precio tope por mercado: ' + (p.excepcion.motivo||''), regla:'tope' };
+    return { sugerido, proponer:cambia, motivo:'Precio tope por mercado: '+(p.excepcion.motivo||''), regla:'tope' };
   }
-
   const objetivo = margenRegla(p);
   const sugerido = Math.round((p.costo/(1-objetivo))*100)/100;
   const cambia = Math.abs(sugerido - p.precio)/p.precio > tol;
   if (!cambia) return { proponer:false };
-
-  const sube = sugerido > p.precio; // el costo subió respecto al precio vigente
-  if (sube) {
-    // Costo subió: se propone conservar margen — para todos
-    return { sugerido, proponer:true, regla:'conservar_margen',
-      motivo:'El costo subió; este precio conserva el margen de '+pct(objetivo),
-      critico: p.sensibilidad==='critico_cuenta' };
-  }
-  // Costo bajó: solo KVI de concentración y línea Smart trasladan
+  const sube = sugerido > p.precio;
+  if (sube) return { sugerido, proponer:true, regla:'conservar_margen',
+    motivo:'El costo subió; este precio conserva el margen de '+pct(objetivo),
+    critico:p.sensibilidad==='critico_cuenta' };
   const traslada = p.sensibilidad==='kvi_concentracion' || p.linea==='smart';
-  if (traslada) {
-    return { sugerido, proponer:true, regla:'trasladar_baja',
-      motivo:'El costo bajó; en este producto la baja se traslada al precio' };
-  }
-  // Los demás: cosecha visible, no propuesta
+  if (traslada) return { sugerido, proponer:true, regla:'trasladar_baja',
+    motivo:'El costo bajó; en este producto la baja se traslada al precio' };
   return { proponer:false, esCosecha:true, sugerido };
 }
-
-// ---- Coherencia entre presentaciones (solo fabricación, por litro)
 function revisarCoherencia(){
   const minDesc = ESTADO.parametros.coherencia_min_desc_litro || 0.12;
   const conLitros = PRODUCTOS.filter(p => p.categoria==='fabricacion' && !p.soloLic)
-    .map(p => {
-      const m = p.nombre.match(/(\d+)\s*litros?/i);
-      return m ? { ...p, litros: parseInt(m[1]) } : null;
-    }).filter(Boolean);
+    .map(p => { const m = p.nombre.match(/(\d+)\s*litros?/i); return m ? { ...p, litros: parseInt(m[1]) } : null; })
+    .filter(Boolean);
   const familias = {};
   for (const p of conLitros) {
     const base = p.nombre.replace(/(\d+)\s*litros?/ig,'').replace(/\s+/g,' ').trim().toLowerCase();
@@ -510,22 +560,17 @@ function revisarCoherencia(){
       const chico = fam[i-1], grande = fam[i];
       if (grande.litros <= chico.litros) continue;
       const plChico = chico.precio/chico.litros, plGrande = grande.precio/grande.litros;
-      if (plGrande > plChico*(1-minDesc)) {
-        problemas.push({ chico, grande,
-          detalle: dinero(plGrande)+'/L en '+grande.litros+'L vs '+dinero(plChico)+'/L en '+chico.litros+
-                   'L — el granel debe ser al menos '+pct(minDesc)+' más barato por litro' });
-      }
+      if (plGrande > plChico*(1-minDesc)) problemas.push({ chico, grande,
+        detalle:dinero(plGrande)+'/L en '+grande.litros+'L vs '+dinero(plChico)+'/L en '+chico.litros+'L — el granel debe ser al menos '+pct(minDesc)+' más barato por litro' });
     }
   }
   return problemas;
 }
-
-// ---- Benchmark
 function benchmarkDe(nombre){
   const entradas = (ESTADO.benchmark||[]).filter(b => b.producto === nombre);
   if (!entradas.length) return null;
   entradas.sort((a,b)=>a.precio_sin_iva-b.precio_sin_iva);
-  return entradas[0]; // el competidor más barato
+  return entradas[0];
 }
 function benchVencido(b){
   const dias = ESTADO.parametros.benchmark_dias_vigencia || 45;
@@ -543,58 +588,59 @@ async function cargarTodo(){
       llamar('/luca/pricing/productos')
     ]);
     ESTADO = est.estado; SHA = est.sha;
+    if (sembrarEstadoSiFalta()) {
+      try { await guardarEstadoCompleto('Pricing: inicialización de posiciones y fuentes'); }
+      catch(e){ /* si falla, sigue en memoria */ }
+    }
     PRODUCTOS = prods.productos
       .filter(p => p.costo>0 && p.precio>0 && p.activo !== false && p.vendible !== false && !/suministros subcontratista/i.test(p.categoria_odoo||''))
       .map(clasificar)
       .sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+    // Cotizaciones 90d para candidatos — en paralelo, no bloqueante
+    llamar('/luca/pricing/candidatos').then(r => { COTIZACIONES_90 = r.cotizaciones_90d || {}; pintarExperimentos(); }).catch(()=>{});
     pintarTodo();
-    document.getElementById('subtitulo').textContent =
-      PRODUCTOS.length + ' productos · reglas v' + (ESTADO.version||1);
-  } catch(e) {
-    aviso('error','No se pudo cargar: '+e.message);
-  }
+    document.getElementById('subtitulo').textContent = PRODUCTOS.length + ' productos · reglas v' + (ESTADO.version||1);
+  } catch(e) { aviso('error','No se pudo cargar: '+e.message); }
   document.getElementById('zonaCargando').style.display='none';
   document.getElementById('contenidoPrincipal').style.display='block';
 }
 
-// ============================================================ Pintado
-let SELECCION = {}; // id → cambio pendiente seleccionado
+// ============================================================ Pintado general
+let SELECCION = {}; // id → {precio: number|null}  null = usar sugerido
 
 function pintarTodo(){
   pintarAtencion();
   pintarExperimentos();
   pintarPendientes();
   pintarBenchmark();
+  pintarPosiciones();
   pintarCatalogo();
   llenarSelectores();
 }
 
+// ---------------- Requiere atención
 function pintarAtencion(){
   const items = [];
-  // 1) Bajo el piso
   for (const p of PRODUCTOS) {
     if (p.soloLic) continue;
     const m = margenActual(p);
-    if (m !== null && m < pisoDe(p)) {
-      items.push({ tipo:'piso', p, texto:'Margen actual '+pct(m)+' — debajo del piso de '+pct(pisoDe(p)) });
-    }
+    if (m !== null && m < pisoDe(p)) items.push({ tipo:'piso', p, texto:'Margen actual '+pct(m)+' — debajo del piso de '+pct(pisoDe(p)) });
   }
-  // 2) Fuente en riesgo
-  for (const p of PRODUCTOS) {
-    if (p.fuente === 'intermediario_riesgo') {
-      items.push({ tipo:'fuente', p, texto:'Costo por encima del precio público de un competidor — revisar proveedor antes de tocar el precio' });
-    }
-  }
-  // 3) Experimentos vencidos
-  for (const e of (ESTADO.experimentos||[])) {
-    if (e.estatus==='activo' && diasEntre(e.fecha_revision) >= 0) {
-      items.push({ tipo:'exp', exp:e, texto:'Experimento vencido — revisar y decidir' });
-    }
-  }
-  // 4) Coherencia rota
-  for (const c of revisarCoherencia()) {
+  for (const p of PRODUCTOS) if (p.fuente === 'intermediario_riesgo')
+    items.push({ tipo:'fuente', p, texto:'Costo por encima del precio público de un competidor — revisar proveedor antes de tocar el precio' });
+  for (const e of (ESTADO.experimentos||[])) if (e.estatus==='activo' && diasEntre(e.fecha_revision) >= 0)
+    items.push({ tipo:'exp', exp:e, texto:'Experimento vencido — revisar y decidir' });
+  for (const c of revisarCoherencia())
     items.push({ tipo:'coherencia', p:c.grande, texto:'Coherencia entre presentaciones: '+c.detalle });
+  const diasEst = ESTADO.parametros.posicion_dias_estancada || 45;
+  for (const pos of (ESTADO.posiciones||[])) {
+    if (pos.estado === 'resuelta' || pos.estado === 'estable') continue;
+    const ultima = pos.notas.length ? pos.notas[0].fecha : pos.creada;
+    if (diasEntre(ultima) > diasEst)
+      items.push({ tipo:'posicion', pos, texto:'Posición estancada — sin movimiento desde '+ultima });
   }
+  for (const f of (ESTADO.benchmark_fuentes||[])) if (f.estatus === 'fallo')
+    items.push({ tipo:'fuenteBench', f, texto:'La fuente automática "'+f.nombre+'" falló'+(f.ultima_verificacion?' el '+f.ultima_verificacion:'')+' — reintenta o captura manualmente' });
 
   document.getElementById('numAtencion').textContent = items.length;
   document.getElementById('tarjetaAtencion').classList.toggle('atencion', items.length>0);
@@ -602,55 +648,95 @@ function pintarAtencion(){
   const cuerpo = document.getElementById('cuerpoAtencion');
   if (!items.length) { cuerpo.innerHTML = '<div class="vacio">Nada urgente hoy. Así debe verse un buen día.</div>'; return; }
   cuerpo.innerHTML = items.map(it => {
-    if (it.tipo==='exp') {
-      return '<div class="fila clicable" onclick="abrirDecidir(\''+it.exp.id+'\')">'+
-        '<div class="info"><div class="nombre-prod">'+esc(it.exp.producto)+'</div>'+
-        '<div class="detalle">'+esc(it.texto)+'</div></div>'+
-        '<div class="derecha"><span class="chip chip-revision">Decidir</span></div></div>';
-    }
-    return '<div class="fila clicable" onclick="abrirProducto('+it.p.id+')">'+
-      '<div class="info"><div class="nombre-prod">'+esc(it.p.nombre)+'</div>'+
-      '<div class="detalle">'+esc(it.texto)+'</div></div>'+
-      '<div class="derecha"><span class="chip chip-revision">'+
-      (it.tipo==='piso'?'Bajo piso':it.tipo==='fuente'?'Proveedor':'Coherencia')+'</span></div></div>';
+    if (it.tipo==='exp') return filaAtencion(it.exp.producto, it.texto, 'Decidir', "abrirDecidir('"+it.exp.id+"')");
+    if (it.tipo==='posicion') return filaAtencion(it.pos.nombre, it.texto, 'Posición', "abrirPosicion('"+it.pos.id+"')");
+    if (it.tipo==='fuenteBench') return filaAtencion(it.f.nombre, it.texto, 'Benchmark', "abrirSeccion('secBenchmark')");
+    if (it.tipo==='piso') return filaAtencion(it.p.nombre, it.texto, 'Bajo piso', 'irAPendiente('+it.p.id+')');
+    return filaAtencion(it.p.nombre, it.texto, it.tipo==='fuente'?'Proveedor':'Coherencia', 'abrirProducto('+it.p.id+')');
   }).join('');
 }
+function filaAtencion(nombre, texto, chip, accion){
+  return '<div class="fila clicable" onclick="'+accion+'">'+
+    '<div class="info"><div class="nombre-prod">'+esc(nombre)+'</div>'+
+    '<div class="detalle">'+esc(texto)+'</div></div>'+
+    '<div class="derecha"><span class="chip chip-revision">'+esc(chip)+'</span></div></div>';
+}
+function abrirSeccion(id){ document.getElementById(id).classList.add('abierta'); document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+function irAPendiente(id){
+  abrirSeccion('secPendientes');
+  setTimeout(()=>{
+    const fila = document.getElementById('pend-'+id);
+    if (fila) { fila.scrollIntoView({behavior:'smooth', block:'center'}); fila.classList.add('resaltada'); setTimeout(()=>fila.classList.remove('resaltada'), 2500); }
+    else aviso('error','Este producto no tiene propuesta de precio pendiente — revisa su clasificación o costo en el Catálogo');
+  }, 350);
+}
 
+// ---------------- Experimentos + candidatos sugeridos
+function candidatosSugeridos(){
+  const activosIds = new Set((ESTADO.experimentos||[]).filter(e=>e.estatus==='activo').map(e=>e.producto_id));
+  const lista = [];
+  for (const p of PRODUCTOS) {
+    if (p.soloLic || activosIds.has(p.id)) continue;
+    const m = margenActual(p);
+    const regla = margenRegla(p);
+    const cot = COTIZACIONES_90[p.id] || 0;
+    if (m === null || cot < 8) continue;
+    if (m - regla < 0.05) continue;
+    lista.push({ p, cot, espacio: m - regla, puntaje: cot * (m - regla) });
+  }
+  lista.sort((a,b)=>b.puntaje-a.puntaje);
+  return lista.slice(0,5);
+}
 function pintarExperimentos(){
   const activos = (ESTADO.experimentos||[]).filter(e=>e.estatus==='activo');
-  document.getElementById('numExperimentos').textContent = activos.length + ' / ' + (ESTADO.parametros.max_experimentos||3);
+  const max = ESTADO.parametros.max_experimentos||3;
+  document.getElementById('numExperimentos').textContent = activos.length + ' / ' + max;
   document.getElementById('conteoExperimentos').textContent = activos.length ? activos.length+' activos' : 'ninguno activo';
   const cuerpo = document.getElementById('cuerpoExperimentos');
-  const cerrados = (ESTADO.experimentos||[]).filter(e=>e.estatus!=='activo').slice(0,5);
   let html = '';
-  if (!activos.length) html += '<div class="vacio">Sin experimentos activos. Los candidatos del arranque: Fapsa TR03610, Desengrasante Smart 20L, Jabón Cereza Smart 20L.</div>';
   for (const e of activos) {
     const dias = diasEntre(e.fecha_revision);
-    const chip = dias >= 0
-      ? '<span class="chip chip-revision">Vencido</span>'
+    const chip = dias >= 0 ? '<span class="chip chip-revision">Vencido</span>'
       : '<span class="chip chip-info">'+(-dias)+' días restantes</span>';
     html += '<div class="fila clicable" onclick="abrirDecidir(\''+e.id+'\')">'+
       '<div class="info"><div class="nombre-prod">'+esc(e.producto)+'</div>'+
       '<div class="detalle">'+dinero(e.precio_anterior)+' → <strong>'+dinero(e.precio_prueba)+'</strong> · '+esc(e.hipotesis)+'</div></div>'+
       '<div class="derecha">'+chip+'</div></div>';
   }
-  if (cerrados.length) {
-    html += '<div class="fila" style="background:var(--fondo)"><div class="info"><div class="detalle"><strong>Últimos cerrados</strong></div></div></div>';
-    for (const e of cerrados) {
-      html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(e.producto)+'</div>'+
-        '<div class="detalle">'+esc(e.motivo_cierre||'')+'</div></div>'+
-        '<div class="derecha"><span class="chip chip-neutro">'+esc(e.estatus)+'</span></div></div>';
+  if (!activos.length) html += '<div class="vacio">Sin experimentos activos.</div>';
+  // Candidatos sugeridos — siempre visibles
+  const cands = candidatosSugeridos();
+  if (cands.length) {
+    html += '<div class="subtitulo-bloque">Candidatos sugeridos — según cotizaciones de 90 días y margen disponible</div>';
+    if (activos.length >= max) html += '<div class="vacio" style="color:var(--revision)">Tienes '+max+' experimentos activos — cierra uno antes de arrancar otro.</div>';
+    for (const c of cands) {
+      const b = benchmarkDe(c.p.nombre);
+      const bench = b ? ' · vs '+esc(b.competidor)+': '+dinero(b.precio_sin_iva) : '';
+      html += '<div class="fila">'+
+        '<div class="info"><div class="nombre-prod">'+esc(c.p.nombre)+'</div>'+
+        '<div class="detalle"><strong>'+c.cot+'</strong> cotizaciones en 90 días · margen '+pct(margenActual(c.p))+' vs regla '+pct(margenRegla(c.p))+bench+'</div></div>'+
+        '<div class="derecha"><button class="boton boton-secundario boton-chico" onclick="abrirNuevoExperimento('+c.p.id+')">Experimentar</button></div></div>';
     }
+  }
+  // Últimos cerrados
+  const cerrados = (ESTADO.experimentos||[]).filter(e=>e.estatus!=='activo').slice(0,5);
+  if (cerrados.length) {
+    html += '<div class="subtitulo-bloque">Últimos cerrados</div>';
+    for (const e of cerrados) html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(e.producto)+'</div>'+
+      '<div class="detalle">'+esc(e.motivo_cierre||'')+'</div></div>'+
+      '<div class="derecha"><span class="chip chip-neutro">'+esc(e.estatus)+'</span></div></div>';
   }
   cuerpo.innerHTML = html;
 }
 
+// ---------------- Revisión de precios (con edición manual)
 function pintarPendientes(){
   const pendientes = [], cosechas = [];
   for (const p of PRODUCTOS) {
     const ev = evaluar(p);
-    if (ev.proponer) pendientes.push({ p, ev });
+    if (ev.proponer) { p._propuesta = ev; pendientes.push({ p, ev }); }
     else if (ev.esCosecha) cosechas.push({ p, ev });
+    else p._propuesta = null;
   }
   document.getElementById('numPendientes').textContent = pendientes.length;
   document.getElementById('conteoPendientes').textContent = pendientes.length ? pendientes.length+' propuestas' : 'al día';
@@ -659,29 +745,37 @@ function pintarPendientes(){
   let html = '';
   if (!pendientes.length) html += '<div class="vacio">Ningún precio requiere cambio según las reglas.</div>';
   for (const {p, ev} of pendientes) {
-    const mNuevo = 1 - p.costo/ev.sugerido;
+    const sel = SELECCION[p.id];
+    const precioUsado = sel && sel.precio != null ? sel.precio : ev.sugerido;
+    const mNuevo = 1 - p.costo/precioUsado;
     const bajoPiso = mNuevo < pisoDe(p);
+    const editado = sel && sel.precio != null && Math.abs(sel.precio - ev.sugerido) > 0.005;
     const b = benchmarkDe(p.nombre);
     let brecha = '';
-    if (b) {
-      const dif = (ev.sugerido - b.precio_sin_iva)/b.precio_sin_iva;
-      brecha = ' · vs '+esc(b.competidor)+': '+(dif>=0?'+':'')+pct(dif)+(benchVencido(b)?' (dato viejo)':'');
+    if (b) { const dif = (precioUsado - b.precio_sin_iva)/b.precio_sin_iva;
+      brecha = ' · vs '+esc(b.competidor)+': '+(dif>=0?'+':'')+pct(dif)+(benchVencido(b)?' (dato viejo)':''); }
+    const chips =
+      (ev.sugerido > p.precio ? '<span class="chip chip-sube">Sube</span>' : '<span class="chip chip-baja">Baja</span>')+
+      (ev.critico ? '<span class="chip chip-revision">Crítico — decide</span>' : '')+
+      (editado ? '<span class="chip chip-info">Editado</span>' : '')+
+      (bajoPiso ? '<span class="chip chip-alerta">Bajo piso</span>' : '');
+    let editor = '';
+    if (sel) {
+      editor = '<div class="editor-precio">'+
+        '<div class="campo-mini"><label>Precio manual</label><input type="number" step="0.01" id="edit-precio-'+p.id+'" value="'+precioUsado.toFixed(2)+'" oninput="editarPrecio('+p.id+', this.value)"></div>'+
+        '<div class="campo-mini"><label>Margen %</label><input type="number" step="0.1" id="edit-margen-'+p.id+'" value="'+(mNuevo*100).toFixed(1)+'" oninput="editarMargen('+p.id+', this.value)"></div>'+
+        '<div class="resultado'+(bajoPiso?' rojo':'')+'" id="edit-res-'+p.id+'">'+(bajoPiso?'Debajo del piso de '+pct(pisoDe(p)):'Margen resultante: '+pct(mNuevo))+'</div>'+
+        '</div>';
     }
-    const chipCrit = ev.critico ? '<span class="chip chip-revision">Crítico — decide</span>' : '';
-    const chipDir = ev.sugerido > p.precio ? '<span class="chip chip-sube">Sube</span>' : '<span class="chip chip-baja">Baja</span>';
-    const chipPiso = bajoPiso ? '<span class="chip chip-revision">Quedaría bajo piso</span>' : '';
-    html += '<div class="fila">'+
-      '<input type="checkbox" onchange="marcar('+p.id+', this.checked)" '+
-        (SELECCION[p.id]?'checked':'')+'>'+
+    html += '<div class="fila" id="pend-'+p.id+'">'+
+      '<input type="checkbox" onchange="marcar('+p.id+', this.checked)" '+(sel?'checked':'')+'>'+
       '<div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
-      '<div class="detalle">'+dinero(p.precio)+' → <strong>'+dinero(ev.sugerido)+'</strong> · margen '+pct(margenActual(p))+
-      ' → <strong>'+pct(mNuevo)+'</strong>'+brecha+'<br>'+esc(ev.motivo)+'</div></div>'+
-      '<div class="derecha">'+chipDir+chipCrit+chipPiso+'</div></div>';
-    // Guarda la propuesta para la aplicación
-    p._propuesta = ev;
+      '<div class="detalle">'+dinero(p.precio)+' → <strong>'+dinero(precioUsado)+'</strong> · margen '+pct(margenActual(p))+
+      ' → <strong>'+pct(mNuevo)+'</strong>'+brecha+'<br>'+esc(ev.motivo)+'</div>'+editor+'</div>'+
+      '<div class="derecha">'+chips+'</div></div>';
   }
   if (cosechas.length) {
-    html += '<div class="fila" style="background:var(--fondo)"><div class="info"><div class="detalle"><strong>Margen creciendo (cosecha consciente)</strong> — el costo bajó y el precio se mantiene por política. Documentado, no accidental.</div></div></div>';
+    html += '<div class="subtitulo-bloque">Margen creciendo (cosecha consciente) — el costo bajó y el precio se mantiene por política</div>';
     for (const {p, ev} of cosechas.slice(0,30)) {
       html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
         '<div class="detalle">Margen actual '+pct(margenActual(p))+' — la regla marcaría '+dinero(ev.sugerido)+'</div></div>'+
@@ -691,9 +785,36 @@ function pintarPendientes(){
   cuerpo.innerHTML = html;
   actualizarBarra();
 }
-
 function marcar(id, activo){
-  if (activo) SELECCION[id] = true; else delete SELECCION[id];
+  if (activo) SELECCION[id] = SELECCION[id] || { precio: null };
+  else delete SELECCION[id];
+  pintarPendientes();
+}
+function editarPrecio(id, valor){
+  const p = PRODUCTOS.find(x=>x.id===id); if (!p || !SELECCION[id]) return;
+  const precio = parseFloat(valor);
+  if (!precio || precio<=0) return;
+  SELECCION[id].precio = precio;
+  const m = 1 - p.costo/precio;
+  const inMargen = document.getElementById('edit-margen-'+id);
+  if (inMargen && document.activeElement !== inMargen) inMargen.value = (m*100).toFixed(1);
+  actualizarResultadoEdicion(id, p, m);
+}
+function editarMargen(id, valor){
+  const p = PRODUCTOS.find(x=>x.id===id); if (!p || !SELECCION[id]) return;
+  const m = parseFloat(valor)/100;
+  if (isNaN(m) || m>=1) return;
+  const precio = Math.round((p.costo/(1-m))*100)/100;
+  SELECCION[id].precio = precio;
+  const inPrecio = document.getElementById('edit-precio-'+id);
+  if (inPrecio && document.activeElement !== inPrecio) inPrecio.value = precio.toFixed(2);
+  actualizarResultadoEdicion(id, p, m);
+}
+function actualizarResultadoEdicion(id, p, m){
+  const res = document.getElementById('edit-res-'+id);
+  const bajoPiso = m < pisoDe(p);
+  if (res) { res.textContent = bajoPiso ? 'Debajo del piso de '+pct(pisoDe(p)) : 'Margen resultante: '+pct(m);
+    res.classList.toggle('rojo', bajoPiso); }
   actualizarBarra();
 }
 function actualizarBarra(){
@@ -703,22 +824,30 @@ function actualizarBarra(){
   if (n>0) document.getElementById('resumenBarra').innerHTML =
     '<strong>'+n+'</strong> cambio'+(n>1?'s':'')+' de precio seleccionado'+(n>1?'s':'')+' — se escribirán a Odoo con tu aprobación';
 }
-
 async function aplicarSeleccionados(){
-  const cambios = [];
+  const cambios = [], bajoPiso = [];
   for (const p of PRODUCTOS) {
-    if (SELECCION[p.id] && p._propuesta && p._propuesta.proponer) {
-      cambios.push({ id:p.id, nombre:p.nombre, precio_anterior:p.precio,
-        precio_nuevo:p._propuesta.sugerido, motivo:p._propuesta.motivo, regla:p._propuesta.regla });
-    }
+    const sel = SELECCION[p.id];
+    if (!sel || !p._propuesta) continue;
+    const precio = sel.precio != null ? sel.precio : p._propuesta.sugerido;
+    const m = 1 - p.costo/precio;
+    if (m < pisoDe(p)) bajoPiso.push(p.nombre);
+    const editado = sel.precio != null && Math.abs(sel.precio - p._propuesta.sugerido) > 0.005;
+    cambios.push({ id:p.id, nombre:p.nombre, precio_anterior:p.precio, precio_nuevo:precio,
+      motivo: editado ? 'Precio ajustado manualmente (regla sugería '+dinero(p._propuesta.sugerido)+')' : p._propuesta.motivo,
+      regla: editado ? 'manual' : p._propuesta.regla });
   }
   if (!cambios.length) return;
+  if (bajoPiso.length) {
+    const ok = confirm('Atención: '+bajoPiso.length+' precio(s) quedarían DEBAJO del piso de su categoría:\n\n'+bajoPiso.slice(0,8).join('\n')+
+      (bajoPiso.length>8?'\n…':'')+'\n\n¿Confirmas aplicarlos de todas formas?');
+    if (!ok) return;
+  }
   const boton = document.getElementById('botonAplicar');
   boton.disabled = true; boton.textContent = 'Aplicando…';
   try {
-    const r = await llamar('/luca/pricing/precios/aplicar', {
-      method:'POST', body: JSON.stringify({ cambios, usuario: USUARIO })
-    });
+    const r = await llamar('/luca/pricing/precios/aplicar', { method:'POST',
+      body: JSON.stringify({ cambios, usuario: USUARIO }) });
     SHA = r.sha;
     const fallidos = r.resultados.filter(x=>!x.ok).length;
     aviso(fallidos? 'error':'exito', fallidos
@@ -730,31 +859,71 @@ async function aplicarSeleccionados(){
   boton.disabled = false; boton.textContent = 'Aplicar a Odoo';
 }
 
-// ============================================================ Benchmark
+// ---------------- Benchmark en tres bloques
+function tareaCapturada(tarea){
+  const entradas = ESTADO.benchmark||[];
+  return entradas.some(b => {
+    const texto = ((b.producto||'')+' '+(b.nota||'')).toLowerCase();
+    return tarea.claves.every(c => texto.includes(c.toLowerCase()));
+  });
+}
 function pintarBenchmark(){
   const entradas = ESTADO.benchmark||[];
   const vencidas = entradas.filter(benchVencido).length;
   document.getElementById('numBenchViejo').textContent = vencidas;
   document.getElementById('conteoBenchmark').textContent = entradas.length ? entradas.length+' registros' : 'sin datos aún';
   const cuerpo = document.getElementById('cuerpoBenchmark');
-  if (!entradas.length) {
-    cuerpo.innerHTML = '<div class="vacio">Sin datos de benchmark. Captura precios manuales aquí, o conecta el scraper de Mesones cuando esté listo.</div>';
-    return;
+  let html = '';
+
+  // Bloque 1 — fuentes automáticas
+  html += '<div class="subtitulo-bloque">Fuentes automáticas</div>';
+  for (const f of (ESTADO.benchmark_fuentes||[])) {
+    let chip;
+    if (f.estatus === 'ok') chip = '<span class="chip chip-ok">Actualizado '+esc(f.ultima_actualizacion||'')+'</span>';
+    else if (f.estatus === 'fallo') chip = '<span class="chip chip-alerta">Falló'+(f.ultima_verificacion?' el '+esc(f.ultima_verificacion):'')+'</span>';
+    else chip = '<span class="chip chip-neutro">En construcción</span>';
+    html += '<div class="fuente-tarjeta"><div><div class="nombre-prod">'+esc(f.nombre)+'</div>'+
+      '<div class="detalle" style="font-size:12px;color:var(--tinta-suave)">'+esc(f.tipo)+(f.mensaje?' · '+esc(f.mensaje):'')+'</div></div>'+
+      '<div>'+chip+'</div></div>';
   }
-  const orden = [...entradas].sort((a,b)=>a.producto.localeCompare(b.producto,'es'));
-  cuerpo.innerHTML = orden.map(b => {
-    const p = PRODUCTOS.find(x=>x.nombre===b.producto);
-    let comp = '';
-    if (p) {
-      const dif = (p.precio - b.precio_sin_iva)/b.precio_sin_iva;
-      comp = ' · tu precio '+dinero(p.precio)+' ('+(dif>=0?'+':'')+pct(dif)+')';
+
+  // Bloque 2 — captura manual pendiente
+  const tareas = ESTADO.benchmark_tareas||[];
+  const pendientesT = tareas.filter(t=>!tareaCapturada(t));
+  html += '<div class="subtitulo-bloque">Captura manual — ronda de graneleros ('+(tareas.length-pendientesT.length)+' de '+tareas.length+' capturados)</div>';
+  for (const t of tareas) {
+    const hecho = tareaCapturada(t);
+    html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(t.etiqueta)+'</div></div>'+
+      '<div class="derecha">'+(hecho?'<span class="chip chip-ok">Capturado</span>':'<span class="chip chip-alerta">Sin dato</span>')+'</div></div>';
+  }
+
+  // Bloque 3 — precios capturados
+  html += '<div class="subtitulo-bloque">Precios capturados</div>';
+  if (!entradas.length) html += '<div class="vacio">Todavía no hay precios de competidor. Usa "Capturar precio" para los manuales.</div>';
+  else {
+    const orden = [...entradas].sort((a,b)=>a.producto.localeCompare(b.producto,'es'));
+    for (const b of orden) {
+      const p = PRODUCTOS.find(x=>x.nombre===b.producto);
+      let comp = '';
+      if (p) { const dif = (p.precio - b.precio_sin_iva)/b.precio_sin_iva;
+        comp = ' · tu precio '+dinero(p.precio)+' ('+(dif>=0?'+':'')+pct(dif)+')'; }
+      const viejo = benchVencido(b) ? ' <span class="chip chip-revision">Desactualizado</span>' : '';
+      html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(b.producto)+'</div>'+
+        '<div class="detalle">'+esc(b.competidor)+': <strong>'+dinero(b.precio_sin_iva)+'</strong>'+comp+
+        ' · capturado '+esc(b.fecha_captura)+(b.nota?' · '+esc(b.nota):'')+'</div></div>'+
+        '<div class="derecha">'+viejo+'</div></div>';
     }
-    const viejo = benchVencido(b) ? ' <span class="chip chip-revision">Desactualizado</span>' : '';
-    return '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(b.producto)+'</div>'+
-      '<div class="detalle">'+esc(b.competidor)+': <strong>'+dinero(b.precio_sin_iva)+'</strong>'+comp+
-      ' · capturado '+esc(b.fecha_captura)+(b.nota?' · '+esc(b.nota):'')+'</div></div>'+
-      '<div class="derecha">'+viejo+'</div></div>';
-  }).join('');
+  }
+  cuerpo.innerHTML = html;
+}
+async function actualizarFuentes(){
+  try {
+    const r = await llamar('/luca/pricing/benchmark/actualizar', { method:'POST', body:'{}' });
+    SHA = r.sha;
+    ESTADO.benchmark_fuentes = r.fuentes;
+    pintarBenchmark(); pintarAtencion();
+    aviso('exito','Fuentes verificadas');
+  } catch(e) { aviso('error', e.message); }
 }
 function abrirCapturaBenchmark(){
   document.getElementById('benchCompetidor').value='';
@@ -780,8 +949,103 @@ async function guardarBenchmark(){
   } catch(e) { aviso('error', e.message); }
 }
 
-// ============================================================ Experimentos
-function abrirNuevoExperimento(){
+// ---------------- Posiciones activas
+function pintarPosiciones(){
+  const activas = (ESTADO.posiciones||[]).filter(p=>p.estado!=='resuelta');
+  const resueltas = (ESTADO.posiciones||[]).filter(p=>p.estado==='resuelta');
+  const max = ESTADO.parametros.max_posiciones||15;
+  document.getElementById('conteoPosiciones').textContent = activas.length+' de '+max+' activas';
+  document.getElementById('chipPosiciones').textContent = resueltas.length ? resueltas.length+' resueltas' : '';
+  const cuerpo = document.getElementById('cuerpoPosiciones');
+  let html = '';
+  for (const pos of activas) {
+    const chip = '<span class="chip '+(CHIP_POS_ESTADO[pos.estado]||'chip-neutro')+'">'+esc(NOMBRES_POS_ESTADO[pos.estado]||pos.estado)+'</span>'+
+      (pos.kvi_imagen?' <span class="chip chip-info">KVI de imagen</span>':'');
+    const ultimaNota = pos.notas.length ? pos.notas[0] : null;
+    html += '<div class="pos-tarjeta" onclick="abrirPosicion(\''+pos.id+'\')">'+
+      '<div class="pos-cabeza"><div class="pos-nombre">'+esc(pos.nombre)+'</div><div>'+chip+'</div></div>'+
+      '<div class="pos-detalle">SKU: <strong>'+esc(pos.sku)+'</strong> · demanda '+dineroCorto(pos.demanda_anual)+'/año · '+pos.clientes+' clientes</div>'+
+      '<div class="pos-detalle">'+esc(pos.objetivo)+'</div>'+
+      (ultimaNota ? '<div class="pos-nota">'+esc(ultimaNota.fecha)+': '+esc(ultimaNota.texto)+'</div>' : '<div class="pos-nota">Sin notas aún</div>')+
+      '</div>';
+  }
+  // Reserva
+  const reserva = ESTADO.posiciones_reserva||[];
+  if (reserva.length) {
+    html += '<div class="subtitulo-bloque">En reserva — candidatas cuando se libere lugar</div>';
+    html += '<div style="padding:12px 16px;font-size:13px;color:var(--tinta-suave)">'+
+      reserva.map(r=>esc(r.nombre)+' ('+dineroCorto(r.demanda)+')').join(' · ')+'</div>';
+  }
+  if (resueltas.length) {
+    html += '<div class="subtitulo-bloque">Resueltas</div>';
+    for (const pos of resueltas) html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(pos.nombre)+'</div>'+
+      '<div class="detalle">'+esc((pos.notas[0]&&pos.notas[0].texto)||'')+'</div></div>'+
+      '<div class="derecha"><span class="chip chip-ok">Resuelta</span></div></div>';
+  }
+  cuerpo.innerHTML = html || '<div class="vacio">Sin posiciones activas.</div>';
+}
+function abrirPosicion(id){
+  POS_ACTUAL = (ESTADO.posiciones||[]).find(p=>p.id===id);
+  if (!POS_ACTUAL) return;
+  const pos = POS_ACTUAL;
+  document.getElementById('posTitulo').textContent = pos.nombre;
+  document.getElementById('posDatos').textContent = 'Demanda '+dineroCorto(pos.demanda_anual)+'/año · '+pos.clientes+' clientes cotizan'+(pos.kvi_imagen?' · KVI de imagen':'');
+  // Benchmark asociado por coincidencia con el nombre del SKU
+  const skuLower = pos.sku.toLowerCase();
+  const asociados = (ESTADO.benchmark||[]).filter(b => {
+    const bp = b.producto.toLowerCase();
+    return bp.includes(skuLower.slice(0,18)) || skuLower.includes(bp.slice(0,18));
+  });
+  document.getElementById('posBenchmark').innerHTML = asociados.length
+    ? '<div class="mensaje" style="background:var(--agua-claro);border:1px solid var(--agua);color:var(--tinta)">Benchmark: '+
+      asociados.map(b=>esc(b.competidor)+' '+dinero(b.precio_sin_iva)+' ('+esc(b.fecha_captura)+')').join(' · ')+'</div>'
+    : '';
+  document.getElementById('posSku').value = pos.sku;
+  document.getElementById('posEstado').value = pos.estado;
+  document.getElementById('posObjetivo').value = pos.objetivo;
+  document.getElementById('posNotaNueva').value = '';
+  document.getElementById('posNotas').innerHTML = pos.notas.slice(0,6).map(n =>
+    '<div class="nota-item"><div class="fecha">'+esc(n.fecha)+(n.usuario?' · '+esc(n.usuario):'')+'</div>'+esc(n.texto)+'</div>').join('');
+  document.getElementById('posHistorialSku').innerHTML = pos.sku_historial.length
+    ? 'Historial de SKU: '+pos.sku_historial.map(h=>esc(h.sku)+' ('+esc(h.desde)+' → '+esc(h.hasta)+')').join(' · ')
+    : '';
+  abrirVelo('veloPosicion');
+}
+async function guardarPosicion(){
+  if (!POS_ACTUAL) return;
+  const pos = POS_ACTUAL;
+  const nuevoSku = document.getElementById('posSku').value.trim();
+  if (nuevoSku && nuevoSku !== pos.sku) {
+    pos.sku_historial.unshift({ sku: pos.sku, desde: pos.sku_desde||pos.creada, hasta: hoyISO() });
+    pos.sku = nuevoSku; pos.sku_desde = hoyISO();
+  }
+  pos.estado = document.getElementById('posEstado').value;
+  pos.objetivo = document.getElementById('posObjetivo').value.trim();
+  const nota = document.getElementById('posNotaNueva').value.trim();
+  if (nota) pos.notas.unshift({ fecha: hoyISO(), texto: nota, usuario: USUARIO });
+  try {
+    await guardarEstadoCompleto('Pricing: posición actualizada — '+pos.nombre);
+    cerrarVelo('veloPosicion');
+    pintarPosiciones(); pintarAtencion();
+    aviso('exito','Posición guardada');
+  } catch(e) { aviso('error','No se pudo guardar: '+e.message); }
+}
+async function cerrarPosicion(){
+  if (!POS_ACTUAL) return;
+  const nota = document.getElementById('posNotaNueva').value.trim();
+  if (!nota) { aviso('error','Escribe una nota con el resultado antes de marcar la posición como resuelta'); return; }
+  POS_ACTUAL.estado = 'resuelta';
+  POS_ACTUAL.notas.unshift({ fecha: hoyISO(), texto: 'RESUELTA: '+nota, usuario: USUARIO });
+  try {
+    await guardarEstadoCompleto('Pricing: posición resuelta — '+POS_ACTUAL.nombre);
+    cerrarVelo('veloPosicion');
+    pintarPosiciones(); pintarAtencion();
+    aviso('exito','Posición marcada como resuelta');
+  } catch(e) { aviso('error', e.message); }
+}
+
+// ---------------- Experimentos: crear y decidir
+function abrirNuevoExperimento(productoId){
   const activos = (ESTADO.experimentos||[]).filter(e=>e.estatus==='activo');
   if (activos.length >= (ESTADO.parametros.max_experimentos||3)) {
     aviso('error','Ya hay '+activos.length+' experimentos activos. Cierra uno antes de abrir otro.'); return;
@@ -789,7 +1053,9 @@ function abrirNuevoExperimento(){
   document.getElementById('expPrecio').value='';
   document.getElementById('expHipotesis').value='';
   document.getElementById('expContexto').style.display='none';
+  if (productoId) document.getElementById('expProducto').value = productoId;
   abrirVelo('veloExperimento');
+  expActualizarContexto();
 }
 function expActualizarContexto(){
   const id = parseInt(document.getElementById('expProducto').value);
@@ -799,7 +1065,6 @@ function expActualizarContexto(){
   if (!p || !precio) { caja.style.display='none'; return; }
   const mNuevo = 1 - p.costo/precio;
   const mActual = margenActual(p);
-  // Aritmética de contribución: volumen extra necesario para empatar
   let extra = '';
   if (mNuevo < mActual && mNuevo > 0) {
     const req = (mActual/mNuevo - 1);
@@ -807,10 +1072,8 @@ function expActualizarContexto(){
   }
   let bench = '';
   const b = benchmarkDe(p.nombre);
-  if (b) {
-    const dif = (precio - b.precio_sin_iva)/b.precio_sin_iva;
-    bench = '<br>Contra '+esc(b.competidor)+' ('+dinero(b.precio_sin_iva)+') quedarías '+(dif>=0?'+':'')+pct(dif)+'.';
-  }
+  if (b) { const dif = (precio - b.precio_sin_iva)/b.precio_sin_iva;
+    bench = '<br>Contra '+esc(b.competidor)+' ('+dinero(b.precio_sin_iva)+') quedarías '+(dif>=0?'+':'')+pct(dif)+'.'; }
   const piso = pisoDe(p);
   const alertaPiso = mNuevo < piso ? '<br><strong>Ojo:</strong> quedaría debajo del piso de '+pct(piso)+'.' : '';
   caja.innerHTML = 'Margen resultante: <strong>'+pct(mNuevo)+'</strong> (hoy '+pct(mActual)+', costo '+dinero(p.costo)+').'+extra+bench+alertaPiso;
@@ -821,15 +1084,29 @@ async function crearExperimento(){
   const precio = parseFloat(document.getElementById('expPrecio').value);
   const hipotesis = document.getElementById('expHipotesis').value.trim();
   const dias = parseInt(document.getElementById('expDias').value);
+  const posicionId = document.getElementById('expPosicion').value || null;
   const p = PRODUCTOS.find(x=>x.id===id);
   if (!p || !precio || !hipotesis) { aviso('error','Producto, precio de prueba e hipótesis son obligatorios'); return; }
   const boton = document.getElementById('botonCrearExp');
   boton.disabled = true; boton.textContent = 'Creando…';
   try {
-    await llamar('/luca/pricing/experimentos/crear', { method:'POST', body: JSON.stringify({
+    const r = await llamar('/luca/pricing/experimentos/crear', { method:'POST', body: JSON.stringify({
       producto_id:p.id, producto:p.nombre, hipotesis,
-      precio_anterior:p.precio, precio_prueba:precio, dias, usuario:USUARIO
+      precio_anterior:p.precio, precio_prueba:precio, dias, usuario:USUARIO, posicion_id:posicionId
     })});
+    SHA = r.sha;
+    // Vincular a la posición si aplica
+    if (posicionId) {
+      const est = await llamar('/luca/pricing/estado');
+      ESTADO = est.estado; SHA = est.sha;
+      const pos = (ESTADO.posiciones||[]).find(x=>x.id===posicionId);
+      if (pos) {
+        pos.estado = 'en_experimento';
+        pos.experimento_id = r.experimento.id;
+        pos.notas.unshift({ fecha:hoyISO(), texto:'Experimento iniciado: '+p.nombre+' a '+dinero(precio)+' — '+hipotesis, usuario:USUARIO });
+        await guardarEstadoCompleto('Pricing: posición ligada a experimento — '+pos.nombre);
+      }
+    }
     cerrarVelo('veloExperimento');
     aviso('exito','Experimento iniciado: precio de prueba en Odoo y recordatorio creado para dentro de '+dias+' días');
     await cargarTodo();
@@ -875,15 +1152,32 @@ async function decidirExperimento(decision){
   try {
     await llamar('/luca/pricing/experimentos/'+EXP_ACTUAL.id+'/decidir', { method:'POST',
       body: JSON.stringify({ decision, motivo, dias_extension:30, usuario:USUARIO }) });
+    // Actualizar posición ligada
+    if (EXP_ACTUAL.posicion_id && decision !== 'extender') {
+      const est = await llamar('/luca/pricing/estado');
+      ESTADO = est.estado; SHA = est.sha;
+      const pos = (ESTADO.posiciones||[]).find(x=>x.id===EXP_ACTUAL.posicion_id);
+      if (pos) {
+        pos.estado = decision === 'confirmar' ? 'estable' : 'pendiente';
+        pos.experimento_id = null;
+        pos.notas.unshift({ fecha:hoyISO(), texto:'Experimento '+decision+': '+motivo, usuario:USUARIO });
+        await guardarEstadoCompleto('Pricing: posición actualizada por experimento — '+pos.nombre);
+      }
+    }
     cerrarVelo('veloDecidir');
     aviso('exito','Experimento '+({confirmar:'confirmado',revertir:'revertido',extender:'extendido',cancelar:'cancelado'})[decision]);
     await cargarTodo();
   } catch(e) { aviso('error', e.message); }
 }
 
-// ============================================================ Catálogo
+// ---------------- Catálogo (en modal)
+function abrirCatalogo(){
+  pintarCatalogo();
+  abrirVelo('veloCatalogo');
+}
 function pintarCatalogo(){
-  document.getElementById('conteoCatalogo').textContent = PRODUCTOS.length + ' productos';
+  const sub = document.getElementById('catalogoSub');
+  if (sub) sub.textContent = PRODUCTOS.length + ' productos · consulta y edita clasificación, fuente de compra y excepciones. Los cambios de clasificación no tocan precios en Odoo.';
   const q = (document.getElementById('busqueda').value||'').toLowerCase();
   const fs = document.getElementById('filtroSensibilidad').value;
   const lista = PRODUCTOS.filter(p =>
@@ -892,7 +1186,19 @@ function pintarCatalogo(){
   ).slice(0, 200);
   document.getElementById('cuerpoCatalogo').innerHTML = lista.map(p => {
     const m = margenActual(p);
-    const chips =
+    const b = benchmarkDe(p.nombre);
+    let compHtml = '';
+    let chipComp = '';
+    if (b) {
+      const dif = (p.precio - b.precio_sin_iva)/b.precio_sin_iva;
+      const viejo = benchVencido(b);
+      compHtml = '<div class="detalle">Competencia: '+esc(b.competidor)+' '+dinero(b.precio_sin_iva)+
+        ' · estás <strong>'+(dif>=0?'+':'')+pct(dif)+'</strong>'+(viejo?' <span style="color:var(--revision)">(dato viejo)</span>':'')+'</div>';
+      chipComp = dif > 0.02 ? '<span class="chip chip-sube">Arriba '+pct(dif)+'</span>'
+        : dif < -0.02 ? '<span class="chip chip-baja">Abajo '+pct(-dif)+'</span>'
+        : '<span class="chip chip-ok">En mercado</span>';
+    }
+    const chips = chipComp +
       '<span class="chip chip-neutro">'+esc(NOMBRES_SENS[p.sensibilidad]||p.sensibilidad)+'</span>'+
       (p.soloLic ? '<span class="chip chip-info">Solo licitación</span>' : '')+
       (p.fuente==='intermediario_riesgo' ? '<span class="chip chip-revision">Proveedor</span>' : '');
@@ -900,20 +1206,27 @@ function pintarCatalogo(){
       '<div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
       '<div class="detalle">Costo '+dinero(p.costo)+' · Precio '+dinero(p.precio)+' · Margen '+pct(m)+
       ' · Regla '+pct(margenRegla(p))+' · '+esc(NOMBRES_FUENTE[p.fuente]||'')+
-      (p.proveedor?' · '+esc(p.proveedor):'')+'</div></div>'+
+      (p.proveedor?' · '+esc(p.proveedor):'')+'</div>'+compHtml+'</div>'+
       '<div class="derecha">'+chips+'</div></div>';
   }).join('') || '<div class="vacio">Sin resultados.</div>';
 }
-
 let PROD_ACTUAL = null;
 function abrirProducto(id){
   PROD_ACTUAL = PRODUCTOS.find(p=>p.id===id);
   if (!PROD_ACTUAL) return;
   const p = PROD_ACTUAL;
   document.getElementById('prodTitulo').textContent = p.nombre;
-  document.getElementById('prodDetalle').textContent =
-    'Costo '+dinero(p.costo)+' · Precio '+dinero(p.precio)+' · Margen actual '+pct(margenActual(p))+
+  let detalle = 'Costo '+dinero(p.costo)+' · Precio '+dinero(p.precio)+' · Margen actual '+pct(margenActual(p))+
     ' · Categoría: '+p.categoria+(p.linea?' ('+p.linea.toUpperCase()+')':'');
+  const bProd = benchmarkDe(p.nombre);
+  if (bProd) {
+    const dif = (p.precio - bProd.precio_sin_iva)/bProd.precio_sin_iva;
+    detalle += ' — Competencia: '+bProd.competidor+' a '+dinero(bProd.precio_sin_iva)+
+      ', estás '+(dif>=0?'+':'')+pct(dif)+(benchVencido(bProd)?' (dato viejo)':'');
+  } else {
+    detalle += ' — Sin dato de competencia capturado';
+  }
+  document.getElementById('prodDetalle').textContent = detalle;
   const selS = document.getElementById('prodSensibilidad');
   selS.innerHTML = Object.entries(NOMBRES_SENS).map(([k,v])=>'<option value="'+k+'">'+v+'</option>').join('');
   selS.value = p.sensibilidad;
@@ -940,14 +1253,11 @@ async function guardarProducto(){
   ESTADO.fuente = ESTADO.fuente || {};
   ESTADO.excepciones = ESTADO.excepciones || {};
   ESTADO.solo_licitacion = ESTADO.solo_licitacion || [];
-
   const sens = document.getElementById('prodSensibilidad').value;
   if (sens === 'acompanamiento') delete ESTADO.sensibilidad[nom];
   else ESTADO.sensibilidad[nom] = sens;
-
   const fuente = document.getElementById('prodFuente').value;
   if (fuente) ESTADO.fuente[nom] = fuente; else delete ESTADO.fuente[nom];
-
   const exTipo = document.getElementById('prodExcepcionTipo').value;
   if (exTipo) {
     const valor = parseFloat(document.getElementById('prodExcepcionValor').value);
@@ -957,15 +1267,11 @@ async function guardarProducto(){
       ? { tipo:'margen', valor: valor/100, motivo }
       : { tipo:'tope', precio: valor, motivo };
   } else delete ESTADO.excepciones[nom];
-
   const soloLic = document.getElementById('prodSoloLicitacion').checked;
   ESTADO.solo_licitacion = ESTADO.solo_licitacion.filter(n=>n!==nom);
   if (soloLic) ESTADO.solo_licitacion.push(nom);
-
   try {
-    const r = await llamar('/luca/pricing/estado', { method:'POST',
-      body: JSON.stringify({ estado: ESTADO, sha: SHA, mensaje: 'Pricing: clasificación de '+nom }) });
-    SHA = r.sha;
+    await guardarEstadoCompleto('Pricing: clasificación de '+nom);
     PRODUCTOS = PRODUCTOS.map(p => p.nombre===nom ? clasificar(p) : p);
     cerrarVelo('veloProducto');
     pintarTodo();
@@ -973,7 +1279,7 @@ async function guardarProducto(){
   } catch(e) { aviso('error','No se pudo guardar: '+e.message); }
 }
 
-// ============================================================ Diccionario
+// ---------------- Diccionario
 const DICCIONARIO = {
   'Clasificación de sensibilidad': {
     kvi_concentracion: 'Productos donde buscamos crecer volumen agresivamente para negociar mejor costo con el proveedor. Son pocos, muy vendidos, y el precio competitivo en ellos nos da imagen de precio con todos los clientes. Cuando su costo baja, el precio baja también.',
@@ -993,6 +1299,14 @@ const DICCIONARIO = {
   '¿Qué pasa cuando baja mi costo?': {
     traslada: 'La baja se traslada al precio: cuando el proveedor nos da mejor costo, bajamos el precio de venta en la misma proporción. Ganamos competitividad en lugar de margen. Aplica a: KVI de concentración y línea Smart.',
     cosecha_regla: 'La baja se queda como margen: mantenemos el precio de venta y ganamos más en cada venta. La herramienta lo muestra como "cosecha consciente" para que sea una decisión visible, no un accidente. Aplica a: todo lo demás.'
+  },
+  'Posiciones y sus estados': {
+    posicion: 'Una posición es una necesidad del cliente que el catálogo debe cubrir a precio competitivo (por ejemplo "toalla en rollo económica"). El producto que la llena puede cambiar cuando otro dé mejor costo — se gestiona la posición, no el SKU.',
+    pendiente_pos: 'Pendiente: la posición está identificada pero el trabajo no ha iniciado.',
+    en_negociacion_pos: 'En negociación: hay una conversación activa con proveedor para mejorar el costo de la posición.',
+    esperando_datos_pos: 'Esperando datos: falta información (benchmark, precios de graneleros) para decidir.',
+    en_experimento_pos: 'En experimento: la posición tiene un experimento de precio corriendo, ligado a ella.',
+    estable_pos: 'Estable: la posición funciona; solo se monitorea.'
   }
 };
 function abrirDiccionario(){
@@ -1003,7 +1317,9 @@ function abrirDiccionario(){
     for (const clave in DICCIONARIO[grupo]) {
       const def = DICCIONARIO[grupo][clave];
       const nombre = NOMBRES_SENS[clave] || NOMBRES_FUENTE[clave] ||
-        (clave==='traslada'?'La baja se traslada al precio': clave==='cosecha_regla'?'La baja se queda como margen': clave);
+        ({traslada:'La baja se traslada al precio', cosecha_regla:'La baja se queda como margen',
+          posicion:'¿Qué es una posición?', pendiente_pos:'Pendiente', en_negociacion_pos:'En negociación',
+          esperando_datos_pos:'Esperando datos', en_experimento_pos:'En experimento', estable_pos:'Estable'})[clave] || clave;
       let conteo = '', lista = '';
       if (PRODUCTOS.length && (NOMBRES_SENS[clave] || NOMBRES_FUENTE[clave])) {
         const enCat = NOMBRES_SENS[clave]
@@ -1025,12 +1341,15 @@ function abrirDiccionario(){
   abrirVelo('veloDiccionario');
 }
 
-// ============================================================ Selectores
+// ---------------- Selectores
 function llenarSelectores(){
-  const opciones = PRODUCTOS.map(p=>'<option value="'+p.id+'">'+esc(p.nombre)+'</option>').join('');
-  document.getElementById('expProducto').innerHTML = opciones;
+  document.getElementById('expProducto').innerHTML =
+    PRODUCTOS.map(p=>'<option value="'+p.id+'">'+esc(p.nombre)+'</option>').join('');
   document.getElementById('benchProducto').innerHTML =
     PRODUCTOS.map(p=>'<option value="'+esc(p.nombre)+'">'+esc(p.nombre)+'</option>').join('');
+  const activas = (ESTADO.posiciones||[]).filter(p=>p.estado!=='resuelta');
+  document.getElementById('expPosicion').innerHTML = '<option value="">Ninguna</option>'+
+    activas.map(p=>'<option value="'+p.id+'">'+esc(p.nombre)+'</option>').join('');
   const fs = document.getElementById('filtroSensibilidad');
   if (fs.options.length <= 1) {
     fs.innerHTML = '<option value="">Todas las clasificaciones</option>'+
@@ -1039,7 +1358,7 @@ function llenarSelectores(){
   }
 }
 
-// ============================================================ Arranque
+// ---------------- Arranque
 if (BACKEND && CLAVE) cargarTodo(); else abrirConfig();
 </script>
 </body>
