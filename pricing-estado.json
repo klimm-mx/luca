@@ -144,7 +144,2710 @@
   "solo_licitacion": [],
   "experimentos": [],
   "historial": [],
-  "benchmark": [],
+  "benchmark": [
+    {
+      "producto": "Atomizador classic 1 litro económico",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.78,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Atomizador industrial 1 litro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 11.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Bomba Destapacaños Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 54.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Bonnet 19’’ para alfombras",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 471.64,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Bote para basura jumbo sin asas ni tapa Sablón (8595NE)",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 73.79,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Brasso vidrios y superficies 650 ml RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 40.26,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Perico plancha recta italiano CP-45",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.22,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Plancha Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 33.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Tallafuerte Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 85.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo lava autos Perico PM-L sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 31.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo lava platos Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 21.12,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo para WC con tazón Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 55.26,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo sanitario Perico PWC-1 s/base",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 15.78,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo sanitario con base Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 59.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Colchón de papel higiénico Pétalo Tradicional (90449) 96 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 456.64,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Contenedor con llantas Heavy Duty Gorilla de 120 lt (AF-07321)",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 827.67,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Crema limpiadora 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 169.14,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cubeta de líquido para mops Ardeli 18 lt",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 1153.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Detergente Roma de 1 kg La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 36.98,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Detergente Roma de 5 kg La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 183.53,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Detergente líquido Roma 1 litro La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 27.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite Blanco 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 136.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite Canela 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 136.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite SPP Plus vino 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 218.45,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite diamante sienna 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 1296.03,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite melamina 20’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 568.1,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite pelo natural canela 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 136.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite rojo 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 136.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite sistema diamante morado 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 1242.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Doble Angular Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 87.76,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Dual Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 72.93,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Perico abanico P-250 sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 30.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Perico extra P-180 curva grande sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Perico plus P-220 sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 33.53,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Perico tipo cepillo extra suave florentina PF sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 31.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Perico vinil extra suave pc-colori sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 31.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba de 7 hilos con bastón azul San José",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 82.24,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba de 7 hilos con bastón rojo San José",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 65,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba de 8 hilos con bastón verde San José",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 89.14,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba de vara",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 96.72,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba de vinilo grande sin bastón La Palma de Oro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 44.05,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba pisos finos Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 100.34,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite 2000 alto desempeño 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 17.33,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite Borra Fácil 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.97,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite P0 Cero rayas 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.22,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite P66 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.09,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite P76 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 14.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite P94 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 13.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite P96 Azul 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 11.29,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite P96 Roja 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 11.29,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite P96 Verde 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 11.29,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite para baño 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 38.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite para parrillas 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 44.66,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra de Acero Inoxidable Scotch-Brite P-10 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra esponja mediana Scotch-Brite Mi Fibra 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 17.33,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra verde gigante Scotch-Brite Mi Fibra 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 11.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra verde popular Scotch-Brite Mi Fibra 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 15.17,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Glade aerosol Campos de Lavanda 400 ml SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 46.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Glade aerosol Hawaiian Breeze 400 ml SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 46.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Glade aerosol Jardín Campestre 400 ml SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 46.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Glade aerosol Paraíso Azul 400 ml SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 46.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jabón Lirio Anti-bacterial 4pz",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 61.12,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jabón de tocador Rosa Venus rosa de 25 gr con 240 piezas",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 437.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador Fragante de neopreno de 1 metro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 178.28,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador Fragante de neopreno de 40 cm",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 74.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador Fragante de neopreno de 50 cm",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 82.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador Limpiaventanas Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 32.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador Perico PJ-40 sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 21.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador Vileda con sujeta paño",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 103.53,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador de plástico multiusos de 40 cm Zing",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 158.36,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador limpia vidrios La Palma de Oro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 50.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador limpia vidrios Perico PLV-20 con bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 27.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador limpia vidrios manual Perico PLV-20M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 14.22,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jalador marino sin bastón La Palma de Oro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 46.98,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jerga Carpe superfina de color, rollo de 50 cm x 25 m",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 381.12,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jerga Trapimax blanca 1 m x 60 cm",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.98,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jerga Trapimax color 1m x 60cm",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.4,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jerga Trapimax nube 1 m x 60 cm",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.98,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jerga carpe popular blanca de 50 cm x 25 m",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 303.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jerga carpe popular de color de 50 cm x 25 m",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 303.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jerga de cocina 3000 de 45 cm x 45 cm",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 4.83,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Limpia vidrios multiusos Perico PLV-40 sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 32.59,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Limpiador Pino del Bosque de 1 lt Ardeli",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.22,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Limpiador multisuperficies Pledge 378 ml SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 67.76,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Líquido para mops Ardeli 1 lt PET",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 65,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Manguera reforzada con conexión de 15 m de Santul (5666)",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 132.93,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo Perico mediano PM-300 sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 48.97,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo chico Perico de algodón BM-150 sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo de pabilo 280 gr con bastón azul Innovaciones",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 34.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo de pabilo 800 gr Innovaciones",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 59.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo de pabilo Perico PM-350 sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 30,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo de tela magitel Innovaciones",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 29.66,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo mediano Perico de microfibra PM-250 sin bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 48.97,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo universal de microfibra Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 68.1,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Marli Jumbo Jr. (90509) 12 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 346.64,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Dalia 500 (HB19350) 6 rollos PSF Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 404.4,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Elite (6688) 6 rollos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 452.76,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Elite (6695) 12 rollos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 457.41,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Elite (8057) 12 rollos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 317.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Elite Classic 12 rollos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 247.16,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Fapsa HB03325 12 rollos PSF Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 437.59,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Junior Elite (5957) 12 rollos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 308.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Kleenex Jumbo Jr. de 300 metros 12 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 672.76,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Kleenex Jumbo Sr. 600 metros 6 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 633.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Marli Jumbo 400 metros (90510) 6 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 350,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Pétalo Jumbo Sr (90552) 6 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 492.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico de fluido céntrico Elite (6810)",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 730,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastillas limpiadoras Pato paquete con 4 SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 47.59,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño de microfibra Luxe 3000 de 37 x 50 cm",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 8.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño suelos Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 31.29,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pañuelos faciales Kleenex (89330) 72 paquetes KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 1150.86,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pledge aerosol cuidado de muebles 333 g SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 58.1,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Plumero de gallina económico",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 35.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Plumero de gallo",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 58.97,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Plumero de guajolote",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 38.97,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Plumero extra largo de guajolote",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 106.21,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Plumero extra largo de henequén",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 100.26,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Practi mop de algodón Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 62.07,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Recogedor Columpio Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 112.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Recogedor Perico de plástico con bastón metálico PR-B",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 30.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Recogedor con mango Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 46.72,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Recogedor con mango Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 51.72,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Rejilla con pastilla non paradicloro Wiese para mingitorio",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 21.72,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Rejilla con pastilla paradicloro Wiese para mingitorio",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 21.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Rejilla para mingitorio con pastilla Gel Kleen",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 21.81,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Removedor de chicle 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 349.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Repuesto Maxi Mop de algodón Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 36.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Repuesto jumbo mop de algodón Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 77.59,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Repuesto practi mop de algodón Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 29.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Repuesto twist mop doble acción Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 105,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Rollo de franela Carpe roja 50 cm x 25 m",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 331.81,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Rollo de franela carpe blanca de 50 cm x 25 m",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 331.81,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Rollo de jerga Trapimax 50 cm x 25 m color",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 390.95,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Servilletas Dalia con 450 (19450) PSF Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.79,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Servilletas Kleenex Tradicional de Lujo (91670) 12 paquetes KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 421.12,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Servilletas Pétalo Barra Mesa Sr (91690) 24 fajillas KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 430.69,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Señalamiento de piso mojado (AM-2014) Gorilla",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 85.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Suavizante Ensueño Max 9 l Frescura Primaveral Alen",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 209.14,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete para mingitorio Gel Kleen con aroma a Canela",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla Scott Shop original 6 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 273.28,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla de fluido céntrico Fapsa Pro (TR03508) 6 rollos PSF Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 482.33,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla en rollo Elite (5971) 6 rollos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 320.09,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla en rollo Marli 180 metros (92257) 6 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 433.45,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla en rollo Pétalo para manos (92221) 6 rollos KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 449.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toallas Interdobladas Pétalo (92113) 20 fajillas KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 354.66,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toallas de cocina Plus Elite (0884) 1 rollo",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.53,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toallas interdobladas Fapsa eco (TI03895) 8 paquetes PSF Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 162.16,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toallitas Antibacteriales Escudo (92549) KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 14.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tratamiento líquido Prodeli para mops, 1 litros",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 62.67,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tratamiento líquido Prodeli para mops, 18 litros",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 1185.09,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Twist mop doble acción Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 163.45,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Zote blanco de 100 g La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 5.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Zote blanco de 200 g La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.69,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Zote blanco de 400 g La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 21.29,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Zote rosa de 100 g La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 5.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Zote rosa de 200 g La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.69,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Ácido muriático Ardeli de 1 litro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 33.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño de Alto Desempeño Scotch-Brite 3M Amarillo",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 20.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Brasso Gold sarro y mugre limpiador líquido de 650 ml RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 49.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Harpic Max Power 10x limpiador desinfectante 750 ml RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 45.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Harpic antihongos líquido para baños con cloro 650 ml RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 49.83,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño de Alto Desempeño Scotch-Brite 3M Blanco",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 20.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Aromatizante Wiese de disparo controlado 180 gr.",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 48.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Freshmatic Air Wick repuesto Lavanda 250 ml RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 98.28,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Harpic removedor de sarro líquido azul 750 ml RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 45.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Lysol desinfectante multiusos Citrus de 5 litros RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 105.78,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pato discos activos Lima Fresca de 38 gr c/aparato SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.4,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Repuesto Glade automático Paraíso Azul 175 g SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 103.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Brasso limpiador de metales de 200 ml RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 133.79,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Detergente Roma de 250 gr La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Detergente Roma de 500gr La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.62,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Gel de acción profunda 500 ml Pato SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 37.59,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Marli Tradicional (90524) 24 paq. con 4 rollos c/u KC",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 297.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño de Alto Desempeño Scotch-Brite 3M Verde",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 20.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño de Alto Desempeño Scotch-Brite 3M Azul",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 20.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño de Alto Desempeño Scotch-Brite 3M Gris",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 20.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Rollo de jerga Trapimax color 60 cm x 25 m",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 460.26,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite Negro 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 136.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Suavizante Ensueño Max 3.7 l Frescura Primaveral Alen",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 209.14,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toallas Interdobladas Elite (6015)",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 288.1,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Difusor Eléctrico Air Wick Lirios de Luna y Seda de 21 ml RTT",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 68.1,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jerga sarga Lorenzo 1m x 60cm Azul",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 12.59,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Lavatrastes Axion pasta 425 gr",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 76.98,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo de pabilo 420 gr con bastón Innovaciones",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 42.41,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite Clean & Shine Pad 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 218.45,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Maxi Mop de Algodón Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 70.26,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Mechudo de pabilo 350 gr con bastón Innovaciones",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.14,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Fregón Clásico",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 6.12,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite 2000 Hex 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 14.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Pétalo Jumbo Jr. (90553) 6 Rollos Kc",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 263.79,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla en rollo Fapsa TR03606 – 6 rollos PSF Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 276.03,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Disco Scotch-Brite Verde Blue 19’’ 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 136.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fibra Scotch-Brite 96 Hex 3M",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 14.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Elite (5940) 6 Rollos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 369.66,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Marli Jr. (90531) 12 Rollos Kc",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 324.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Tradicional Elite Premium (6046) 24 rollos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 133.45,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Para Recipientes Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 23.97,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Sanitario con Base Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 59.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Detergente Roma De 10 Kg La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 363.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Para Azulejos Reynera",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 15.95,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba 3 En 1 Antichoque Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 105.09,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Perico Económica Ce Sin Bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 17.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla Para Manos Marli Ecológica (92244) 6 Rollos Kc",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 326.55,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Perico Plancha Tradicional Cp-35",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 8.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Limpiavidrios con atomizador Mary Fresh de 1 lt",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 22.24,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Angular 2 En 1 Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 82.76,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Servilletas De Mesa Doblez Elite (6022)",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 38.1,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toallas Interdobladas Fapsa (Ti03890) 20 Paquetes Psf Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 241.21,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Perico Normal P-140 Sin Bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 24.4,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Fabuloso Lavanda 5 Litros",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 159.4,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Dalia 180 (Hb19318) Psf Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 250.86,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Rollo Papel Higiénico Elite Tradicional Premium Individual (6039)",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.17,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Ácido Muriático Ardeli De 3.800 Litros",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 124.05,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Escoba Perico Super P-200 Sin Bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 29.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Jumbo Jr. Scott 500 Metros (90621) 6 Rollos Kc",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 477.33,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla Interdoblada Dalitas (Ti19800) 20 Paquetes Psf Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 173.62,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tratamiento Líquido Prodeli Para Mops, 4 Litros",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 238.1,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Glade aerosol 400 ml SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 46.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Líquido Quitasarro Ardeli De 1 Lt",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 32.59,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cubeta rígida de 13 lt Sablón (9152BL)",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 64.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cubo Gris Con Exprimidor Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 106.98,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Maxi mop de algodón Vileda con bastón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 70.26,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Dalia (HD400) HB19340",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 289.22,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Lavaplatos Alemán Cepimex",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.95,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cubeta De Limpiador Pino Del Bosque Ardeli 18 Lt",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 327.24,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla Fapsa Eco (Tr03690) 6 Rollos Psf Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 236.47,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Windex Original Limpiador De Vidrios 640 Ml Scj",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 44.31,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cepillo Sanitario Perico C/Base Pwc-2",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Dalia (HD360) HB19336",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 269.4,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toalla Fapsa (Tr03610) 6 Rollos Psf Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 268.79,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Zote Rosa De 400 G La Corona",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 21.29,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Fapsa (HD180) HB03318",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 308.79,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Fapsa (HD200) HB03320",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 352.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Bolsas Extra Grandes Para Basura Anguiplast 70X90 Cm. Rollo",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 41.72,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Bolsas Grandes Para Basura Anguiplast 60 X 90 Cm Rollo Negra",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 41.72,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Dalia Ph19104 – 4 Rollos Psf Pro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 12.59,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Tradicional Dalia (Hd300) 19101",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 5.6,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese redonda 70 gr.",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese redonda 80 gr.",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Ácido Muriático Fru & Veu De 1 Lt",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.88,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Bastón De Madera Con Rosca Para Escobas",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 11.72,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Raid Casa y Jardín base agua SCJ 400 ml",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 78.97,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Bolsas Jumbo Para Basura Anguiplast 90X120 Cm. Rollo Negra",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 41.72,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla para baño Pato 40 gr SCJ",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 17.84,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jabón de Tocador Lirio 150 gramos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.03,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Sosa Cáustica Granulada 100 gr. La Jirafa",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.29,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Creolina Fru & Veu De 1 Lt",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 41.29,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cubeta C/Prensa Y Separador Gorilla 20 Lts",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 426.64,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Scotch-Brite Satinados-amarillo 7 - 7 .5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Scotch-Brite Satinados-amarillo 8 - 8 .5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel higiénico Dalia (HD250) HB19325",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 404.4,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Satinados Professional Scoth-Brite Amarillos #8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Scotch-Brite Satinados-azul 3M 8- 8.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Scotch-Brite Satinados-verde 3M 7 - 7.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Scotch-Brite Satinados-verde 3M 8 - 8.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Satinados Proffesional Scotch-Brite Rojos #8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Satinados Proffesional Scotch-Brite Rojos #9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Franela de México 1 m x 60 cm Blanco",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese Storm para mingitorio con aroma Manzana Canela",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Cítrico",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese liso para mingitorio con aroma Chicle",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 17.41,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Mango",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese Storm para mingitorio con aroma Cítrico",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Scotch-Brite Satinados-azul 3M 7 - 7.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese liso para mingitorio con aroma Menta",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 17.41,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex Plus N satinados 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex Plus N satinados 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex Plus N satinados 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex industriales de látex natural talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 96.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex industriales de látex natural talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 96.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jabón para manos con aplicador Bye-Bac de 500 ml Ardeli aroma Cherry",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.28,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jabón para manos con aplicador Bye-Bac de 500 ml Ardeli aroma Herbal",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.28,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla desodorante La Poblanita 70 g de Ardeli Flores Silvestres",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.14,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese Storm para mingitorio con aroma Brissé",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese Storm para mingitorio con aroma Mango",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Lavanda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Manzana-Canela",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese liso para mingitorio con aroma Cereza",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 17.41,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Aromatizante Wiese en aerosol 400 ml Tahiti",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Cartucho de jabón para manos con 12 piezas de 500 ml Gel Kleen Jazmín",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 302.24,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex Plus N satinados 10",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex Plus N satinados 6.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex Plus N satinados 7.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex Plus N satinados 8.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex industriales de látex natural talla 10",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 96.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multi resistentes talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 27.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multi resistentes talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 27.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multi resistentes talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 27.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 60 gr media luna Herbal",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 8.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 70 gr media luna Herbal",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 80 gr media luna Herbal",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla desodorante La Poblanita 70 g de Ardeli Pino",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.14,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese Storm para mingitorio con aroma Menta",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Pepino-Limón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multieconómicos satinados talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 12.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multieconómicos satinados talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 12.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multieconómicos satinados talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 12.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes universales Vileda talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 30.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes universales Vileda talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 30.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes universales Vileda talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 30.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese Storm para mingitorio con aroma Lavanda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Ever Green",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Red Clover",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Franela de México 1 m x 60 cm Gris",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Franela de México 1 m x 60 cm Rojo",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex clásicos limpiatodo talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex clásicos limpiatodo talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex clásicos limpiatodo talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multieconómicos satinados talla 6.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 12.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Menta",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multiusos satinados talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multiusos satinados talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multiusos satinados talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex refortex satinados talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 23.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex refortex satinados talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 23.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex refortex satinados talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 23.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex clásicos limpiatodo talla 10",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex clásicos limpiatodo talla 6.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex clásicos limpiatodo talla 7.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex clásicos limpiatodo talla 8.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 16.9,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multiusos satinados talla 10",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multiusos satinados talla 6.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multiusos satinados talla 7.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multiusos satinados talla 8.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex refortex satinados talla 10",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 23.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex refortex satinados talla 7.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 23.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex refortex satinados talla 8.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 23.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes extra sensation Vileda Talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes extra sensation Vileda Talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes extra sensation Vileda Talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 60 gr media luna Citrus",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 8.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 60 gr media luna Lavanda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 8.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 60 gr media luna Popurrí",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 8.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 70 gr media luna Citrus",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 70 gr media luna Lavanda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 70 gr media luna Popurrí",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 80 gr media luna Citrus",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 80 gr media luna Lavanda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 80 gr media luna Popurrí",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla desodorante La Poblanita 70 g de Ardeli Brisa Marina",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.14,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Adex azul pastel Talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Adex azul pastel Talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Adex azul pastel Talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Ruddex 450 negro talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 73.45,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Ruddex 450 negro talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 73.45,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes robust Vileda 6.5-7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 47.16,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes robust Vileda 7.5-8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 47.16,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes robust Vileda 8.5-9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 47.16,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Adex azul pastel talla 10",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 60 gr media luna Manzana Verde",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 8.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 70 gr media luna Manzana Verde",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 9.57,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pastilla Wiese 80 gr media luna Manzana Verde",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 10.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex amarillo talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex amarillo talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex amarillo talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes grabados rojos Adex talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.62,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multieconómicos satinados talla 8.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 12.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Toallas Interdobladas Kimberly-Clark Sanitas 20 Fajillas Con 100 Pzas C/U",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 194.66,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño absorbente Scotch-Brite Professional 3M Blanco",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño absorbente Scotch-Brite Professional 3M Azul",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño absorbente Scotch-Brite Professional 3M Rojo",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.36,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Aromatizante En Aerosol Wiese Lavanda 400 Ml",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes grabados rojos Adex talla 10",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.62,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pinol Alen 1 litro",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Aromatizante Wiese En Aerosol 400 Ml Frutos Rojos",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Lavatrastes líquido Axión limón 900 ml",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 22.33,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex verde talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex verde talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex verde talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jabón Para Manos Con Aplicador Bye-Bac De 500 Ml Ardeli Mora Azul",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.28,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex azul talla 7",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex azul talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes colors Adex azul talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.02,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Aromatizante En Aerosol Wiese Hawaiian Ginger 400 Ml",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.19,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Pinol El Original 3.785 litros",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.52,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes grabados rojos Adex talla 9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.62,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Repuesto mechudo universal de microfibra Vileda",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 68.1,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Satinados Professional Scotch-Brite Amarillos #9",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño absorbente Scotch-Brite Professional 3M Amarillo",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 19.48,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Jabón para manos con aplicador Bye-Bac de 500 ml Ardeli aroma Almendras",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.28,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes Vitex multieconómicos satinados talla 7.5",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 12.5,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese Storm para mingitorio con aroma Pepino-Limón",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 25.43,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Guantes grabados rojos Adex talla 8",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 28.62,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Paño absorbente Scotch-Brite Professional 3M Verde",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 18.36,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Tapete Wiese anti-salpicadurasMT para mingitorio con aroma Brissé",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 39.74,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    },
+    {
+      "producto": "Papel Higiénico Dalia (Hd200) Hb19320",
+      "competidor": "Chrisalim",
+      "precio_sin_iva": 268.71,
+      "fuente": "scraper",
+      "fecha_captura": "2026-07-16"
+    }
+  ],
   "posiciones": [
     {
       "id": "pos-1",
@@ -400,17 +3103,19 @@
       "id": "mesones",
       "nombre": "Mesones",
       "tipo": "Scraper automático",
-      "estatus": "pendiente_construccion",
-      "mensaje": "Scraper en construcción — siguiente fase técnica",
-      "ultima_verificacion": null
+      "estatus": "ok",
+      "mensaje": "0 precios actualizados",
+      "ultima_verificacion": "2026-07-16",
+      "ultima_actualizacion": "2026-07-16"
     },
     {
       "id": "chrisalim",
       "nombre": "Chrisalim",
       "tipo": "Herramienta de costos",
-      "estatus": "pendiente_construccion",
-      "mensaje": "Conexión con la herramienta de costos en construcción",
-      "ultima_verificacion": null
+      "estatus": "ok",
+      "mensaje": "386 precios actualizados",
+      "ultima_verificacion": "2026-07-16",
+      "ultima_actualizacion": "2026-07-16"
     }
   ],
   "benchmark_tareas": [
