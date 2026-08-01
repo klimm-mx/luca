@@ -368,6 +368,8 @@ let BACKEND = localStorage.getItem('luca_backend') || '';
 let CLAVE = localStorage.getItem('luca_clave') || '';
 let USUARIO = localStorage.getItem('luca_usuario') || '';
 let SHA = null, ESTADO = null, PRODUCTOS = [], EXP_ACTUAL = null, POS_ACTUAL = null;
+let SENSIBILIDAD = {}; // mapa { odoo_product_id: clasificacion } desde product_attributes
+let PENDIENTES_CLASIF = []; // productos nuevos sin clasificar: [{odoo_product_id, nombre}]
 let COTIZACIONES_90 = {}; // tmpl_id → nº cotizaciones últimos 90 días
 
 function abrirConfig(){
@@ -501,7 +503,7 @@ function clasificar(p){
   else categoria = 'resto';
   let linea = null;
   if (categoria === 'fabricacion') linea = /\bsmart\b/i.test(nom) ? 'smart' : 'pro';
-  const sensibilidad = (ESTADO.sensibilidad||{})[nom] || 'acompanamiento';
+  const sensibilidad = SENSIBILIDAD[p.id] || 'acompanamiento';
   let fuente = (ESTADO.fuente||{})[nom];
   if (!fuente) fuente = categoria === 'fabricacion' ? 'directa' : 'intermediario';
   const excepcion = (ESTADO.excepciones||{})[nom] || null;
@@ -583,11 +585,16 @@ async function cargarTodo(){
   document.getElementById('zonaCargando').style.display='block';
   document.getElementById('contenidoPrincipal').style.display='none';
   try {
-    const [est, prods] = await Promise.all([
+    const [est, prods, sens] = await Promise.all([
       llamar('/luca/pricing/estado'),
-      llamar('/luca/pricing/productos')
+      llamar('/luca/pricing/productos'),
+      llamar('/luca/pricing/sensibilidad')
     ]);
     ESTADO = est.estado; SHA = est.sha;
+    // Sensibilidad desde la base de datos (product_attributes), cruzada por
+    // odoo_product_id. Es la fuente de verdad de la clasificación; el bloque
+    // sensibilidad del JSON ya no se usa para leer.
+    SENSIBILIDAD = sens.sensibilidad || {};
     if (sembrarEstadoSiFalta()) {
       try { await guardarEstadoCompleto('Pricing: inicialización de posiciones y fuentes'); }
       catch(e){ /* si falla, sigue en memoria */ }
@@ -598,6 +605,8 @@ async function cargarTodo(){
       .sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
     // Cotizaciones 90d para candidatos — en paralelo, no bloqueante
     llamar('/luca/pricing/candidatos').then(r => { COTIZACIONES_90 = r.cotizaciones_90d || {}; pintarExperimentos(); }).catch(()=>{});
+    // Pendientes de clasificación (productos nuevos sin sensibilidad) — no bloqueante
+    llamar('/luca/pricing/sensibilidad/pendientes').then(r => { PENDIENTES_CLASIF = r.por_clasificar || []; pintarAtencion(); }).catch(()=>{});
     pintarTodo();
     document.getElementById('subtitulo').textContent = PRODUCTOS.length + ' productos · reglas v' + (ESTADO.version||1);
   } catch(e) { aviso('error','No se pudo cargar: '+e.message); }
@@ -621,6 +630,11 @@ function pintarTodo(){
 // ---------------- Requiere atención
 function pintarAtencion(){
   const items = [];
+  // Productos nuevos sin clasificar (vienen de Odoo pero no están en la tabla).
+  // Van primero: un producto sin sensibilidad se trata como acompañamiento por
+  // defecto, y conviene clasificarlo a conciencia antes de que eso pase inadvertido.
+  for (const q of PENDIENTES_CLASIF)
+    items.push({ tipo:'sinClasificar', pend:q, texto:'Producto nuevo sin clasificación de sensibilidad — clasifícalo para que el pricing lo trate bien' });
   for (const p of PRODUCTOS) {
     if (p.soloLic) continue;
     const m = margenActual(p);
@@ -652,6 +666,7 @@ function pintarAtencion(){
     if (it.tipo==='posicion') return filaAtencion(it.pos.nombre, it.texto, 'Posición', "abrirPosicion('"+it.pos.id+"')");
     if (it.tipo==='fuenteBench') return filaAtencion(it.f.nombre, it.texto, 'Benchmark', "abrirSeccion('secBenchmark')");
     if (it.tipo==='piso') return filaAtencion(it.p.nombre, it.texto, 'Bajo piso', 'irAPendiente('+it.p.id+')');
+    if (it.tipo==='sinClasificar') return filaAtencion(it.pend.nombre, it.texto, 'Clasificar', 'abrirProducto('+it.pend.odoo_product_id+')');
     return filaAtencion(it.p.nombre, it.texto, it.tipo==='fuente'?'Proveedor':'Coherencia', 'abrirProducto('+it.p.id+')');
   }).join('');
 }
@@ -1256,13 +1271,11 @@ function prodCambioExcepcion(){
 async function guardarProducto(){
   if (!PROD_ACTUAL) return;
   const nom = PROD_ACTUAL.nombre;
-  ESTADO.sensibilidad = ESTADO.sensibilidad || {};
+  const idProd = PROD_ACTUAL.id;
   ESTADO.fuente = ESTADO.fuente || {};
   ESTADO.excepciones = ESTADO.excepciones || {};
   ESTADO.solo_licitacion = ESTADO.solo_licitacion || [];
   const sens = document.getElementById('prodSensibilidad').value;
-  if (sens === 'acompanamiento') delete ESTADO.sensibilidad[nom];
-  else ESTADO.sensibilidad[nom] = sens;
   const fuente = document.getElementById('prodFuente').value;
   if (fuente) ESTADO.fuente[nom] = fuente; else delete ESTADO.fuente[nom];
   const exTipo = document.getElementById('prodExcepcionTipo').value;
@@ -1278,8 +1291,17 @@ async function guardarProducto(){
   ESTADO.solo_licitacion = ESTADO.solo_licitacion.filter(n=>n!==nom);
   if (soloLic) ESTADO.solo_licitacion.push(nom);
   try {
+    // Sensibilidad → base de datos (product_attributes), al instante y por id.
+    await llamar('/luca/pricing/sensibilidad', {
+      method: 'POST',
+      body: JSON.stringify({ odoo_product_id: idProd, clasificacion: sens, odoo_name: nom })
+    });
+    SENSIBILIDAD[idProd] = sens;
+    // Si estaba en la bandera de pendientes, ya quedó clasificado: quitarlo.
+    PENDIENTES_CLASIF = PENDIENTES_CLASIF.filter(q => q.odoo_product_id !== idProd);
+    // Fuente, excepciones y solo_licitación siguen en el JSON de estado, igual que antes.
     await guardarEstadoCompleto('Pricing: clasificación de '+nom);
-    PRODUCTOS = PRODUCTOS.map(p => p.nombre===nom ? clasificar(p) : p);
+    PRODUCTOS = PRODUCTOS.map(p => p.id===idProd ? clasificar(p) : p);
     cerrarVelo('veloProducto');
     pintarTodo();
     aviso('exito','Clasificación guardada');
