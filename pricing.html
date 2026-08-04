@@ -1295,7 +1295,7 @@ async function guardarProducto(){
     // Sensibilidad → base de datos (product_attributes), al instante y por id.
     await llamar('/luca/pricing/sensibilidad', {
       method: 'POST',
-      body: JSON.stringify({ odoo_product_id: idProd, clasificacion: sens, odoo_name: nom })
+      body: JSON.stringify({ odoo_product_id: idProd, clasificacion: sens })
     });
     SENSIBILIDAD[idProd] = sens;
     // Si estaba en la bandera de pendientes, ya quedó clasificado: quitarlo.
