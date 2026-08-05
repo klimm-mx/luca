@@ -370,6 +370,7 @@ let CLAVE = localStorage.getItem('luca_clave') || '';
 let USUARIO = localStorage.getItem('luca_usuario') || '';
 let SHA = null, ESTADO = null, PRODUCTOS = [], EXP_ACTUAL = null, POS_ACTUAL = null;
 let SENSIBILIDAD = {}; // mapa { odoo_product_id: clasificacion } desde product_attributes
+let BENCHMARK = {}; // mapa { odoo_product_id: [ {competidor, precio_sin_iva, fecha_captura, ...} ] } desde ofertas
 let PENDIENTES_CLASIF = []; // productos nuevos sin clasificar: [{odoo_product_id, nombre}]
 let COTIZACIONES_90 = {}; // tmpl_id → nº cotizaciones últimos 90 días
 
@@ -569,11 +570,31 @@ function revisarCoherencia(){
   }
   return problemas;
 }
-function benchmarkDe(nombre){
-  const entradas = (ESTADO.benchmark||[]).filter(b => b.producto === nombre);
-  if (!entradas.length) return null;
-  entradas.sort((a,b)=>a.precio_sin_iva-b.precio_sin_iva);
+// Benchmark leído desde `ofertas` (GET /benchmark), indexado por odoo_product_id.
+// Recibe el producto (con su .id = odoo_product_id) y devuelve el competidor más
+// barato de todos los que apuntan a ese producto. Antes filtraba por nombre-string
+// contra ESTADO.benchmark (el array del JSON, ya obsoleto). Ahora la llave es el id.
+function benchmarkDe(prod){
+  const id = (prod && typeof prod === 'object') ? prod.id : prod; // tolera id directo
+  const entradas = BENCHMARK[id];
+  if (!entradas || !entradas.length) return null;
+  // ya vienen ordenadas por precio asc del backend; el primero es el más barato
   return entradas[0];
+}
+// Aplana el mapa BENCHMARK { id: [entradas] } a una lista de {odoo_product_id,
+// producto, competidor, precio_sin_iva, fecha_captura, ...}, resolviendo el
+// nombre del producto desde PRODUCTOS por id. Sustituye al viejo ESTADO.benchmark
+// (array plano indexado por nombre) para los paneles que listan todo el benchmark.
+function benchmarkLista(){
+  const nombrePorId = {};
+  for (const p of PRODUCTOS) nombrePorId[p.id] = p.nombre;
+  const out = [];
+  for (const id in BENCHMARK) {
+    for (const e of BENCHMARK[id]) {
+      out.push({ ...e, odoo_product_id: Number(id), producto: nombrePorId[id] || ('#'+id) });
+    }
+  }
+  return out;
 }
 function benchVencido(b){
   const dias = ESTADO.parametros.benchmark_dias_vigencia || 45;
@@ -586,12 +607,16 @@ async function cargarTodo(){
   document.getElementById('zonaCargando').style.display='block';
   document.getElementById('contenidoPrincipal').style.display='none';
   try {
-    const [est, prods, sens] = await Promise.all([
+    const [est, prods, sens, bench] = await Promise.all([
       llamar('/luca/pricing/estado'),
       llamar('/luca/pricing/productos'),
-      llamar('/luca/pricing/sensibilidad')
+      llamar('/luca/pricing/sensibilidad'),
+      llamar('/luca/pricing/benchmark')   // benchmark desde `ofertas`, por odoo_product_id
     ]);
     ESTADO = est.estado; SHA = est.sha;
+    // Benchmark: fuente de verdad = `ofertas` (mapa por odoo_product_id).
+    // El array ESTADO.benchmark del JSON quedó obsoleto y ya no se lee.
+    BENCHMARK = bench.benchmark || {};
     // Sensibilidad desde la base de datos (product_attributes), cruzada por
     // odoo_product_id. Es la fuente de verdad de la clasificación; el bloque
     // sensibilidad del JSON ya no se usa para leer.
@@ -726,7 +751,7 @@ function pintarExperimentos(){
     html += '<div class="subtitulo-bloque">Candidatos sugeridos — según cotizaciones de 90 días y margen disponible</div>';
     if (activos.length >= max) html += '<div class="vacio" style="color:var(--revision)">Tienes '+max+' experimentos activos — cierra uno antes de arrancar otro.</div>';
     for (const c of cands) {
-      const b = benchmarkDe(c.p.nombre);
+      const b = benchmarkDe(c.p);
       const bench = b ? ' · vs '+esc(b.competidor)+': '+dinero(b.precio_sin_iva) : '';
       html += '<div class="fila">'+
         '<div class="info"><div class="nombre-prod">'+esc(c.p.nombre)+'</div>'+
@@ -766,7 +791,7 @@ function pintarPendientes(){
     const mNuevo = 1 - p.costo/precioUsado;
     const bajoPiso = mNuevo < pisoDe(p);
     const editado = sel && sel.precio != null && Math.abs(sel.precio - ev.sugerido) > 0.005;
-    const b = benchmarkDe(p.nombre);
+    const b = benchmarkDe(p);
     let brecha = '';
     if (b) { const dif = (precioUsado - b.precio_sin_iva)/b.precio_sin_iva;
       brecha = ' · vs '+esc(b.competidor)+': '+(dif>=0?'+':'')+pct(dif)+(benchVencido(b)?' (dato viejo)':''); }
@@ -877,14 +902,14 @@ async function aplicarSeleccionados(){
 
 // ---------------- Benchmark en tres bloques
 function tareaCapturada(tarea){
-  const entradas = ESTADO.benchmark||[];
+  const entradas = benchmarkLista();
   return entradas.some(b => {
     const texto = ((b.producto||'')+' '+(b.nota||'')).toLowerCase();
     return tarea.claves.every(c => texto.includes(c.toLowerCase()));
   });
 }
 function pintarBenchmark(){
-  const entradas = ESTADO.benchmark||[];
+  const entradas = benchmarkLista();
   const vencidas = entradas.filter(benchVencido).length;
   document.getElementById('numBenchViejo').textContent = vencidas;
   document.getElementById('conteoBenchmark').textContent = entradas.length ? entradas.length+' registros' : 'sin datos aún';
@@ -1013,10 +1038,14 @@ function abrirPosicion(id){
   const pos = POS_ACTUAL;
   document.getElementById('posTitulo').textContent = pos.nombre;
   document.getElementById('posDatos').textContent = 'Demanda '+dineroCorto(pos.demanda_anual)+'/año · '+pos.clientes+' clientes cotizan'+(pos.kvi_imagen?' · KVI de imagen':'');
-  // Benchmark asociado por coincidencia con el nombre del SKU
+  // Benchmark asociado por coincidencia con el nombre del SKU.
+  // TRANSITORIO: sigue siendo match difuso por nombre. Lo correcto es ligar la
+  // posición a su current_odoo_product_id (que ya existe en la tabla positions
+  // de la BD) y leer BENCHMARK[ese_id] directo. Pendiente documentado: unificar
+  // las posiciones del JSON con la tabla positions y anclar por odoo_product_id.
   const skuLower = pos.sku.toLowerCase();
-  const asociados = (ESTADO.benchmark||[]).filter(b => {
-    const bp = b.producto.toLowerCase();
+  const asociados = benchmarkLista().filter(b => {
+    const bp = (b.producto||'').toLowerCase();
     return bp.includes(skuLower.slice(0,18)) || skuLower.includes(bp.slice(0,18));
   });
   document.getElementById('posBenchmark').innerHTML = asociados.length
@@ -1094,7 +1123,7 @@ function expActualizarContexto(){
     extra = '<br>Para generar la misma contribución necesitas <strong>+'+pct(req)+'</strong> de volumen.';
   }
   let bench = '';
-  const b = benchmarkDe(p.nombre);
+  const b = benchmarkDe(p);
   if (b) { const dif = (precio - b.precio_sin_iva)/b.precio_sin_iva;
     bench = '<br>Contra '+esc(b.competidor)+' ('+dinero(b.precio_sin_iva)+') quedarías '+(dif>=0?'+':'')+pct(dif)+'.'; }
   const piso = pisoDe(p);
@@ -1209,7 +1238,7 @@ function pintarCatalogo(){
   ).slice(0, 200);
   document.getElementById('cuerpoCatalogo').innerHTML = lista.map(p => {
     const m = margenActual(p);
-    const b = benchmarkDe(p.nombre);
+    const b = benchmarkDe(p);
     let compHtml = '';
     let chipComp = '';
     if (b) {
@@ -1241,7 +1270,7 @@ function abrirProducto(id){
   document.getElementById('prodTitulo').textContent = p.nombre;
   let detalle = 'Costo '+dinero(p.costo)+' · Precio '+dinero(p.precio)+' · Margen actual '+pct(margenActual(p))+
     ' · Categoría: '+p.categoria+(p.linea?' ('+p.linea.toUpperCase()+')':'');
-  const bProd = benchmarkDe(p.nombre);
+  const bProd = benchmarkDe(p);
   if (bProd) {
     const dif = (p.precio - bProd.precio_sin_iva)/bProd.precio_sin_iva;
     detalle += ' — Competencia: '+bProd.competidor+' a '+dinero(bProd.precio_sin_iva)+
