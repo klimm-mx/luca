@@ -474,13 +474,9 @@ function sembrarEstadoSiFalta(){
     cambio = true;
   }
   if (!Array.isArray(ESTADO.posiciones_reserva)) { ESTADO.posiciones_reserva = RESERVA_SEED.slice(); cambio = true; }
-  if (!Array.isArray(ESTADO.benchmark_fuentes)) {
-    ESTADO.benchmark_fuentes = [
-      {id:'mesones', nombre:'Mesones', tipo:'Scraper automático', estatus:'pendiente_construccion', mensaje:'Scraper en construcción — siguiente fase técnica', ultima_verificacion:null},
-      {id:'chrisalim', nombre:'Chrisalim', tipo:'Herramienta de costos', estatus:'pendiente_construccion', mensaje:'Conexión con la herramienta de costos en construcción', ultima_verificacion:null}
-    ];
-    cambio = true;
-  }
+  // Seed de ESTADO.benchmark_fuentes RETIRADO (5-ago-2026, Hallazgo 1): eran
+  // nombres hardcodeados ("Chrisalim"/"Mesones") de un scraper de Pricing ya
+  // retirado (Pendiente C). Ya no se siembra ni se usa.
   if (!Array.isArray(ESTADO.benchmark_tareas)) { ESTADO.benchmark_tareas = TAREAS_BENCH_SEED.slice(); cambio = true; }
   if (!ESTADO.parametros.max_posiciones) { ESTADO.parametros.max_posiciones = 15; cambio = true; }
   if (!ESTADO.parametros.posicion_dias_estancada) { ESTADO.parametros.posicion_dias_estancada = 45; cambio = true; }
@@ -693,8 +689,8 @@ function pintarAtencion(){
     if (diasEntre(ultima) > diasEst)
       items.push({ tipo:'posicion', pos, texto:'Posición estancada — sin movimiento desde '+ultima });
   }
-  for (const f of (ESTADO.benchmark_fuentes||[])) if (f.estatus === 'fallo')
-    items.push({ tipo:'fuenteBench', f, texto:'La fuente automática "'+f.nombre+'" falló'+(f.ultima_verificacion?' el '+f.ultima_verificacion:'')+' — reintenta o captura manualmente' });
+  // Alertas de "fuente automática falló" RETIRADAS (5-ago-2026, Hallazgo 1):
+  // dependían de ESTADO.benchmark_fuentes, ya retirado (ver pintarBenchmark).
 
   document.getElementById('numAtencion').textContent = items.length;
   document.getElementById('tarjetaAtencion').classList.toggle('atencion', items.length>0);
@@ -704,7 +700,6 @@ function pintarAtencion(){
   cuerpo.innerHTML = items.map(it => {
     if (it.tipo==='exp') return filaAtencion(it.exp.producto, it.texto, 'Decidir', "abrirDecidir('"+it.exp.id+"')");
     if (it.tipo==='posicion') return filaAtencion(it.pos.nombre, it.texto, 'Posición', "abrirPosicion('"+it.pos.id+"')");
-    if (it.tipo==='fuenteBench') return filaAtencion(it.f.nombre, it.texto, 'Benchmark', "abrirSeccion('secBenchmark')");
     if (it.tipo==='piso') return filaAtencion(it.p.nombre, it.texto, 'Bajo piso', 'irAPendiente('+it.p.id+')');
     if (it.tipo==='sinClasificar') return filaAtencion(it.pend.nombre, it.texto, 'Clasificar', 'abrirProducto('+it.pend.odoo_product_id+')');
     return filaAtencion(it.p.nombre, it.texto, it.tipo==='fuente'?'Proveedor':'Coherencia', 'abrirProducto('+it.p.id+')');
@@ -973,17 +968,12 @@ function pintarBenchmark(){
   const cuerpo = document.getElementById('cuerpoBenchmark');
   let html = '';
 
-  // Bloque 1 — fuentes automáticas
-  html += '<div class="subtitulo-bloque">Fuentes automáticas</div>';
-  for (const f of (ESTADO.benchmark_fuentes||[])) {
-    let chip;
-    if (f.estatus === 'ok') chip = '<span class="chip chip-ok">Actualizado '+esc(f.ultima_actualizacion||'')+'</span>';
-    else if (f.estatus === 'fallo') chip = '<span class="chip chip-alerta">Falló'+(f.ultima_verificacion?' el '+esc(f.ultima_verificacion):'')+'</span>';
-    else chip = '<span class="chip chip-neutro">En construcción</span>';
-    html += '<div class="fuente-tarjeta"><div><div class="nombre-prod">'+esc(f.nombre)+'</div>'+
-      '<div class="detalle" style="font-size:12px;color:var(--tinta-suave)">'+esc(f.tipo)+(f.mensaje?' · '+esc(f.mensaje):'')+'</div></div>'+
-      '<div>'+chip+'</div></div>';
-  }
+  // Bloque "Fuentes automáticas" RETIRADO (5-ago-2026, Hallazgo 1). Mostraba
+  // ESTADO.benchmark_fuentes (nombres hardcodeados "Chrisalim"/"Mesones" en el JSON,
+  // que no respetaban Odoo) y el estado de un scraper de Pricing que ya se retiró
+  // (Pendiente C). El refresco del benchmark vive ahora en Costos (scraper.js ->
+  // ofertas) y los nombres se resuelven desde Odoo (GET /benchmark). Este panel ya
+  // no describía nada real.
 
   // Bloque "captura manual — graneleros" RETIRADO (5-ago-2026): era una lista
   // de tareas (benchmark_tareas) del JSON, no una clasificación ni datos reales.
