@@ -199,10 +199,6 @@ textarea{resize:vertical;min-height:64px}
     <div class="seccion" id="secBenchmark">
       <div class="seccion-cabeza" onclick="alternar('secBenchmark')">
         <div class="izq"><span class="nombre">Benchmark de competidores</span><span class="conteo" id="conteoBenchmark"></span></div>
-        <div style="display:flex;gap:8px">
-          <button class="boton boton-secundario boton-chico" onclick="event.stopPropagation();actualizarFuentes()">Actualizar automáticos</button>
-          <button class="boton boton-secundario boton-chico" onclick="event.stopPropagation();abrirCapturaBenchmark()">Capturar precio</button>
-        </div>
       </div>
       <div class="seccion-cuerpo" id="cuerpoBenchmark"></div>
     </div>
@@ -1012,22 +1008,6 @@ function pintarBenchmark(){
     }
   }
   cuerpo.innerHTML = html;
-}
-async function actualizarFuentes(fuentes){
-  const boton = document.querySelector('[onclick="actualizarFuentes()"]');
-  if (boton) { boton.disabled = true; boton.textContent = 'Actualizando…'; }
-  try {
-    // Llama al nuevo endpoint de scraping real
-    const body = fuentes ? JSON.stringify({ fuentes }) : JSON.stringify({});
-    await llamar('/luca/pricing/benchmark/scraper', { method:'POST', body });
-    aviso('exito', 'Scraping iniciado — actualizando en 35 segundos…');
-    await new Promise(resolve => setTimeout(resolve, 35000));
-    const est = await llamar('/luca/pricing/estado');
-    ESTADO = est.estado; SHA = est.sha;
-    aviso('exito', 'Benchmark actualizado');
-    pintarBenchmark(); pintarAtencion();
-  } catch(e) { aviso('error', e.message); }
-  if (boton) { boton.disabled = false; boton.textContent = 'Actualizar automáticos'; }
 }
 function abrirCapturaBenchmark(){
   document.getElementById('benchCompetidor').value='';
