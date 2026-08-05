@@ -788,59 +788,103 @@ function pintarExperimentos(){
 }
 
 // ---------------- Revisión de precios (con edición manual)
+let FILTRO_BUSQUEDA = '';
+function filtrarPendientes(texto){ FILTRO_BUSQUEDA = (texto||'').trim().toLowerCase(); pintarPendientes(); }
+
+// Clasifica una propuesta como de atención inmediata según criterio de negocio
+// (5-ago-2026): (1) estamos perdiendo — margen actual bajo el piso de su
+// categoría o negativo; (2) cambio grande — la regla mueve el precio ±10% o más
+// (aproximación al "cambio brusco de costo" mientras no haya costo histórico).
+const UMBRAL_CAMBIO_GRANDE = 0.10;
+function esAtencionInmediata(p, ev){
+  const mActual = margenActual(p);
+  const perdiendo = mActual == null || mActual < pisoDe(p);
+  const cambioGrande = p.precio > 0 && Math.abs(ev.sugerido - p.precio)/p.precio >= UMBRAL_CAMBIO_GRANDE;
+  return { es: perdiendo || cambioGrande, perdiendo, cambioGrande };
+}
+
+// Renderiza una fila de propuesta (reutilizable entre ambos grupos).
+function filaPropuesta(p, ev, motivoAtencion){
+  const sel = SELECCION[p.id];
+  const precioUsado = sel && sel.precio != null ? sel.precio : ev.sugerido;
+  const mNuevo = 1 - p.costo/precioUsado;
+  const bajoPiso = mNuevo < pisoDe(p);
+  const editado = sel && sel.precio != null && Math.abs(sel.precio - ev.sugerido) > 0.005;
+  const bTxt = benchmarkTexto(p, precioUsado);
+  const brecha = bTxt ? ' · vs ' + bTxt : '';
+  const chips =
+    (motivoAtencion || '')+
+    (ev.sugerido > p.precio ? '<span class="chip chip-sube">Sube</span>' : '<span class="chip chip-baja">Baja</span>')+
+    (ev.critico ? '<span class="chip chip-revision">Crítico — decide</span>' : '')+
+    (editado ? '<span class="chip chip-info">Editado</span>' : '')+
+    (bajoPiso ? '<span class="chip chip-alerta">Bajo piso</span>' : '');
+  let editor = '';
+  if (sel) {
+    editor = '<div class="editor-precio">'+
+      '<div class="campo-mini"><label>Precio manual</label><input type="number" step="0.01" id="edit-precio-'+p.id+'" value="'+precioUsado.toFixed(2)+'" oninput="editarPrecio('+p.id+', this.value)"></div>'+
+      '<div class="campo-mini"><label>Margen %</label><input type="number" step="0.1" id="edit-margen-'+p.id+'" value="'+(mNuevo*100).toFixed(1)+'" oninput="editarMargen('+p.id+', this.value)"></div>'+
+      '<div class="resultado'+(bajoPiso?' rojo':'')+'" id="edit-res-'+p.id+'">'+(bajoPiso?'Debajo del piso de '+pct(pisoDe(p)):'Margen resultante: '+pct(mNuevo))+'</div>'+
+      '</div>';
+  }
+  return '<div class="fila" id="pend-'+p.id+'">'+
+    '<input type="checkbox" onchange="marcar('+p.id+', this.checked)" '+(sel?'checked':'')+'>'+
+    '<div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
+    '<div class="detalle">costo '+dinero(p.costo)+' · '+dinero(p.precio)+' → <strong>'+dinero(precioUsado)+'</strong> · margen '+pct(margenActual(p))+
+    ' → <strong>'+pct(mNuevo)+'</strong>'+brecha+'<br>'+esc(ev.motivo)+'</div>'+editor+'</div>'+
+    '<div class="derecha">'+chips+'</div></div>';
+}
+
 function pintarPendientes(){
-  const pendientes = [], cosechas = [];
+  // Todo producto con propuesta de cambio, separado en dos grupos por criterio
+  // de negocio. Los "cosecha" (margen sobre regla sin cambio propuesto) ya NO se
+  // listan como bucket aparte: son actualización normal o no requieren nada.
+  const atencion = [], normal = [];
   for (const p of PRODUCTOS) {
     const ev = evaluar(p);
-    if (ev.proponer) { p._propuesta = ev; pendientes.push({ p, ev }); }
-    else if (ev.esCosecha) cosechas.push({ p, ev });
-    else p._propuesta = null;
+    if (ev.proponer) {
+      p._propuesta = ev;
+      const ai = esAtencionInmediata(p, ev);
+      (ai.es ? atencion : normal).push({ p, ev, ai });
+    } else { p._propuesta = null; }
   }
-  document.getElementById('numPendientes').textContent = pendientes.length;
-  document.getElementById('conteoPendientes').textContent = pendientes.length ? pendientes.length+' propuestas' : 'al día';
-  document.getElementById('chipPendientes').textContent = cosechas.length ? cosechas.length+' en cosecha' : '';
+  // Buscador: filtra ambos grupos por nombre
+  const filtra = arr => FILTRO_BUSQUEDA
+    ? arr.filter(x => x.p.nombre.toLowerCase().includes(FILTRO_BUSQUEDA))
+    : arr;
+  const atencionF = filtra(atencion), normalF = filtra(normal);
+
+  document.getElementById('numPendientes').textContent = atencion.length + normal.length;
+  document.getElementById('conteoPendientes').textContent = (atencion.length + normal.length)
+    ? atencion.length+' de atención · '+normal.length+' normales' : 'al día';
+  document.getElementById('chipPendientes').textContent = atencion.length
+    ? atencion.length+' requieren atención inmediata' : '';
+
   const cuerpo = document.getElementById('cuerpoPendientes');
   let html = '';
-  if (!pendientes.length) html += '<div class="vacio">Ningún precio requiere cambio según las reglas.</div>';
-  for (const {p, ev} of pendientes) {
-    const sel = SELECCION[p.id];
-    const precioUsado = sel && sel.precio != null ? sel.precio : ev.sugerido;
-    const mNuevo = 1 - p.costo/precioUsado;
-    const bajoPiso = mNuevo < pisoDe(p);
-    const editado = sel && sel.precio != null && Math.abs(sel.precio - ev.sugerido) > 0.005;
-    const b = benchmarkDe(p);
-    let brecha = '';
-    const bTxt = benchmarkTexto(p, precioUsado);
-    if (bTxt) brecha = ' · vs ' + bTxt;
-    const chips =
-      (ev.sugerido > p.precio ? '<span class="chip chip-sube">Sube</span>' : '<span class="chip chip-baja">Baja</span>')+
-      (ev.critico ? '<span class="chip chip-revision">Crítico — decide</span>' : '')+
-      (editado ? '<span class="chip chip-info">Editado</span>' : '')+
-      (bajoPiso ? '<span class="chip chip-alerta">Bajo piso</span>' : '');
-    let editor = '';
-    if (sel) {
-      editor = '<div class="editor-precio">'+
-        '<div class="campo-mini"><label>Precio manual</label><input type="number" step="0.01" id="edit-precio-'+p.id+'" value="'+precioUsado.toFixed(2)+'" oninput="editarPrecio('+p.id+', this.value)"></div>'+
-        '<div class="campo-mini"><label>Margen %</label><input type="number" step="0.1" id="edit-margen-'+p.id+'" value="'+(mNuevo*100).toFixed(1)+'" oninput="editarMargen('+p.id+', this.value)"></div>'+
-        '<div class="resultado'+(bajoPiso?' rojo':'')+'" id="edit-res-'+p.id+'">'+(bajoPiso?'Debajo del piso de '+pct(pisoDe(p)):'Margen resultante: '+pct(mNuevo))+'</div>'+
-        '</div>';
-    }
-    html += '<div class="fila" id="pend-'+p.id+'">'+
-      '<input type="checkbox" onchange="marcar('+p.id+', this.checked)" '+(sel?'checked':'')+'>'+
-      '<div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
-      '<div class="detalle">costo '+dinero(p.costo)+' · '+dinero(p.precio)+' → <strong>'+dinero(precioUsado)+'</strong> · margen '+pct(margenActual(p))+
-      ' → <strong>'+pct(mNuevo)+'</strong>'+brecha+'<br>'+esc(ev.motivo)+'</div>'+editor+'</div>'+
-      '<div class="derecha">'+chips+'</div></div>';
+
+  // Buscador de texto
+  html += '<div style="margin-bottom:12px"><input type="text" id="buscadorPend" placeholder="Buscar producto por nombre…" '+
+    'value="'+esc(FILTRO_BUSQUEDA)+'" oninput="filtrarPendientes(this.value)" '+
+    'style="width:100%;padding:8px 12px;border:1px solid var(--linea,#ddd);border-radius:8px;font-size:14px"></div>';
+
+  // Grupo 1 — Atención inmediata
+  html += '<div class="subtitulo-bloque">Atención inmediata — estás perdiendo o el precio cambia ≥'+pct(UMBRAL_CAMBIO_GRANDE)+' ('+atencionF.length+')</div>';
+  if (!atencionF.length) html += '<div class="vacio">'+(FILTRO_BUSQUEDA?'Nada coincide con la búsqueda.':'Nada urgente ahora mismo.')+'</div>';
+  for (const {p, ev, ai} of atencionF) {
+    const motivo = (ai.perdiendo ? '<span class="chip chip-alerta">Perdiendo</span>' : '')+
+                   (ai.cambioGrande ? '<span class="chip chip-revision">Cambio ≥'+pct(UMBRAL_CAMBIO_GRANDE)+'</span>' : '');
+    html += filaPropuesta(p, ev, motivo);
   }
-  if (cosechas.length) {
-    html += '<div class="subtitulo-bloque">Margen creciendo (cosecha consciente) — el costo bajó y el precio se mantiene por política</div>';
-    for (const {p, ev} of cosechas.slice(0,30)) {
-      html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
-        '<div class="detalle">Margen actual '+pct(margenActual(p))+' — la regla marcaría '+dinero(ev.sugerido)+'</div></div>'+
-        '<div class="derecha"><span class="chip chip-ok">Cosecha</span></div></div>';
-    }
-  }
+
+  // Grupo 2 — Actualización normal
+  html += '<div class="subtitulo-bloque">Actualización normal — cada uno según la regla de su clasificación ('+normalF.length+')</div>';
+  if (!normalF.length) html += '<div class="vacio">'+(FILTRO_BUSQUEDA?'Nada coincide con la búsqueda.':'Sin cambios normales pendientes.')+'</div>';
+  for (const {p, ev} of normalF) html += filaPropuesta(p, ev, '');
+
   cuerpo.innerHTML = html;
+  // Mantener foco en el buscador tras re-render
+  const bus = document.getElementById('buscadorPend');
+  if (bus && FILTRO_BUSQUEDA) { bus.focus(); bus.setSelectionRange(bus.value.length, bus.value.length); }
   actualizarBarra();
 }
 function marcar(id, activo){
