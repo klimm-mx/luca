@@ -581,6 +581,24 @@ function benchmarkDe(prod){
   // ya vienen ordenadas por precio asc del backend; el primero es el más barato
   return entradas[0];
 }
+// Todos los competidores de un producto (para mostrar cada precio en pesos, no
+// solo el más barato). Devuelve [] si no hay ninguno.
+function benchmarkTodos(prod){
+  const id = (prod && typeof prod === 'object') ? prod.id : prod;
+  return BENCHMARK[id] || [];
+}
+// Texto legible del benchmark: "Mesones $85.35 (+27%) · Chrisalim $86.72 (+25%)".
+// precioUsado es tu precio propuesto, para calcular la brecha contra cada uno.
+function benchmarkTexto(prod, precioUsado){
+  const entradas = benchmarkTodos(prod);
+  if (!entradas.length) return '';
+  return entradas.map(b => {
+    const dif = precioUsado ? (precioUsado - b.precio_sin_iva)/b.precio_sin_iva : null;
+    const brechaTxt = dif!=null ? ' ('+(dif>=0?'+':'')+pct(dif)+')' : '';
+    const viejo = benchVencido(b) ? ' ⚠' : '';
+    return esc(b.competidor)+' '+dinero(b.precio_sin_iva)+brechaTxt+viejo;
+  }).join(' · ');
+}
 // Aplana el mapa BENCHMARK { id: [entradas] } a una lista de {odoo_product_id,
 // producto, competidor, precio_sin_iva, fecha_captura, ...}, resolviendo el
 // nombre del producto desde PRODUCTOS por id. Sustituye al viejo ESTADO.benchmark
@@ -751,8 +769,7 @@ function pintarExperimentos(){
     html += '<div class="subtitulo-bloque">Candidatos sugeridos — según cotizaciones de 90 días y margen disponible</div>';
     if (activos.length >= max) html += '<div class="vacio" style="color:var(--revision)">Tienes '+max+' experimentos activos — cierra uno antes de arrancar otro.</div>';
     for (const c of cands) {
-      const b = benchmarkDe(c.p);
-      const bench = b ? ' · vs '+esc(b.competidor)+': '+dinero(b.precio_sin_iva) : '';
+      const bench = benchmarkTexto(c.p) ? ' · vs '+benchmarkTexto(c.p) : '';
       html += '<div class="fila">'+
         '<div class="info"><div class="nombre-prod">'+esc(c.p.nombre)+'</div>'+
         '<div class="detalle"><strong>'+c.cot+'</strong> cotizaciones en 90 días · margen '+pct(margenActual(c.p))+' vs regla '+pct(margenRegla(c.p))+bench+'</div></div>'+
@@ -793,8 +810,8 @@ function pintarPendientes(){
     const editado = sel && sel.precio != null && Math.abs(sel.precio - ev.sugerido) > 0.005;
     const b = benchmarkDe(p);
     let brecha = '';
-    if (b) { const dif = (precioUsado - b.precio_sin_iva)/b.precio_sin_iva;
-      brecha = ' · vs '+esc(b.competidor)+': '+(dif>=0?'+':'')+pct(dif)+(benchVencido(b)?' (dato viejo)':''); }
+    const bTxt = benchmarkTexto(p, precioUsado);
+    if (bTxt) brecha = ' · vs ' + bTxt;
     const chips =
       (ev.sugerido > p.precio ? '<span class="chip chip-sube">Sube</span>' : '<span class="chip chip-baja">Baja</span>')+
       (ev.critico ? '<span class="chip chip-revision">Crítico — decide</span>' : '')+
