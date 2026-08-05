@@ -828,7 +828,7 @@ function pintarPendientes(){
     html += '<div class="fila" id="pend-'+p.id+'">'+
       '<input type="checkbox" onchange="marcar('+p.id+', this.checked)" '+(sel?'checked':'')+'>'+
       '<div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
-      '<div class="detalle">'+dinero(p.precio)+' → <strong>'+dinero(precioUsado)+'</strong> · margen '+pct(margenActual(p))+
+      '<div class="detalle">costo '+dinero(p.costo)+' · '+dinero(p.precio)+' → <strong>'+dinero(precioUsado)+'</strong> · margen '+pct(margenActual(p))+
       ' → <strong>'+pct(mNuevo)+'</strong>'+brecha+'<br>'+esc(ev.motivo)+'</div>'+editor+'</div>'+
       '<div class="derecha">'+chips+'</div></div>';
   }
@@ -945,17 +945,12 @@ function pintarBenchmark(){
       '<div>'+chip+'</div></div>';
   }
 
-  // Bloque 2 — captura manual pendiente
-  const tareas = ESTADO.benchmark_tareas||[];
-  const pendientesT = tareas.filter(t=>!tareaCapturada(t));
-  html += '<div class="subtitulo-bloque">Captura manual — ronda de graneleros ('+(tareas.length-pendientesT.length)+' de '+tareas.length+' capturados)</div>';
-  for (const t of tareas) {
-    const hecho = tareaCapturada(t);
-    html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(t.etiqueta)+'</div></div>'+
-      '<div class="derecha">'+(hecho?'<span class="chip chip-ok">Capturado</span>':'<span class="chip chip-alerta">Sin dato</span>')+'</div></div>';
-  }
+  // Bloque "captura manual — graneleros" RETIRADO (5-ago-2026): era una lista
+  // de tareas (benchmark_tareas) del JSON, no una clasificación ni datos reales.
+  // El benchmark ahora vive en `ofertas`. Si se necesita seguimiento de captura
+  // manual, se rediseñará sobre ofertas, no sobre el JSON.
 
-  // Bloque 3 — precios capturados
+  // Bloque — precios capturados
   html += '<div class="subtitulo-bloque">Precios capturados</div>';
   if (!entradas.length) html += '<div class="vacio">Todavía no hay precios de competidor. Usa "Capturar precio" para los manuales.</div>';
   else {
