@@ -564,13 +564,20 @@ async function marcarNoAplica(productId, proveedorId){
 /* ================= EXPORTAR MANUALES ================= */
 function exportarManuales(){
   if (!manualesActuales.length) { alert('No hay productos en actualización manual (o aún no cargan).'); return; }
+  // La lista ya viene agrupada por socio desde el backend. Se repite el socio
+  // en cada renglón (estándar Excel: permite ordenar/filtrar por socio).
+  // 'Actual' muestra el valor de referencia según el rol: costo_actual para
+  // 'costo', precio_competidor para 'benchmark'. 'Nuevo precio' se deja vacío
+  // para captura manual (la re-importación es una fase posterior).
   const filas = manualesActuales.map(m => ({
-    'Producto (nombre en Odoo)': m.nombre,
-    'Proveedor': m.proveedor,
-    'Costo actual': m.costo_actual
+    'Socio': m.socio,
+    'Tipo': m.rol === 'costo' ? 'Costo' : 'Benchmark',
+    'Producto': m.producto,
+    'Actual': m.rol === 'costo' ? m.costo_actual : m.precio_competidor,
+    'Nuevo precio': ''
   }));
   const ws = XLSX.utils.json_to_sheet(filas);
-  ws['!cols'] = [{ wch: 55 }, { wch: 25 }, { wch: 14 }];
+  ws['!cols'] = [{ wch: 25 }, { wch: 12 }, { wch: 50 }, { wch: 14 }, { wch: 14 }];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Actualización manual');
   const fecha = new Date().toISOString().slice(0,10);
