@@ -306,21 +306,6 @@ textarea{resize:vertical;min-height:64px}
   </div>
 </div>
 
-<div class="velo" id="veloBenchmark">
-  <div class="modal">
-    <h3>Capturar precio de competidor</h3>
-    <p>Para precios que no vienen de fuentes automáticas: graneleros, Abasto Básico y productos manuales.</p>
-    <div class="campo"><label>Producto de Klimm al que corresponde</label><select id="benchProducto"></select></div>
-    <div class="campo"><label>Competidor</label><input type="text" id="benchCompetidor" placeholder="Ej. Granelero X, Abasto Básico"></div>
-    <div class="campo"><label>Precio sin IVA</label><input type="number" step="0.01" id="benchPrecio"></div>
-    <div class="campo"><label>Nota (presentación, calidad, condiciones)</label><input type="text" id="benchNota" placeholder="Ej. porrón 20L, calidad similar, precio de mostrador"></div>
-    <div class="acciones">
-      <button class="boton boton-secundario" onclick="cerrarVelo('veloBenchmark')">Cancelar</button>
-      <button class="boton boton-principal" onclick="guardarBenchmark()">Guardar</button>
-    </div>
-  </div>
-</div>
-
 <div class="velo" id="veloCatalogo">
   <div class="modal ancho">
     <h3>Catálogo y clasificación</h3>
@@ -999,30 +984,6 @@ function pintarBenchmark(){
   }
   cuerpo.innerHTML = html;
 }
-function abrirCapturaBenchmark(){
-  document.getElementById('benchCompetidor').value='';
-  document.getElementById('benchPrecio').value='';
-  document.getElementById('benchNota').value='';
-  abrirVelo('veloBenchmark');
-}
-async function guardarBenchmark(){
-  const producto = document.getElementById('benchProducto').value;
-  const competidor = document.getElementById('benchCompetidor').value.trim();
-  const precio = parseFloat(document.getElementById('benchPrecio').value);
-  const nota = document.getElementById('benchNota').value.trim();
-  if (!producto || !competidor || !precio) { aviso('error','Producto, competidor y precio son obligatorios'); return; }
-  try {
-    const r = await llamar('/luca/pricing/benchmark', { method:'POST',
-      body: JSON.stringify({ usuario:USUARIO, entradas:[{ producto, competidor, precio_sin_iva:precio, nota, fuente:'manual' }] }) });
-    SHA = r.sha;
-    cerrarVelo('veloBenchmark');
-    const est = await llamar('/luca/pricing/estado');
-    ESTADO = est.estado; SHA = est.sha;
-    pintarTodo();
-    aviso('exito','Precio de competidor guardado');
-  } catch(e) { aviso('error', e.message); }
-}
-
 // ---------------- Posiciones activas
 function pintarPosiciones(){
   const activas = (ESTADO.posiciones||[]).filter(p=>p.estado!=='resuelta');
@@ -1430,8 +1391,6 @@ function abrirDiccionario(){
 function llenarSelectores(){
   document.getElementById('expProducto').innerHTML =
     PRODUCTOS.map(p=>'<option value="'+p.id+'">'+esc(p.nombre)+'</option>').join('');
-  document.getElementById('benchProducto').innerHTML =
-    PRODUCTOS.map(p=>'<option value="'+esc(p.nombre)+'">'+esc(p.nombre)+'</option>').join('');
   const activas = (ESTADO.posiciones||[]).filter(p=>p.estado!=='resuelta');
   document.getElementById('expPosicion').innerHTML = '<option value="">Ninguna</option>'+
     activas.map(p=>'<option value="'+p.id+'">'+esc(p.nombre)+'</option>').join('');
