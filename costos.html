@@ -349,7 +349,7 @@ function seccionCambios(titulo, lista, esAtencion){
       '<div class="info">' +
         '<div class="nombre-prod">' + escaparHtml(c.nombre_producto) + '</div>' +
         '<div class="cambio-precio">$' + Number(c.costo_anterior).toFixed(2) + ' → $' + Number(c.costo_nuevo).toFixed(2) +
-          (c.url_variante ? ' · <a href="' + escaparHtml(c.url_variante) + '" target="_blank" rel="noopener">ver en tienda</a> <span class="editar-url" title="Corregir URL del mapeo" ondblclick="editarUrlMapeo(' + c.odoo_product_id + ',' + c.proveedor_id + ', this)" data-url="' + escaparHtml(c.url_variante) + '">✎</span>' : '') +
+          (c.url_variante ? ' · <a href="' + escaparHtml(c.url_variante) + '" target="_blank" rel="noopener">ver en tienda</a> <span class="editar-url" title="Corregir URL del mapeo" ondblclick="editarUrlMapeo(' + c.odoo_product_id + ',' + c.odoo_partner_id + ', this)" data-url="' + escaparHtml(c.url_variante) + '">✎</span>' : '') +
         '</div>' +
       '</div>' +
       '<span class="chip ' + chipClase + '">' + signo + pct.toFixed(1) + '%</span>';
@@ -483,7 +483,7 @@ async function confirmarCandidato(productId, partnerId, url){
   }
 }
 
-async function editarUrlMapeo(productId, proveedorId, el){
+async function editarUrlMapeo(productId, partnerId, el){
   const urlActual = el.getAttribute('data-url') || '';
   const nueva = prompt('Corregir URL del mapeo.\nEdita la URL y acepta para guardar:', urlActual);
   if (!nueva || nueva.trim() === urlActual) return;
@@ -497,7 +497,7 @@ async function editarUrlMapeo(productId, proveedorId, el){
       method: 'POST',
       body: JSON.stringify({
         odoo_product_id: productId,
-        proveedor_id: proveedorId,
+        odoo_partner_id: partnerId,
         estado: 'automatico',
         url_variante: urlLimpia,
         metodo_match: 'url_manual'
