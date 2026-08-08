@@ -154,12 +154,25 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 
     <div class="tarjeta-manuales">
       <div>
-        <div class="titulo">Productos en actualización manual</div>
-        <div class="detalle">No tienen forma automática de actualizarse — revisar periódicamente</div>
+        <div class="titulo">Costos de actualización manual</div>
+        <div class="detalle">Productos cuyo costo se actualiza a mano — descarga el Excel, captura y súbelo</div>
       </div>
       <div class="derecha">
-        <span class="conteo" id="numManuales">—</span>
-        <button class="boton boton-secundario boton-chico" onclick="exportarManuales()">Exportar a Excel</button>
+        <span class="conteo" id="numCostoManual">—</span>
+        <button class="boton boton-secundario boton-chico" onclick="exportarCostos()">Exportar a Excel</button>
+        <button class="boton boton-principal boton-chico" onclick="document.getElementById('archivoCostos').click()">Subir Excel</button>
+        <input type="file" id="archivoCostos" accept=".xlsx" style="display:none" onchange="importarCostos(event)">
+      </div>
+    </div>
+
+    <div class="tarjeta-manuales">
+      <div>
+        <div class="titulo">Benchmark de actualización manual</div>
+        <div class="detalle">Precios de competidor capturados a mano — sin proveedores manuales aún</div>
+      </div>
+      <div class="derecha">
+        <span class="conteo" id="numBenchmarkManual">—</span>
+        <button class="boton boton-secundario boton-chico" onclick="exportarBenchmark()">Exportar a Excel</button>
       </div>
     </div>
 
@@ -242,7 +255,8 @@ function mostrarMensaje(tipo, texto){
 /* ================= ESTADO ================= */
 let cambiosActuales = [];   // cambios de la última corrida consultada
 let candidatosActuales = [];
-let manualesActuales = [];
+let costosManuales = [];     // carril costo (es_fuente_costo=TRUE)
+let benchmarkManuales = [];  // carril benchmark (es_fuente_costo=FALSE)
 let corridaActualId = null;
 
 /* ================= INICIO ================= */
@@ -261,10 +275,14 @@ async function iniciar(){
 async function cargarManuales(){
   try {
     const data = await llamar('/luca/costos/manuales');
-    manualesActuales = data.manuales;
-    document.getElementById('numManuales').textContent = manualesActuales.length;
+    // Separar por rol: el backend ya devuelve rol='costo'|'benchmark' por fila.
+    costosManuales = data.manuales.filter(m => m.rol === 'costo');
+    benchmarkManuales = data.manuales.filter(m => m.rol === 'benchmark');
+    document.getElementById('numCostoManual').textContent = costosManuales.length;
+    document.getElementById('numBenchmarkManual').textContent = benchmarkManuales.length;
   } catch(err){
-    document.getElementById('numManuales').textContent = '?';
+    document.getElementById('numCostoManual').textContent = '?';
+    document.getElementById('numBenchmarkManual').textContent = '?';
   }
 }
 
@@ -562,26 +580,142 @@ async function marcarNoAplica(productId, partnerId){
 }
 
 /* ================= EXPORTAR MANUALES ================= */
-function exportarManuales(){
-  if (!manualesActuales.length) { alert('No hay productos en actualización manual (o aún no cargan).'); return; }
-  // La lista ya viene agrupada por socio desde el backend. Se repite el socio
-  // en cada renglón (estándar Excel: permite ordenar/filtrar por socio).
-  // 'Actual' muestra el valor de referencia según el rol: costo_actual para
-  // 'costo', precio_competidor para 'benchmark'. 'Nuevo precio' se deja vacío
-  // para captura manual (la re-importación es una fase posterior).
-  const filas = manualesActuales.map(m => ({
+// Las dos primeras columnas (odoo_product_id, odoo_partner_id) son el ANCLA:
+// identifican cada fila sin depender del texto. Al re-importar, la herramienta
+// ancla por esos IDs e IGNORA Socio/Producto (son solo referencia legible para
+// la persona). Regla del sistema: agrupar/traducir siempre por ID, nunca por
+// nombre-texto.
+function exportarCostos(){
+  if (!costosManuales.length) { alert('No hay costos de actualización manual (o aún no cargan).'); return; }
+  const filas = costosManuales.map(m => ({
+    'odoo_product_id': m.odoo_product_id,
+    'odoo_partner_id': m.odoo_partner_id,
     'Socio': m.socio,
-    'Tipo': m.rol === 'costo' ? 'Costo' : 'Benchmark',
     'Producto': m.producto,
-    'Actual': m.rol === 'costo' ? m.costo_actual : m.precio_competidor,
+    'Costo actual': m.costo_actual,
+    'Nuevo costo': ''
+  }));
+  const ws = XLSX.utils.json_to_sheet(filas);
+  ws['!cols'] = [{ wch: 15 }, { wch: 15 }, { wch: 25 }, { wch: 50 }, { wch: 14 }, { wch: 14 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Costos manual');
+  const fecha = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, 'costos_actualizacion_manual_' + fecha + '.xlsx');
+}
+
+function exportarBenchmark(){
+  if (!benchmarkManuales.length) { alert('No hay benchmark de actualización manual (o aún no cargan).'); return; }
+  const filas = benchmarkManuales.map(m => ({
+    'odoo_product_id': m.odoo_product_id,
+    'odoo_partner_id': m.odoo_partner_id,
+    'Socio': m.socio,
+    'Producto': m.producto,
+    'Precio actual': m.precio_competidor,
     'Nuevo precio': ''
   }));
   const ws = XLSX.utils.json_to_sheet(filas);
-  ws['!cols'] = [{ wch: 25 }, { wch: 12 }, { wch: 50 }, { wch: 14 }, { wch: 14 }];
+  ws['!cols'] = [{ wch: 15 }, { wch: 15 }, { wch: 25 }, { wch: 50 }, { wch: 14 }, { wch: 14 }];
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Actualización manual');
+  XLSX.utils.book_append_sheet(wb, ws, 'Benchmark manual');
   const fecha = new Date().toISOString().slice(0,10);
-  XLSX.writeFile(wb, 'productos_actualizacion_manual_' + fecha + '.xlsx');
+  XLSX.writeFile(wb, 'benchmark_actualizacion_manual_' + fecha + '.xlsx');
+}
+
+// Subir el Excel de costos lleno. Lee por ancla (odoo_product_id +
+// odoo_partner_id), clasifica cada fila en tres grupos y pide confirmación
+// ANTES de mandar nada al backend. El backend solo crea `cambios` pendientes;
+// la escritura a Odoo sigue pasando por aprobar → aplicar.
+async function importarCostos(event){
+  const archivo = event.target.files[0];
+  event.target.value = ''; // permite re-subir el mismo archivo si hace falta
+  if (!archivo) return;
+
+  // Índice del universo vivo por ancla, para validar contra lo que la
+  // herramienta realmente reconoce como costo manual.
+  const indice = {};
+  for (const m of costosManuales) {
+    indice[m.odoo_product_id + '|' + m.odoo_partner_id] = m;
+  }
+
+  let libro;
+  try {
+    const buffer = await archivo.arrayBuffer();
+    libro = XLSX.read(buffer, { type: 'array' });
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo leer el archivo: ' + err.message);
+    return;
+  }
+  const hoja = libro.Sheets[libro.SheetNames[0]];
+  const filas = XLSX.utils.sheet_to_json(hoja, { defval: '' });
+
+  const seActualizan = [];   // costo nuevo válido y distinto del actual
+  const seQuedanIgual = [];  // sin captura, o igual al actual
+  const noSePudieron = [];   // no ancla, o costo inválido
+
+  for (const f of filas){
+    const pid = Number(f.odoo_product_id);
+    const sid = Number(f.odoo_partner_id);
+    const nombre = f.Producto || ('producto ' + (f.odoo_product_id || '?'));
+
+    if (!pid || !sid){
+      noSePudieron.push({ nombre, motivo: 'faltan los IDs de ancla en la fila' });
+      continue;
+    }
+    const ref = indice[pid + '|' + sid];
+    if (!ref){
+      noSePudieron.push({ nombre, motivo: 'no está en la lista de costos manuales vigente' });
+      continue;
+    }
+    const crudo = String(f['Nuevo costo']).trim();
+    if (crudo === ''){
+      seQuedanIgual.push({ nombre, motivo: 'sin costo nuevo' });
+      continue;
+    }
+    const nuevo = Number(crudo.replace(',', '.'));
+    if (!isFinite(nuevo) || nuevo <= 0){
+      noSePudieron.push({ nombre, motivo: 'el costo "' + crudo + '" no es un número válido' });
+      continue;
+    }
+    // "Se queda igual" si el costo nuevo coincide con el actual (a 2 decimales).
+    const actual = ref.costo_actual == null ? null : Number(ref.costo_actual);
+    if (actual != null && Math.abs(nuevo - actual) < 0.005){
+      seQuedanIgual.push({ nombre, motivo: 'mismo costo actual' });
+      continue;
+    }
+    seActualizan.push({ odoo_product_id: pid, odoo_partner_id: sid, costo_nuevo: nuevo, nombre });
+  }
+
+  // Resumen de confirmación.
+  let msg = 'Vas a procesar el archivo de costos:\n\n';
+  msg += '• ' + seActualizan.length + ' productos se ACTUALIZAN (costo nuevo)\n';
+  msg += '• ' + seQuedanIgual.length + ' productos se quedan igual\n';
+  if (noSePudieron.length){
+    msg += '• ' + noSePudieron.length + ' filas NO se pudieron leer:\n';
+    for (const r of noSePudieron.slice(0, 8)) msg += '    – ' + r.nombre + ': ' + r.motivo + '\n';
+    if (noSePudieron.length > 8) msg += '    … y ' + (noSePudieron.length - 8) + ' más\n';
+  }
+  if (!seActualizan.length){
+    msg += '\nNo hay nada que actualizar.';
+    alert(msg);
+    return;
+  }
+  msg += '\nSe crearán ' + seActualizan.length + ' cambios pendientes de aprobación. Nada se escribe a Odoo todavía. ¿Continuar?';
+  if (!confirm(msg)) return;
+
+  try {
+    const data = await llamar('/luca/costos/manuales/importar', {
+      method: 'POST',
+      body: JSON.stringify({ usuario: USUARIO, filas: seActualizan })
+    });
+    corridaActualId = data.corrida_id;
+    await cargarCorrida(corridaActualId);
+    mostrarMensaje('exito',
+      'Importación lista: ' + data.creados + ' cambios pendientes creados' +
+      (data.rechazados && data.rechazados.length ? ' · ' + data.rechazados.length + ' rechazados por el servidor' : '') +
+      '. Revísalos abajo y aprueba los que quieras aplicar.');
+  } catch(err){
+    mostrarMensaje('error', 'Error al importar: ' + err.message);
+  }
 }
 
 /* ================= UTILIDADES ================= */
