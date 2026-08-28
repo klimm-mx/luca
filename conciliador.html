@@ -179,6 +179,7 @@ tr:last-child td{border-bottom:none}
     <div class="paso-titulo"><div class="paso-num">4</div><h2>Conciliación: órdenes de compra vs CFDI</h2></div>
     <p class="nota-pie" style="text-align:left;margin-bottom:12px">Cada tarjeta es una orden de compra. Cualquier diferencia, aunque sea mínima, se notifica para que investigues su origen. Verde: diferencia ≤ 1% (puedes escribir a Odoo, pero verifica). Amarillo: diferencia 1–5% (notificar verbalmente al proveedor). Rojo: diferencia > 5% (escalar). Naranja: compra incompleta, se arrastra al siguiente corte.</p>
     <div id="listaConciliacion"></div>
+    <div id="reporteMedicion"></div>
   </section>
 
   <!-- PASO 5: Tarjeta -->
@@ -512,6 +513,13 @@ function registrarProveedor(){
 }
 
 /* ============ MATCHING: CFDIs → líneas de OC (cruce 1) ============ */
+/* MODELO POOL: el emparejamiento ya NO se parte por RFC. Se arman dos canastas
+   de la semana (demanda de todas las OCs vs. conceptos de todos los CFDIs) y se
+   llenan huecos producto↔producto sin importar el proveedor. El RFC deja de ser
+   filtro de entrada y queda como metadato de procedencia. */
+
+const UMBRAL_SIMILITUD = 0.55;   // similitud de texto mínima para auto-asignar
+
 function similitud(a, b){
   const ta = new Set(norm(a).split(' ').filter(x => x.length > 2));
   const tb = new Set(norm(b).split(' ').filter(x => x.length > 2));
@@ -522,54 +530,110 @@ function similitud(a, b){
 }
 
 let ASIGNACIONES_PENDIENTES = []; // conceptos de CFDI que no se pudieron asignar solos
+let MEDICION_CORTE = null;        // reporte de medición del último corte (quién resolvió qué)
+
+/* Catálogo aprendido GLOBAL: descNormalizada -> { producto }.
+   Antes vivía indexado por RFC (catalogoProductos[rfc][desc]); ahora una
+   equivalencia de nombre sirve para cualquier proveedor. Esta función migra el
+   catálogo viejo al global la primera vez, sin perder nada de lo aprendido. */
+function catalogoGlobal(){
+  if(!ESTADO.catalogoGlobal){
+    ESTADO.catalogoGlobal = {};
+    // migrar lo aprendido por RFC en versiones anteriores
+    const viejo = ESTADO.catalogoProductos || {};
+    for(const rfc of Object.keys(viejo)){
+      for(const desc of Object.keys(viejo[rfc] || {})){
+        if(!ESTADO.catalogoGlobal[desc]) ESTADO.catalogoGlobal[desc] = viejo[rfc][desc];
+      }
+    }
+  }
+  return ESTADO.catalogoGlobal;
+}
+
+/* Todas las líneas con saldo pendiente de TODAS las OCs abiertas (canasta A). */
+function lineasConSaldo(){
+  const fuera = [];
+  for(const oc of Object.values(ESTADO.ocsAbiertas)){
+    if(oc.preparadaEnOdoo) continue;
+    for(const l of oc.lineas){
+      if(l.cubierta < l.pedida) fuera.push({ oc, linea: l });
+    }
+  }
+  return fuera;
+}
+
+/* Intenta colocar un concepto en una línea de la canasta A.
+   Devuelve { destino, origen } o { destino:null } si nadie lo resolvió con confianza.
+   Origen ∈ 'catalogo' | 'similitud'  (la IA y lo manual se marcan aparte). */
+function ubicarConcepto(con, poolLineas, catalogo){
+  const clave = norm(con.descripcion);
+  // 1) catálogo aprendido (global)
+  if(catalogo[clave]){
+    const cand = poolLineas.find(x => x.linea.producto === catalogo[clave].producto && x.linea.cubierta < x.linea.pedida);
+    if(cand) return { destino: cand, origen: 'catalogo' };
+  }
+  // 2) similitud de texto contra todo el pool
+  let mejor = { puntos: 0 };
+  for(const x of poolLineas){
+    if(x.linea.cubierta >= x.linea.pedida) continue;
+    const p = Math.max(similitud(con.descripcion, x.linea.producto), similitud(con.descripcion, x.linea.descripcion));
+    if(p > mejor.puntos) mejor = { puntos: p, destino: x };
+  }
+  if(mejor.puntos >= UMBRAL_SIMILITUD) return { destino: mejor.destino, origen: 'similitud' };
+  return { destino: null };
+}
 
 function aplicarCfdis(){
   if(COLA_PROVEEDORES.length) return; // primero registrar proveedores
   ASIGNACIONES_PENDIENTES = [];
-
-  // Reiniciar cobertura de esta sesión (la de cortes anteriores ya viene sumada en el estado)
-  const nuevosPorOC = {};
+  SERVICIOS_DETECTADOS = [];
+  const catalogo = catalogoGlobal();
+  const medicion = { catalogo:0, similitud:0, servicio:0, ia:0, manual:0, pendientes:0, total:0 };
+  const marcador = {};
+  const paraIA = []; // conceptos que ni catálogo ni similitud resolvieron → candidatos a IA
 
   for(const cfdi of CFDIS){
-    const ocsDelRfc = Object.values(ESTADO.ocsAbiertas)
-      .filter(oc => !oc.preparadaEnOdoo && oc.rfc && oc.rfc === cfdi.rfc);
-    if(!ocsDelRfc.length){
-      ASIGNACIONES_PENDIENTES.push({ tipo:'cfdi-sin-oc', cfdi });
-      continue;
-    }
-    const catalogo = ESTADO.catalogoProductos[cfdi.rfc] || {};
     for(const con of cfdi.conceptos){
-      const clave = norm(con.descripcion);
-      let destino = null; // {oc, linea}
-      // 1) catálogo aprendido
-      if(catalogo[clave]){
-        for(const oc of ocsDelRfc){
-          const l = oc.lineas.find(x => x.producto === catalogo[clave].producto && x.cubierta < x.pedida);
-          if(l){ destino = { oc, linea: l }; break; }
-        }
+      medicion.total++;
+
+      // 0) regla de excepción: servicio de entrega sin OC (AMIDA DE COCO y afines)
+      const servicio = reglaServicio(cfdi, con);
+      if(servicio){
+        registrarServicio(cfdi, con, servicio, marcador);
+        medicion.servicio++;
+        continue;
       }
-      // 2) similitud de texto
-      if(!destino){
-        let mejor = { puntos: 0 };
-        for(const oc of ocsDelRfc){
-          for(const l of oc.lineas){
-            if(l.cubierta >= l.pedida) continue;
-            const p = Math.max(similitud(con.descripcion, l.producto), similitud(con.descripcion, l.descripcion));
-            if(p > mejor.puntos) mejor = { puntos: p, oc, linea: l };
-          }
-        }
-        if(mejor.puntos >= 0.55) destino = mejor;
-      }
-      if(destino){
-        aplicarConcepto(destino.oc, destino.linea, con, cfdi, nuevosPorOC);
+
+      const pool = lineasConSaldo();
+      const r = ubicarConcepto(con, pool, catalogo);
+      if(r.destino){
+        aplicarConcepto(r.destino.oc, r.destino.linea, con, cfdi, marcador);
+        medicion[r.origen]++;
       }else{
-        ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi, concepto: con, ocsDelRfc: ocsDelRfc.map(o => o.id) });
+        // nadie lo resolvió con confianza → se deja para la capa de IA (si está activa)
+        paraIA.push({ cfdi, concepto: con });
       }
     }
   }
+
+  // 3) capa de IA como red de seguridad (solo lo que quedó sin resolver)
+  //    Se resuelve de forma asíncrona; mientras tanto, se pinta lo que ya cuadró.
+  MEDICION_CORTE = medicion;
   estadoSucio = true;
   pintarConciliacion();
   prepararCruceTarjeta();
+
+  if(paraIA.length && IA_ACTIVA){
+    resolverConIA(paraIA, marcador, medicion);
+  }else{
+    // sin IA: todo lo no resuelto va directo a la cola manual
+    for(const p of paraIA){
+      ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto });
+      medicion.pendientes++;
+    }
+    pintarConciliacion();
+    pintarMedicion();
+  }
 }
 
 function aplicarConcepto(oc, linea, con, cfdi, marcador){
@@ -577,10 +641,8 @@ function aplicarConcepto(oc, linea, con, cfdi, marcador){
   linea.importeReal = +(linea.importeReal + con.importe).toFixed(2);
   if(!oc.cfdis.includes(cfdi.uuid)) oc.cfdis.push(cfdi.uuid);
   if(marcador) marcador[oc.id] = true;
-  // aprender la equivalencia para el futuro
-  const rfc = cfdi.rfc;
-  ESTADO.catalogoProductos[rfc] = ESTADO.catalogoProductos[rfc] || {};
-  ESTADO.catalogoProductos[rfc][norm(con.descripcion)] = { producto: linea.producto };
+  // aprender la equivalencia para el futuro (catálogo GLOBAL)
+  catalogoGlobal()[norm(con.descripcion)] = { producto: linea.producto };
 }
 
 function asignarManual(indicePendiente, ocId, lineaId){
@@ -591,22 +653,167 @@ function asignarManual(indicePendiente, ocId, lineaId){
   if(!oc || !linea) return;
   aplicarConcepto(oc, linea, pend.concepto, pend.cfdi, null);
   ASIGNACIONES_PENDIENTES.splice(indicePendiente, 1);
+  if(MEDICION_CORTE){ MEDICION_CORTE.manual++; MEDICION_CORTE.pendientes = Math.max(0, MEDICION_CORTE.pendientes-1); }
   estadoSucio = true;
   guardarEstado(true);
   pintarConciliacion();
+  pintarMedicion();
+}
+
+/* ============ REGLA DE EXCEPCIÓN: servicios facturados sin OC ============ */
+/* Caso AMIDA DE COCO: un proveedor que SÍ tiene OCs factura además un servicio
+   (entrega) bajo un nombre que nunca tendrá OC. Mismo RFC + mismo texto siempre,
+   así que es una regla fija, no un caso de IA. Cada regla dice: "cuando el RFC es
+   X y el concepto contiene el texto Y, es el producto de servicio Odoo Z (id).
+   Ese concepto se registra como línea de servicio, aparte de la cascada de match. */
+
+function reglasServicioDefault(){
+  // Semilla del caso conocido. El productoServicioId real se completa en config
+  // (es el id del producto "Servicio de entrega" que ya existe en Odoo).
+  return [
+    { rfc:'', textoContiene:'AMIDA DE COCO', productoServicioId:255, etiqueta:'Servicio de entrega' }
+  ];
+}
+function reglasServicio(){
+  if(!ESTADO.reglasServicio) ESTADO.reglasServicio = reglasServicioDefault();
+  return ESTADO.reglasServicio;
+}
+/* ¿Este concepto cae en una regla de servicio? Devuelve la regla o null. */
+function reglaServicio(cfdi, con){
+  const desc = norm(con.descripcion);
+  for(const r of reglasServicio()){
+    if(!r.textoContiene) continue;
+    const rfcOk = !r.rfc || r.rfc.toUpperCase() === (cfdi.rfc||'').toUpperCase();
+    const txtOk = desc.includes(norm(r.textoContiene));
+    if(rfcOk && txtOk) return r;
+  }
+  return null;
+}
+/* Los servicios NO se imputan a una línea de OC: se acumulan en el estado para
+   añadirse como línea extra a la factura del proveedor en el paso de Odoo. */
+let SERVICIOS_DETECTADOS = []; // {cfdi, concepto, regla} de este corte
+function registrarServicio(cfdi, con, regla, marcador){
+  SERVICIOS_DETECTADOS.push({ cfdi, concepto: con, regla });
+  // el CFDI cuenta como usado por su proveedor, para que el cruce bancario cuadre
+  if(marcador) marcador['servicio:'+cfdi.rfc] = true;
+}
+
+/* ============ CAPA DE IA: red de seguridad para nombres no resueltos ============ */
+/* La IA solo se invoca para conceptos que ni el catálogo ni la similitud
+   resolvieron. Devuelve producto candidato + confianza. Arranca en modo (b):
+   propone y el operador confirma. Reusa Claude Haiku 4.5 vía el backend. */
+
+let IA_ACTIVA = (localStorage.getItem('luca_ia_activa') !== '0'); // encendida por defecto
+let IA_MODO = localStorage.getItem('luca_ia_modo') || 'proponer';  // 'proponer' (b) | 'auto' (a)
+let IA_UMBRAL = parseFloat(localStorage.getItem('luca_ia_umbral') || '0.85'); // confianza mínima
+
+async function resolverConIA(lista, marcador, medicion){
+  try{
+    cargando(`Consultando la IA para ${lista.length} concepto${lista.length!==1?'s':''} sin reconocer…`);
+    // candidatos: productos únicos con saldo (nombre) para que la IA elija de una lista acotada
+    const pool = lineasConSaldo();
+    const candidatos = [...new Set(pool.map(x => x.linea.producto))];
+    const payload = {
+      conceptos: lista.map((p,i) => ({ i, descripcion: p.concepto.descripcion })),
+      candidatos
+    };
+    const d = await llamar('/api/resolver-nombres', { method:'POST', body: JSON.stringify(payload) });
+    const res = d.resultados || [];
+    for(const p of lista){
+      const r = res.find(x => x.i === lista.indexOf(p));
+      const conf = r ? (r.confianza || 0) : 0;
+      const prodElegido = r ? r.producto : null;
+      const cand = prodElegido ? pool.find(x => x.linea.producto === prodElegido && x.linea.cubierta < x.linea.pedida) : null;
+
+      if(cand && conf >= IA_UMBRAL && IA_MODO === 'auto'){
+        // modo (a): aplica directo, deja anotado
+        aplicarConcepto(cand.oc, cand.linea, p.concepto, p.cfdi, marcador);
+        medicion.ia++;
+      }else if(cand && conf >= IA_UMBRAL){
+        // modo (b): propone con la sugerencia precargada para confirmar con un clic
+        ASIGNACIONES_PENDIENTES.push({
+          tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto,
+          sugerenciaIA: { ocId: cand.oc.id, lineaId: cand.linea.id, producto: prodElegido, confianza: conf }
+        });
+        medicion.pendientes++;
+      }else{
+        // IA sin confianza suficiente → cola manual normal
+        ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto });
+        medicion.pendientes++;
+      }
+    }
+  }catch(e){
+    // si la IA falla, no rompemos el corte: todo lo pendiente va a cola manual
+    for(const p of lista){
+      ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto });
+      medicion.pendientes++;
+    }
+    avisar('La IA no estuvo disponible; esos conceptos quedaron para asignación manual. ' + esc(e.message), 'error');
+  }finally{
+    cargando(null);
+    estadoSucio = true;
+    pintarConciliacion();
+    pintarMedicion();
+  }
+}
+
+/* ============ REPORTE DE MEDICIÓN (subproducto de la fase b) ============ */
+function pintarMedicion(){
+  const cont = document.getElementById('reporteMedicion');
+  if(!cont) return;
+  const m = MEDICION_CORTE;
+  if(!m || !m.total){ cont.innerHTML=''; return; }
+  const pct = n => m.total ? Math.round(n/m.total*100) : 0;
+  const fila = (etq, n, extra='') => n ? `<tr><td>${etq}</td><td class="num">${n}</td><td class="num">${pct(n)}%</td><td>${extra}</td></tr>` : '';
+  cont.innerHTML = `
+    <div class="tarjeta" style="margin-top:12px">
+      <div class="titulo">Resumen del corte — ${m.total} concepto${m.total!==1?'s':''} procesado${m.total!==1?'s':''}</div>
+      <table class="tabla-medicion" style="width:100%;margin-top:8px">
+        <thead><tr><th>Quién lo resolvió</th><th class="num">Cantidad</th><th class="num">%</th><th></th></tr></thead>
+        <tbody>
+          ${fila('Catálogo aprendido (ya lo había visto)', m.catalogo)}
+          ${fila('Similitud de texto', m.similitud)}
+          ${fila('Regla de servicio (entrega)', m.servicio)}
+          ${fila('IA (Haiku)', m.ia)}
+          ${fila('Resuelto a mano', m.manual)}
+          ${fila('Pendiente de revisión', m.pendientes, '<span class="dif-mas">requiere tu atención</span>')}
+        </tbody>
+      </table>
+      <div class="resumen-simple" style="margin-top:6px">Semana a semana, el catálogo aprendido debería crecer y la IA/manual encogerse. Si la IA acierta consistentemente, es la señal para pasarla a modo automático.</div>
+    </div>`;
 }
 
 /* ============ PINTAR CONCILIACIÓN (cruce 1) ============ */
 const TOLERANCIA_VERDE = 0.01;   // ≤1%
 const TOLERANCIA_CRITICA = 0.05; // >5% = rojo
 
+/* Peor variación de PRECIO UNITARIO entre las líneas cubiertas (dimensión C).
+   Devuelve la fracción de desvío (0.08 = 8%). Una línea que subió y otra que
+   bajó pueden cancelarse en el monto total pero ambas son desvíos reales, así
+   que el precio se evalúa línea por línea, no solo por el total. */
+function peorDesvioPrecio(oc){
+  let peor = 0;
+  for(const l of oc.lineas){
+    if(!l.cubierta || !l.precioOC) continue;
+    const precioReal = l.importeReal / l.cubierta;
+    const d = Math.abs(precioReal - l.precioOC) / l.precioOC;
+    if(d > peor) peor = d;
+  }
+  return peor;
+}
+
 function estadoOC(oc){
   const incompleta = oc.lineas.some(l => l.cubierta < l.pedida);
   const conCobertura = oc.lineas.some(l => l.cubierta > 0);
   if(incompleta) return conCobertura || oc.cfdis.length ? 'parcial' : 'sin-cfdi';
+  // dimensión monto total (como antes)
   const esperado = oc.lineas.reduce((s,l) => s + l.pedida * l.precioOC, 0);
   const real = oc.lineas.reduce((s,l) => s + l.importeReal, 0);
-  const dif = esperado ? Math.abs(real - esperado) / esperado : 0;
+  const difMonto = esperado ? Math.abs(real - esperado) / esperado : 0;
+  // dimensión precio unitario por línea (nuevo)
+  const difPrecio = peorDesvioPrecio(oc);
+  // el color lo manda la PEOR de las dos dimensiones
+  const dif = Math.max(difMonto, difPrecio);
   if(dif <= TOLERANCIA_VERDE) return 'verde';
   if(dif <= TOLERANCIA_CRITICA) return 'amarillo';
   return 'rojo';
@@ -621,34 +828,47 @@ function pintarConciliacion(){
 
   // Conceptos de CFDI sin asignar — primero, porque bloquean el cierre de sus OCs
   ASIGNACIONES_PENDIENTES.forEach((p, i) => {
-    if(p.tipo === 'cfdi-sin-oc'){
+    // Caso sin salida: el concepto no encontró match y NO hay ninguna línea con
+    // saldo en toda la semana (pool vacío). Con el modelo de pool ya no depende
+    // del RFC; es una compra que ninguna OC de la semana pedía.
+    if(p.tipo === 'concepto' && !lineasConSaldo().length){
       html += `<div class="tarjeta rojo">
         <div class="tarjeta-encabezado">
-          <div><div class="titulo">CFDI sin orden de compra: ${esc(p.cfdi.emisor || p.cfdi.rfc)}</div>
-          <div class="sub">${esc(p.cfdi.archivo)} · ${dinero(p.cfdi.subtotal)} subtotal · ${esc(p.cfdi.fecha)}</div></div>
+          <div><div class="titulo">Producto facturado que ninguna OC pedía</div>
+          <div class="sub">${esc(p.cfdi.emisor || p.cfdi.rfc)} · "${esc(p.concepto.descripcion)}" · ${p.concepto.cantidad} × ${dinero(p.concepto.valorUnitario)}</div></div>
           <div class="chips"><span class="chip chip-rojo">REVISAR</span></div>
         </div>
-        <div class="resumen-simple">No hay ninguna orden de compra abierta de este proveedor (RFC ${esc(p.cfdi.rfc)}). Puede ser una compra sin OC, un RFC mal capturado en Odoo, o una OC de otro período. Este CFDI no se aplicó.</div>
+        <div class="resumen-simple">Este concepto no corresponde a ningún producto pedido esta semana (ya no queda demanda pendiente). Puede ser una compra fuera de catálogo, un servicio sin OC aún no configurado, o un producto mal identificado. Requiere decisión manual en Odoo.</div>
       </div>`;
     }else{
-      const opciones = p.ocsDelRfc.map(id => {
-        const oc = ESTADO.ocsAbiertas[id];
-        if(!oc) return '';
-        return oc.lineas.filter(l => l.cubierta < l.pedida)
-          .map(l => `<option value="${id}|${l.id}">${esc(oc.nombre)} — ${esc(l.producto)} (faltan ${+(l.pedida-l.cubierta).toFixed(2)})</option>`).join('');
-      }).join('');
+      // POOL: las opciones de asignación son TODAS las líneas con saldo de la semana,
+      // no solo las del RFC del CFDI (ese candado se quitó).
+      const opciones = lineasConSaldo().map(({oc, linea:l}) =>
+        `<option value="${oc.id}|${l.id}">${esc(oc.nombre)} — ${esc(l.producto)} (faltan ${+(l.pedida-l.cubierta).toFixed(2)})</option>`
+      ).join('');
+      // Si la IA sugirió algo (modo proponer), preseleccionar y ofrecer confirmación de 1 clic.
+      const sug = p.sugerenciaIA;
+      const preSel = sug ? `${sug.ocId}|${sug.lineaId}` : '';
+      const bannerIA = sug
+        ? `<div class="resumen-simple" style="background:#eef6ff;border-radius:8px;padding:8px 10px">
+             <strong>La IA sugiere:</strong> ${esc(sug.producto)} · confianza ${(sug.confianza*100).toFixed(0)}%.
+             Revisa y confirma, o cambia la selección abajo.</div>`
+        : '';
       html += `<div class="tarjeta parcial">
         <div class="tarjeta-encabezado">
-          <div><div class="titulo">Producto del CFDI sin reconocer</div>
+          <div><div class="titulo">Producto del CFDI sin reconocer${sug?' · sugerencia de IA':''}</div>
           <div class="sub">${esc(p.cfdi.emisor || p.cfdi.rfc)} · "${esc(p.concepto.descripcion)}" · ${p.concepto.cantidad} × ${dinero(p.concepto.valorUnitario)}</div></div>
-          <div class="chips"><span class="chip chip-parcial">ASIGNAR</span></div>
+          <div class="chips"><span class="chip chip-parcial">${sug?'CONFIRMAR':'ASIGNAR'}</span></div>
         </div>
-        <div class="resumen-simple">No se pudo relacionar automáticamente con un producto de la orden de compra. Elige a qué producto corresponde (se recordará para la próxima vez):</div>
+        ${bannerIA}
+        <div class="resumen-simple">Elige a qué producto de las compras de la semana corresponde (se recordará para la próxima vez):</div>
         <div class="acciones-tarjeta">
-          <select id="asignar-${i}" style="flex:1;min-width:200px">${opciones || '<option value="">(no hay líneas pendientes de este proveedor)</option>'}</select>
-          <button class="boton boton-principal boton-chico" onclick="const v=document.getElementById('asignar-${i}').value.split('|'); if(v[0]) asignarManual(${i}, v[0], v[1])">Asignar</button>
+          <select id="asignar-${i}" style="flex:1;min-width:200px">${opciones || '<option value="">(no hay líneas con saldo esta semana)</option>'}</select>
+          <button class="boton boton-principal boton-chico" onclick="const v=document.getElementById('asignar-${i}').value.split('|'); if(v[0]) asignarManual(${i}, v[0], v[1])">${sug?'Confirmar':'Asignar'}</button>
         </div>
       </div>`;
+      // preseleccionar la sugerencia de IA tras render
+      if(preSel) setTimeout(() => { const s=document.getElementById('asignar-'+i); if(s) s.value=preSel; }, 0);
     }
   });
 
@@ -765,10 +985,20 @@ async function prepararEnOdoo(ocId){
       cantidad: l.cubierta,
       precioUnitario: +(l.importeReal / l.cubierta).toFixed(6)
     }));
+    // Servicios sin OC (AMIDA DE COCO) de CFDIs de ESTE proveedor: se añaden a su factura.
+    const serviciosExtra = SERVICIOS_DETECTADOS
+      .filter(s => (s.cfdi.rfc||'').toUpperCase() === (oc.rfc||'').toUpperCase())
+      .map(s => ({
+        productoServicioId: s.regla.productoServicioId,
+        etiqueta: s.regla.etiqueta,
+        descripcion: s.concepto.descripcion,
+        cantidad: s.concepto.cantidad,
+        precioUnitario: s.concepto.valorUnitario
+      }));
     const d = await llamar('/api/preparar-factura', {
       method: 'POST',
       body: JSON.stringify({
-        ocId, lineas, cfdis: oc.cfdis,
+        ocId, lineas, cfdis: oc.cfdis, serviciosExtra,
         resumen: `Corte del ${document.getElementById('fechaDesde').value} al ${document.getElementById('fechaHasta').value}.`
       })
     });
