@@ -145,6 +145,138 @@
   "experimentos": [],
   "historial": [
     {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 197,
+      "producto": "Toallas Interdobladas Kimberly-Clark Sanitas 20 Fajillas Con 100 Pzas C/U",
+      "precio_anterior": 229.01,
+      "precio_nuevo": 238.85,
+      "motivo": "El costo subió; este precio conserva el margen de 15.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 23793,
+      "producto": "Toalla Fapsa (Tr03610) 6 Rollos Psf Pro",
+      "precio_anterior": 316.22,
+      "precio_nuevo": 325.86,
+      "motivo": "El costo subió; este precio conserva el margen de 15.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 23212,
+      "producto": "Toalla en rollo Elite (5971) 6 rollos",
+      "precio_anterior": 376.58,
+      "precio_nuevo": 392.91,
+      "motivo": "El costo subió; este precio conserva el margen de 15.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 186,
+      "producto": "Papel Higiénico Dalia (Hd200) Hb19320",
+      "precio_anterior": 316.13,
+      "precio_nuevo": 354.56,
+      "motivo": "El costo subió; este precio conserva el margen de 15.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 153,
+      "producto": "Lysol Desinfectante Multiusos con Aroma Cítricos 6 l",
+      "precio_anterior": 50,
+      "precio_nuevo": 52.47,
+      "motivo": "El costo subió; este precio conserva el margen de 20.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 23598,
+      "producto": "Lysol desinfectante multiusos Citrus de 5 litros RTT",
+      "precio_anterior": 132.23,
+      "precio_nuevo": 170.8,
+      "motivo": "El costo subió; este precio conserva el margen de 20.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 23538,
+      "producto": "Harpic antihongos líquido para baños con cloro 650 ml RTT",
+      "precio_anterior": 62.29,
+      "precio_nuevo": 68.63,
+      "motivo": "El costo subió; este precio conserva el margen de 20.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 247,
+      "producto": "Fibra Scotch-Brite P96 Verde 3M",
+      "precio_anterior": 14.11,
+      "precio_nuevo": 14.38,
+      "motivo": "El costo subió; este precio conserva el margen de 20.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 216,
+      "producto": "Fibra Scotch-Brite P94 3M",
+      "precio_anterior": 17.35,
+      "precio_nuevo": 16.7,
+      "motivo": "El costo bajó; en este producto la baja se traslada al precio",
+      "regla": "trasladar_baja",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 152,
+      "producto": "Desinfectante Antibacterial en Aerosol Lysol para Superficies 3 pzas de 354 g",
+      "precio_anterior": 50,
+      "precio_nuevo": 52.47,
+      "motivo": "El costo subió; este precio conserva el margen de 20.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 24257,
+      "producto": "Café Soluble Nescafé Clásico 2 pzas de 350 g c/u",
+      "precio_anterior": 444.09,
+      "precio_nuevo": 471.85,
+      "motivo": "El costo subió; este precio conserva el margen de 20.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
+      "fecha": "2026-09-07T23:12:15.632Z",
+      "tipo": "cambio_precio",
+      "producto_id": 24258,
+      "producto": "Café Molido 1.2 kg",
+      "precio_anterior": 430.86,
+      "precio_nuevo": 457.79,
+      "motivo": "El costo subió; este precio conserva el margen de 20.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
       "fecha": "2026-08-15T00:52:25.360Z",
       "tipo": "cambio_precio",
       "producto_id": 197,
