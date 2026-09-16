@@ -145,6 +145,17 @@
   "experimentos": [],
   "historial": [
     {
+      "fecha": "2026-09-16T01:24:00.824Z",
+      "tipo": "cambio_precio",
+      "producto_id": 23504,
+      "producto": "Repuesto mechudo universal de microfibra Vileda",
+      "precio_anterior": 85.12,
+      "precio_nuevo": 88.57,
+      "motivo": "El costo subió; este precio conserva el margen de 20.0%",
+      "regla": "conservar_margen",
+      "usuario": "Ventas"
+    },
+    {
       "fecha": "2026-09-16T01:23:26.165Z",
       "tipo": "cambio_precio",
       "producto_id": 23268,
