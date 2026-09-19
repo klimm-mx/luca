@@ -284,8 +284,18 @@ textarea{resize:vertical;min-height:64px}
     <h3 id="prodTitulo">Producto</h3>
     <p id="prodDetalle"></p>
     <div class="campo"><label>Clasificación de sensibilidad</label><select id="prodSensibilidad"></select></div>
-    <div class="campo"><label>Fuente de compra</label><select id="prodFuente"></select></div>
-    <div class="campo"><label>Excepción de margen</label><select id="prodExcepcionTipo" onchange="prodCambioExcepcion()"></select></div>
+    <div class="campo"><label>Fuente de compra</label><select id="prodFuente">
+      <option value="">Automática (según proveedor)</option>
+      <option value="directa">Compra directa</option>
+      <option value="transicion">En transición</option>
+      <option value="intermediario">Intermediario</option>
+      <option value="intermediario_riesgo">Intermediario — atención requerida</option>
+    </select></div>
+    <div class="campo"><label>Excepción de margen</label><select id="prodExcepcionTipo" onchange="prodCambioExcepcion()">
+      <option value="">Sin excepción — usa la regla de su categoría</option>
+      <option value="margen">Margen propio</option>
+      <option value="tope">Precio tope (limitado por mercado)</option>
+    </select></div>
     <div class="campo" id="prodCampoValor" style="display:none"><label id="prodEtiquetaValor">Valor</label><input type="number" step="0.01" id="prodExcepcionValor"></div>
     <div class="campo" id="prodCampoMotivo" style="display:none"><label>Motivo de la excepción (obligatorio)</label><input type="text" id="prodExcepcionMotivo"></div>
     <div class="campo"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="prodSoloLicitacion" style="width:16px;height:16px"> Solo licitación — fuera del pricing normal</label></div>
@@ -315,7 +325,13 @@ textarea{resize:vertical;min-height:64px}
     <p id="posDatos"></p>
     <div id="posBenchmark"></div>
     <div class="campo"><label>SKU que llena la posición hoy</label><input type="text" id="posSku"></div>
-    <div class="campo"><label>Estado</label><select id="posEstado"></select></div>
+    <div class="campo"><label>Estado</label><select id="posEstado">
+      <option value="pendiente">Pendiente — sin trabajo iniciado</option>
+      <option value="en_negociacion">En negociación con proveedor</option>
+      <option value="esperando_datos">Esperando datos (benchmark, graneleros…)</option>
+      <option value="en_experimento">En experimento de precio</option>
+      <option value="estable">Estable — funcionando, solo monitorear</option>
+    </select></div>
     <div class="campo"><label>Objetivo</label><textarea id="posObjetivo"></textarea></div>
     <div class="campo"><label>Agregar nota</label><textarea id="posNotaNueva" placeholder="Qué pasó, con fecha automática"></textarea></div>
     <div id="posNotas"></div>
@@ -330,30 +346,14 @@ textarea{resize:vertical;min-height:64px}
 
 <script>
 // ============================================================ Conexión
-// [ETAPA 5c] Este panel es una CÁSCARA: ya NO contiene la lógica de pricing.
-// Toda la lógica (clasificar, márgenes/pisos, la estrategia de "evaluar",
-// coherencia, candidatos, benchmark, vocabulario y diccionario) vive en el
-// backend, detrás de la clave, y llega ya calculada por GET /luca/pricing/evaluacion.
-// El panel solo pinta lo que el backend le manda. "Ver código fuente" ya no
-// deja deducir el método. La aritmética de margen que queda (1 - costo/precio)
-// es la definición estándar de margen: no revela nada.
 let BACKEND = localStorage.getItem('luca_backend') || '';
 let CLAVE = localStorage.getItem('luca_clave') || '';
 let USUARIO = localStorage.getItem('luca_usuario') || '';
 let SHA = null, ESTADO = null, PRODUCTOS = [], EXP_ACTUAL = null, POS_ACTUAL = null;
+let SENSIBILIDAD = {}; // mapa { odoo_product_id: clasificacion } desde product_attributes
+let BENCHMARK = {}; // mapa { odoo_product_id: [ {competidor, precio_sin_iva, fecha_captura, ...} ] } desde ofertas
 let PENDIENTES_CLASIF = []; // productos nuevos sin clasificar: [{odoo_product_id, nombre}]
-
-// Todo lo de abajo llega del backend (detrás de la clave). En el código fuente
-// arrancan vacíos: ni reglas, ni umbrales, ni vocabulario, ni benchmark.
-let COHERENCIA = [];          // problemas de coherencia ya calculados
-let CANDIDATOS = [];          // candidatos a experimento ya calculados
-let BENCHMARK_PANEL = { registros: [], total: 0, vencidas: 0 };
-let POS_BENCHMARK = {};       // benchmark por posición, ya asociado
-let DICCIONARIO = {};         // definiciones (se llenan al cargar)
-let DICC_NOMBRES = {};        // nombres a mostrar de cada término
-let META = {};                // umbrales/máximos para pintar (no son método)
-let NOMBRES_SENS = {}, NOMBRES_FUENTE = {}, NOMBRES_POS_ESTADO = {}, CHIP_POS_ESTADO = {};
-let FORMULARIOS = { fuente: [], excepcion: [], excepcion_label_valor: {}, estado: [] }; // opciones de menús, del backend
+let COTIZACIONES_90 = {}; // tmpl_id → nº cotizaciones últimos 90 días
 
 function abrirConfig(){
   document.getElementById('confBackend').value = BACKEND;
@@ -394,43 +394,199 @@ function aviso(tipo, texto){
 function diasEntre(iso){ return Math.floor((Date.now() - new Date(iso+'T00:00:00').getTime()) / 86400000); }
 function hoyISO(){ return new Date().toISOString().slice(0,10); }
 
-// Único cálculo que queda en el panel: el margen es (precio-costo)/precio. Es la
-// definición estándar de margen; se conserva para que el editor manual muestre
-// el margen al instante mientras tecleas, sin ir al servidor por cada tecla.
-function margenActual(p){ return p.precio > 0 ? 1 - p.costo/p.precio : null; }
+const NOMBRES_SENS = {
+  kvi_concentracion:'KVI de concentración', kvi_estandar:'KVI estándar',
+  critico_cuenta:'Crítico de cuenta', kvi_licitacion:'KVI condicional (licitación)',
+  ganador_silencioso:'Ganador silencioso', cosecha:'Cosecha', acompanamiento:'Acompañamiento'
+};
+const NOMBRES_FUENTE = {
+  directa:'Compra directa', transicion:'En transición',
+  intermediario:'Intermediario', intermediario_riesgo:'Intermediario — atención requerida'
+};
+const NOMBRES_POS_ESTADO = {
+  pendiente:'Pendiente', en_negociacion:'En negociación', esperando_datos:'Esperando datos',
+  en_experimento:'En experimento', estable:'Estable', resuelta:'Resuelta'
+};
+const CHIP_POS_ESTADO = {
+  pendiente:'chip-neutro', en_negociacion:'chip-info', esperando_datos:'chip-revision',
+  en_experimento:'chip-info', estable:'chip-ok', resuelta:'chip-ok'
+};
 
+// ============================================================ Inicialización de estado
+// [ETAPA 5a seguridad, 19-sep-2026] Las "semillas" (posiciones estratégicas,
+// reserva y tareas de benchmark) se RETIRARON de esta página. Eran datos de
+// negociación sensibles —SKU, objetivo, demanda y clientes de cada posición—
+// escritos en texto plano y visibles con "ver código fuente". Ya vivían por
+// duplicado en el estado de Postgres (privado), que es la fuente de verdad, así
+// que aquí eran solo peso muerto: la siembra únicamente actuaba "si el estado no
+// las tenía", y el estado SÍ las tiene. Se deja la función como no-op para no
+// tocar su punto de llamada; el comportamiento es idéntico. Si algún día el
+// estado quedara vacío y hubiera que re-sembrar, los datos se recuperan del
+// respaldo (Postgres / historial de Git), NO de esta página pública.
+function sembrarEstadoSiFalta(){ return false; }
 async function guardarEstadoCompleto(mensaje){
   const r = await llamar('/luca/pricing/estado', { method:'POST',
     body: JSON.stringify({ estado: ESTADO, sha: SHA, mensaje }) });
   SHA = r.sha;
 }
 
+// ============================================================ Clasificación y reglas
+function clasificar(p){
+  const cat = (p.categoria_odoo||''); const nom = p.nombre;
+  let categoria;
+  if (/insumos de papel/i.test(cat)) categoria = 'higienicos';
+  else if (/producto terminado klimm/i.test(cat)) categoria = 'fabricacion';
+  else categoria = 'resto';
+  let linea = null;
+  if (categoria === 'fabricacion') linea = /\bsmart\b/i.test(nom) ? 'smart' : 'pro';
+  const sensibilidad = SENSIBILIDAD[p.id] || 'acompanamiento';
+  let fuente = (ESTADO.fuente||{})[nom];
+  if (!fuente) fuente = categoria === 'fabricacion' ? 'directa' : 'intermediario';
+  const excepcion = (ESTADO.excepciones||{})[nom] || null;
+  const soloLic = (ESTADO.solo_licitacion||[]).includes(nom);
+  return { ...p, categoria, linea, sensibilidad, fuente, excepcion, soloLic };
+}
+function margenRegla(p){
+  const m = ESTADO.parametros.margenes;
+  if (p.excepcion && p.excepcion.tipo === 'margen') return p.excepcion.valor;
+  if (p.categoria === 'higienicos') return m.higienicos;
+  if (p.categoria === 'fabricacion') return p.linea === 'smart' ? m.fabricacion_smart : m.fabricacion_pro;
+  return m.resto;
+}
+function pisoDe(p){
+  const pi = ESTADO.parametros.pisos;
+  if (p.categoria === 'higienicos') return pi.higienicos;
+  if (p.categoria === 'fabricacion') return p.linea === 'smart' ? pi.fabricacion_smart : pi.fabricacion_pro;
+  return pi.resto;
+}
+function margenActual(p){ return p.precio > 0 ? 1 - p.costo/p.precio : null; }
+function evaluar(p){
+  if (p.soloLic || p.costo <= 0 || p.precio <= 0) return { proponer:false };
+  const tol = ESTADO.parametros.tolerancia_cambio_precio || 0.005;
+  if (p.excepcion && p.excepcion.tipo === 'tope') {
+    const sugerido = p.excepcion.precio;
+    const cambia = Math.abs(sugerido - p.precio)/p.precio > tol;
+    return { sugerido, proponer:cambia, motivo:'Precio tope por mercado: '+(p.excepcion.motivo||''), regla:'tope' };
+  }
+  const objetivo = margenRegla(p);
+  const sugerido = Math.round((p.costo/(1-objetivo))*100)/100;
+  const cambia = Math.abs(sugerido - p.precio)/p.precio > tol;
+  if (!cambia) return { proponer:false };
+  const sube = sugerido > p.precio;
+  if (sube) return { sugerido, proponer:true, regla:'conservar_margen',
+    motivo:'El costo subió; este precio conserva el margen de '+pct(objetivo),
+    critico:p.sensibilidad==='critico_cuenta' };
+  const traslada = p.sensibilidad==='kvi_concentracion' || p.linea==='smart';
+  if (traslada) return { sugerido, proponer:true, regla:'trasladar_baja',
+    motivo:'El costo bajó; en este producto la baja se traslada al precio' };
+  return { proponer:false, esCosecha:true, sugerido };
+}
+function revisarCoherencia(){
+  const minDesc = ESTADO.parametros.coherencia_min_desc_litro || 0.12;
+  const conLitros = PRODUCTOS.filter(p => p.categoria==='fabricacion' && !p.soloLic)
+    .map(p => { const m = p.nombre.match(/(\d+)\s*litros?/i); return m ? { ...p, litros: parseInt(m[1]) } : null; })
+    .filter(Boolean);
+  const familias = {};
+  for (const p of conLitros) {
+    const base = p.nombre.replace(/(\d+)\s*litros?/ig,'').replace(/\s+/g,' ').trim().toLowerCase();
+    (familias[base] = familias[base] || []).push(p);
+  }
+  const problemas = [];
+  for (const base in familias) {
+    const fam = familias[base].sort((a,b)=>a.litros-b.litros);
+    for (let i=1;i<fam.length;i++){
+      const chico = fam[i-1], grande = fam[i];
+      if (grande.litros <= chico.litros) continue;
+      const plChico = chico.precio/chico.litros, plGrande = grande.precio/grande.litros;
+      if (plGrande > plChico*(1-minDesc)) problemas.push({ chico, grande,
+        detalle:dinero(plGrande)+'/L en '+grande.litros+'L vs '+dinero(plChico)+'/L en '+chico.litros+'L — el granel debe ser al menos '+pct(minDesc)+' más barato por litro' });
+    }
+  }
+  return problemas;
+}
+// Benchmark leído desde `ofertas` (GET /benchmark), indexado por odoo_product_id.
+// Recibe el producto (con su .id = odoo_product_id) y devuelve el competidor más
+// barato de todos los que apuntan a ese producto. Antes filtraba por nombre-string
+// contra ESTADO.benchmark (el array del JSON, ya obsoleto). Ahora la llave es el id.
+function benchmarkDe(prod){
+  const id = (prod && typeof prod === 'object') ? prod.id : prod; // tolera id directo
+  const entradas = BENCHMARK[id];
+  if (!entradas || !entradas.length) return null;
+  // ya vienen ordenadas por precio asc del backend; el primero es el más barato
+  return entradas[0];
+}
+// Todos los competidores de un producto (para mostrar cada precio en pesos, no
+// solo el más barato). Devuelve [] si no hay ninguno.
+function benchmarkTodos(prod){
+  const id = (prod && typeof prod === 'object') ? prod.id : prod;
+  return BENCHMARK[id] || [];
+}
+// Texto legible del benchmark: "Competidor A $85.35 (+27%) · Competidor B $86.72 (+25%)".
+// precioUsado es tu precio propuesto, para calcular la brecha contra cada uno.
+function benchmarkTexto(prod, precioUsado){
+  const entradas = benchmarkTodos(prod);
+  if (!entradas.length) return '';
+  return entradas.map(b => {
+    const dif = precioUsado ? (precioUsado - b.precio_sin_iva)/b.precio_sin_iva : null;
+    const brechaTxt = dif!=null ? ' ('+(dif>=0?'+':'')+pct(dif)+')' : '';
+    const viejo = benchVencido(b) ? ' ⚠' : '';
+    return esc(b.competidor)+' '+dinero(b.precio_sin_iva)+brechaTxt+viejo;
+  }).join(' · ');
+}
+// Aplana el mapa BENCHMARK { id: [entradas] } a una lista de {odoo_product_id,
+// producto, competidor, precio_sin_iva, fecha_captura, ...}, resolviendo el
+// nombre del producto desde PRODUCTOS por id. Sustituye al viejo ESTADO.benchmark
+// (array plano indexado por nombre) para los paneles que listan todo el benchmark.
+function benchmarkLista(){
+  const nombrePorId = {};
+  for (const p of PRODUCTOS) nombrePorId[p.id] = p.nombre;
+  const out = [];
+  for (const id in BENCHMARK) {
+    for (const e of BENCHMARK[id]) {
+      out.push({ ...e, odoo_product_id: Number(id), producto: nombrePorId[id] || ('#'+id) });
+    }
+  }
+  return out;
+}
+function benchVencido(b){
+  const dias = ESTADO.parametros.benchmark_dias_vigencia || 45;
+  return diasEntre(b.fecha_captura) > dias;
+}
+
 // ============================================================ Carga
-// Una sola llamada trae TODO ya calculado por el backend.
 async function cargarTodo(){
   if (!BACKEND || !CLAVE) { abrirConfig(); return; }
   document.getElementById('zonaCargando').style.display='block';
   document.getElementById('contenidoPrincipal').style.display='none';
   try {
-    const data = await llamar('/luca/pricing/evaluacion');
-    ESTADO = data.estado; SHA = data.sha;
-    PRODUCTOS = data.productos || [];
-    COHERENCIA = data.coherencia || [];
-    CANDIDATOS = data.candidatos || [];
-    BENCHMARK_PANEL = data.benchmarkPanel || { registros:[], total:0, vencidas:0 };
-    POS_BENCHMARK = data.posBenchmark || {};
-    DICCIONARIO = data.diccionario || {};
-    DICC_NOMBRES = data.diccionarioNombres || {};
-    const L = data.labels || {};
-    NOMBRES_SENS = L.NOMBRES_SENS || {}; NOMBRES_FUENTE = L.NOMBRES_FUENTE || {};
-    NOMBRES_POS_ESTADO = L.NOMBRES_POS_ESTADO || {}; CHIP_POS_ESTADO = L.CHIP_POS_ESTADO || {};
-    META = data.meta || {};
-    FORMULARIOS = data.formularios || { fuente: [], excepcion: [], excepcion_label_valor: {}, estado: [] };
-    llenarFormularios();
-    // Pendientes de clasificación (productos nuevos) — no bloqueante, endpoint sin cambios
+    const [est, prods, sens, bench] = await Promise.all([
+      llamar('/luca/pricing/estado'),
+      llamar('/luca/pricing/productos'),
+      llamar('/luca/pricing/sensibilidad'),
+      llamar('/luca/pricing/benchmark')   // benchmark desde `ofertas`, por odoo_product_id
+    ]);
+    ESTADO = est.estado; SHA = est.sha;
+    // Benchmark: fuente de verdad = `ofertas` (mapa por odoo_product_id).
+    // El array ESTADO.benchmark del JSON quedó obsoleto y ya no se lee.
+    BENCHMARK = bench.benchmark || {};
+    // Sensibilidad desde la base de datos (product_attributes), cruzada por
+    // odoo_product_id. Es la fuente de verdad de la clasificación; el bloque
+    // sensibilidad del JSON ya no se usa para leer.
+    SENSIBILIDAD = sens.sensibilidad || {};
+    if (sembrarEstadoSiFalta()) {
+      try { await guardarEstadoCompleto('Pricing: inicialización de posiciones y fuentes'); }
+      catch(e){ /* si falla, sigue en memoria */ }
+    }
+    PRODUCTOS = prods.productos
+      .filter(p => p.costo>0 && p.precio>0 && p.activo !== false && p.vendible !== false && !/suministros subcontratista/i.test(p.categoria_odoo||''))
+      .map(clasificar)
+      .sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+    // Cotizaciones 90d para candidatos — en paralelo, no bloqueante
+    llamar('/luca/pricing/candidatos').then(r => { COTIZACIONES_90 = r.cotizaciones_90d || {}; pintarExperimentos(); }).catch(()=>{});
+    // Pendientes de clasificación (productos nuevos sin sensibilidad) — no bloqueante
     llamar('/luca/pricing/sensibilidad/pendientes').then(r => { PENDIENTES_CLASIF = r.por_clasificar || []; pintarAtencion(); }).catch(()=>{});
     pintarTodo();
-    document.getElementById('subtitulo').textContent = PRODUCTOS.length + ' productos · reglas v' + (META.version||1);
+    document.getElementById('subtitulo').textContent = PRODUCTOS.length + ' productos · reglas v' + (ESTADO.version||1);
   } catch(e) { aviso('error','No se pudo cargar: '+e.message); }
   document.getElementById('zonaCargando').style.display='none';
   document.getElementById('contenidoPrincipal').style.display='block';
@@ -452,26 +608,31 @@ function pintarTodo(){
 // ---------------- Requiere atención
 function pintarAtencion(){
   const items = [];
+  // Productos nuevos sin clasificar (vienen de Odoo pero no están en la tabla).
+  // Van primero: un producto sin sensibilidad se trata como acompañamiento por
+  // defecto, y conviene clasificarlo a conciencia antes de que eso pase inadvertido.
   for (const q of PENDIENTES_CLASIF)
     items.push({ tipo:'sinClasificar', pend:q, texto:'Producto nuevo sin clasificación de sensibilidad — clasifícalo para que el pricing lo trate bien' });
   for (const p of PRODUCTOS) {
     if (p.soloLic) continue;
     const m = margenActual(p);
-    if (m !== null && m < p.piso) items.push({ tipo:'piso', p, texto:'Margen actual '+pct(m)+' — debajo del piso de '+pct(p.piso) });
+    if (m !== null && m < pisoDe(p)) items.push({ tipo:'piso', p, texto:'Margen actual '+pct(m)+' — debajo del piso de '+pct(pisoDe(p)) });
   }
   for (const p of PRODUCTOS) if (p.fuente === 'intermediario_riesgo')
     items.push({ tipo:'fuente', p, texto:'Costo por encima del precio público de un competidor — revisar proveedor antes de tocar el precio' });
   for (const e of (ESTADO.experimentos||[])) if (e.estatus==='activo' && diasEntre(e.fecha_revision) >= 0)
     items.push({ tipo:'exp', exp:e, texto:'Experimento vencido — revisar y decidir' });
-  for (const c of COHERENCIA)
-    items.push({ tipo:'coherencia', p:{ id:c.grande_id, nombre:c.grande_nombre }, texto:'Coherencia entre presentaciones: '+c.detalle });
-  const diasEst = (ESTADO.parametros && ESTADO.parametros.posicion_dias_estancada) || 45;
+  for (const c of revisarCoherencia())
+    items.push({ tipo:'coherencia', p:c.grande, texto:'Coherencia entre presentaciones: '+c.detalle });
+  const diasEst = ESTADO.parametros.posicion_dias_estancada || 45;
   for (const pos of (ESTADO.posiciones||[])) {
     if (pos.estado === 'resuelta' || pos.estado === 'estable') continue;
     const ultima = pos.notas.length ? pos.notas[0].fecha : pos.creada;
     if (diasEntre(ultima) > diasEst)
       items.push({ tipo:'posicion', pos, texto:'Posición estancada — sin movimiento desde '+ultima });
   }
+  // Alertas de "fuente automática falló" RETIRADAS (5-ago-2026, Hallazgo 1):
+  // dependían de ESTADO.benchmark_fuentes, ya retirado (ver pintarBenchmark).
 
   document.getElementById('numAtencion').textContent = items.length;
   document.getElementById('tarjetaAtencion').classList.toggle('atencion', items.length>0);
@@ -502,10 +663,25 @@ function irAPendiente(id){
   }, 350);
 }
 
-// ---------------- Experimentos + candidatos sugeridos (candidatos ya vienen del backend)
+// ---------------- Experimentos + candidatos sugeridos
+function candidatosSugeridos(){
+  const activosIds = new Set((ESTADO.experimentos||[]).filter(e=>e.estatus==='activo').map(e=>e.producto_id));
+  const lista = [];
+  for (const p of PRODUCTOS) {
+    if (p.soloLic || activosIds.has(p.id)) continue;
+    const m = margenActual(p);
+    const regla = margenRegla(p);
+    const cot = COTIZACIONES_90[p.id] || 0;
+    if (m === null || cot < 8) continue;
+    if (m - regla < 0.05) continue;
+    lista.push({ p, cot, espacio: m - regla, puntaje: cot * (m - regla) });
+  }
+  lista.sort((a,b)=>b.puntaje-a.puntaje);
+  return lista.slice(0,5);
+}
 function pintarExperimentos(){
   const activos = (ESTADO.experimentos||[]).filter(e=>e.estatus==='activo');
-  const max = (ESTADO.parametros && ESTADO.parametros.max_experimentos) || META.max_experimentos || 3;
+  const max = ESTADO.parametros.max_experimentos||3;
   document.getElementById('numExperimentos').textContent = activos.length + ' / ' + max;
   document.getElementById('conteoExperimentos').textContent = activos.length ? activos.length+' activos' : 'ninguno activo';
   const cuerpo = document.getElementById('cuerpoExperimentos');
@@ -520,18 +696,20 @@ function pintarExperimentos(){
       '<div class="derecha">'+chip+'</div></div>';
   }
   if (!activos.length) html += '<div class="vacio">Sin experimentos activos.</div>';
-  const cands = CANDIDATOS;
+  // Candidatos sugeridos — siempre visibles
+  const cands = candidatosSugeridos();
   if (cands.length) {
     html += '<div class="subtitulo-bloque">Candidatos sugeridos — según cotizaciones de 90 días y margen disponible</div>';
     if (activos.length >= max) html += '<div class="vacio" style="color:var(--revision)">Tienes '+max+' experimentos activos — cierra uno antes de arrancar otro.</div>';
     for (const c of cands) {
-      const bench = c.benchmark_texto ? ' · vs '+c.benchmark_texto : '';
+      const bench = benchmarkTexto(c.p) ? ' · vs '+benchmarkTexto(c.p) : '';
       html += '<div class="fila">'+
-        '<div class="info"><div class="nombre-prod">'+esc(c.nombre)+'</div>'+
-        '<div class="detalle"><strong>'+c.cot+'</strong> cotizaciones en 90 días · margen '+pct(c.margenActual)+' vs regla '+pct(c.objetivo)+bench+'</div></div>'+
-        '<div class="derecha"><button class="boton boton-secundario boton-chico" onclick="abrirNuevoExperimento('+c.id+')">Experimentar</button></div></div>';
+        '<div class="info"><div class="nombre-prod">'+esc(c.p.nombre)+'</div>'+
+        '<div class="detalle"><strong>'+c.cot+'</strong> cotizaciones en 90 días · margen '+pct(margenActual(c.p))+' vs regla '+pct(margenRegla(c.p))+bench+'</div></div>'+
+        '<div class="derecha"><button class="boton boton-secundario boton-chico" onclick="abrirNuevoExperimento('+c.p.id+')">Experimentar</button></div></div>';
     }
   }
+  // Últimos cerrados
   const cerrados = (ESTADO.experimentos||[]).filter(e=>e.estatus!=='activo').slice(0,5);
   if (cerrados.length) {
     html += '<div class="subtitulo-bloque">Últimos cerrados</div>';
@@ -546,16 +724,26 @@ function pintarExperimentos(){
 let FILTRO_BUSQUEDA = '';
 function filtrarPendientes(texto){ FILTRO_BUSQUEDA = (texto||'').trim().toLowerCase(); pintarPendientes(); }
 
-// Renderiza una fila de propuesta. La propuesta (p.ev) y su atención (p.atencion)
-// vienen ya decididas por el backend; el piso (p.piso) también. Aquí solo se
-// pinta y se recalcula el margen del precio tecleado (aritmética genérica).
+// Clasifica una propuesta como de atención inmediata según criterio de negocio
+// (5-ago-2026): (1) estamos perdiendo — margen actual bajo el piso de su
+// categoría o negativo; (2) cambio grande — la regla mueve el precio ±10% o más
+// (aproximación al "cambio brusco de costo" mientras no haya costo histórico).
+const UMBRAL_CAMBIO_GRANDE = 0.10;
+function esAtencionInmediata(p, ev){
+  const mActual = margenActual(p);
+  const perdiendo = mActual == null || mActual < pisoDe(p);
+  const cambioGrande = p.precio > 0 && Math.abs(ev.sugerido - p.precio)/p.precio >= UMBRAL_CAMBIO_GRANDE;
+  return { es: perdiendo || cambioGrande, perdiendo, cambioGrande };
+}
+
+// Renderiza una fila de propuesta (reutilizable entre ambos grupos).
 function filaPropuesta(p, ev, motivoAtencion){
   const sel = SELECCION[p.id];
   const precioUsado = sel && sel.precio != null ? sel.precio : ev.sugerido;
   const mNuevo = 1 - p.costo/precioUsado;
-  const bajoPiso = mNuevo < p.piso;
+  const bajoPiso = mNuevo < pisoDe(p);
   const editado = sel && sel.precio != null && Math.abs(sel.precio - ev.sugerido) > 0.005;
-  const bTxt = p.benchmark.texto_vs_sugerido;
+  const bTxt = benchmarkTexto(p, precioUsado);
   const brecha = bTxt ? ' · vs ' + bTxt : '';
   const chips =
     (motivoAtencion || '')+
@@ -568,7 +756,7 @@ function filaPropuesta(p, ev, motivoAtencion){
     editor = '<div class="editor-precio">'+
       '<div class="campo-mini"><label>Precio manual</label><input type="number" step="0.01" id="edit-precio-'+p.id+'" value="'+precioUsado.toFixed(2)+'" oninput="editarPrecio('+p.id+', this.value)"></div>'+
       '<div class="campo-mini"><label>Margen %</label><input type="number" step="0.1" id="edit-margen-'+p.id+'" value="'+(mNuevo*100).toFixed(1)+'" oninput="editarMargen('+p.id+', this.value)"></div>'+
-      '<div class="resultado'+(bajoPiso?' rojo':'')+'" id="edit-res-'+p.id+'">'+(bajoPiso?'Debajo del piso de '+pct(p.piso):'Margen resultante: '+pct(mNuevo))+'</div>'+
+      '<div class="resultado'+(bajoPiso?' rojo':'')+'" id="edit-res-'+p.id+'">'+(bajoPiso?'Debajo del piso de '+pct(pisoDe(p)):'Margen resultante: '+pct(mNuevo))+'</div>'+
       '</div>';
   }
   return '<div class="fila" id="pend-'+p.id+'">'+
@@ -580,16 +768,19 @@ function filaPropuesta(p, ev, motivoAtencion){
 }
 
 function pintarPendientes(){
-  const umbral = META.umbral_cambio_grande || 0.10;
+  // Todo producto con propuesta de cambio, separado en dos grupos por criterio
+  // de negocio. Los "cosecha" (margen sobre regla sin cambio propuesto) ya NO se
+  // listan como bucket aparte: son actualización normal o no requieren nada.
   const atencion = [], normal = [];
   for (const p of PRODUCTOS) {
-    const ev = p.ev;
-    if (ev && ev.proponer) {
+    const ev = evaluar(p);
+    if (ev.proponer) {
       p._propuesta = ev;
-      const ai = p.atencion || { es:false };
+      const ai = esAtencionInmediata(p, ev);
       (ai.es ? atencion : normal).push({ p, ev, ai });
     } else { p._propuesta = null; }
   }
+  // Buscador: filtra ambos grupos por nombre
   const filtra = arr => FILTRO_BUSQUEDA
     ? arr.filter(x => x.p.nombre.toLowerCase().includes(FILTRO_BUSQUEDA))
     : arr;
@@ -604,23 +795,27 @@ function pintarPendientes(){
   const cuerpo = document.getElementById('cuerpoPendientes');
   let html = '';
 
+  // Buscador de texto
   html += '<div style="margin-bottom:12px"><input type="text" id="buscadorPend" placeholder="Buscar producto por nombre…" '+
     'value="'+esc(FILTRO_BUSQUEDA)+'" oninput="filtrarPendientes(this.value)" '+
     'style="width:100%;padding:8px 12px;border:1px solid var(--linea,#ddd);border-radius:8px;font-size:14px"></div>';
 
-  html += '<div class="subtitulo-bloque">Atención inmediata — estás perdiendo o el precio cambia ≥'+pct(umbral)+' ('+atencionF.length+')</div>';
+  // Grupo 1 — Atención inmediata
+  html += '<div class="subtitulo-bloque">Atención inmediata — estás perdiendo o el precio cambia ≥'+pct(UMBRAL_CAMBIO_GRANDE)+' ('+atencionF.length+')</div>';
   if (!atencionF.length) html += '<div class="vacio">'+(FILTRO_BUSQUEDA?'Nada coincide con la búsqueda.':'Nada urgente ahora mismo.')+'</div>';
   for (const {p, ev, ai} of atencionF) {
     const motivo = (ai.perdiendo ? '<span class="chip chip-alerta">Perdiendo</span>' : '')+
-                   (ai.cambioGrande ? '<span class="chip chip-revision">Cambio ≥'+pct(umbral)+'</span>' : '');
+                   (ai.cambioGrande ? '<span class="chip chip-revision">Cambio ≥'+pct(UMBRAL_CAMBIO_GRANDE)+'</span>' : '');
     html += filaPropuesta(p, ev, motivo);
   }
 
+  // Grupo 2 — Actualización normal
   html += '<div class="subtitulo-bloque">Actualización normal — cada uno según la regla de su clasificación ('+normalF.length+')</div>';
   if (!normalF.length) html += '<div class="vacio">'+(FILTRO_BUSQUEDA?'Nada coincide con la búsqueda.':'Sin cambios normales pendientes.')+'</div>';
   for (const {p, ev} of normalF) html += filaPropuesta(p, ev, '');
 
   cuerpo.innerHTML = html;
+  // Mantener foco en el buscador tras re-render
   const bus = document.getElementById('buscadorPend');
   if (bus && FILTRO_BUSQUEDA) { bus.focus(); bus.setSelectionRange(bus.value.length, bus.value.length); }
   actualizarBarra();
@@ -652,8 +847,8 @@ function editarMargen(id, valor){
 }
 function actualizarResultadoEdicion(id, p, m){
   const res = document.getElementById('edit-res-'+id);
-  const bajoPiso = m < p.piso;
-  if (res) { res.textContent = bajoPiso ? 'Debajo del piso de '+pct(p.piso) : 'Margen resultante: '+pct(m);
+  const bajoPiso = m < pisoDe(p);
+  if (res) { res.textContent = bajoPiso ? 'Debajo del piso de '+pct(pisoDe(p)) : 'Margen resultante: '+pct(m);
     res.classList.toggle('rojo', bajoPiso); }
   actualizarBarra();
 }
@@ -671,7 +866,7 @@ async function aplicarSeleccionados(){
     if (!sel || !p._propuesta) continue;
     const precio = sel.precio != null ? sel.precio : p._propuesta.sugerido;
     const m = 1 - p.costo/precio;
-    if (m < p.piso) bajoPiso.push(p.nombre);
+    if (m < pisoDe(p)) bajoPiso.push(p.nombre);
     const editado = sel.precio != null && Math.abs(sel.precio - p._propuesta.sugerido) > 0.005;
     cambios.push({ id:p.id, nombre:p.nombre, precio_anterior:p.precio, precio_nuevo:precio,
       motivo: editado ? 'Precio ajustado manualmente (regla sugería '+dinero(p._propuesta.sugerido)+')' : p._propuesta.motivo,
@@ -699,20 +894,45 @@ async function aplicarSeleccionados(){
   boton.disabled = false; boton.textContent = 'Aplicar a Odoo';
 }
 
-// ---------------- Benchmark (registros ya armados por el backend)
+// ---------------- Benchmark en tres bloques
+function tareaCapturada(tarea){
+  const entradas = benchmarkLista();
+  return entradas.some(b => {
+    const texto = ((b.producto||'')+' '+(b.nota||'')).toLowerCase();
+    return tarea.claves.every(c => texto.includes(c.toLowerCase()));
+  });
+}
 function pintarBenchmark(){
-  const registros = BENCHMARK_PANEL.registros || [];
-  document.getElementById('numBenchViejo').textContent = BENCHMARK_PANEL.vencidas || 0;
-  document.getElementById('conteoBenchmark').textContent = (BENCHMARK_PANEL.total||0) ? BENCHMARK_PANEL.total+' registros' : 'sin datos aún';
+  const entradas = benchmarkLista();
+  const vencidas = entradas.filter(benchVencido).length;
+  document.getElementById('numBenchViejo').textContent = vencidas;
+  document.getElementById('conteoBenchmark').textContent = entradas.length ? entradas.length+' registros' : 'sin datos aún';
   const cuerpo = document.getElementById('cuerpoBenchmark');
   let html = '';
+
+  // Bloque "Fuentes automáticas" RETIRADO (5-ago-2026, Hallazgo 1). Mostraba
+  // ESTADO.benchmark_fuentes (nombres de proveedores hardcodeados en el JSON,
+  // que no respetaban Odoo) y el estado de un scraper de Pricing que ya se retiró
+  // (Pendiente C). El refresco del benchmark vive ahora en Costos (scraper.js ->
+  // ofertas) y los nombres se resuelven desde Odoo (GET /benchmark). Este panel ya
+  // no describía nada real.
+
+  // Bloque "captura manual — graneleros" RETIRADO (5-ago-2026): era una lista
+  // de tareas (benchmark_tareas) del JSON, no una clasificación ni datos reales.
+  // El benchmark ahora vive en `ofertas`. Si se necesita seguimiento de captura
+  // manual, se rediseñará sobre ofertas, no sobre el JSON.
+
+  // Bloque — precios capturados
   html += '<div class="subtitulo-bloque">Precios capturados</div>';
-  if (!registros.length) html += '<div class="vacio">Todavía no hay precios de competidor. Usa "Capturar precio" para los manuales.</div>';
+  if (!entradas.length) html += '<div class="vacio">Todavía no hay precios de competidor. Usa "Capturar precio" para los manuales.</div>';
   else {
-    for (const b of registros) {
+    const orden = [...entradas].sort((a,b)=>a.producto.localeCompare(b.producto,'es'));
+    for (const b of orden) {
+      const p = PRODUCTOS.find(x=>x.nombre===b.producto);
       let comp = '';
-      if (b.tu_precio != null) { comp = ' · tu precio '+dinero(b.tu_precio)+' ('+(b.dif_vs_tu_precio>=0?'+':'')+pct(b.dif_vs_tu_precio)+')'; }
-      const viejo = b.vencido ? ' <span class="chip chip-revision">Desactualizado</span>' : '';
+      if (p) { const dif = (p.precio - b.precio_sin_iva)/b.precio_sin_iva;
+        comp = ' · tu precio '+dinero(p.precio)+' ('+(dif>=0?'+':'')+pct(dif)+')'; }
+      const viejo = benchVencido(b) ? ' <span class="chip chip-revision">Desactualizado</span>' : '';
       html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(b.producto)+'</div>'+
         '<div class="detalle">'+esc(b.competidor)+': <strong>'+dinero(b.precio_sin_iva)+'</strong>'+comp+
         ' · capturado '+esc(b.fecha_captura)+(b.nota?' · '+esc(b.nota):'')+'</div></div>'+
@@ -725,7 +945,7 @@ function pintarBenchmark(){
 function pintarPosiciones(){
   const activas = (ESTADO.posiciones||[]).filter(p=>p.estado!=='resuelta');
   const resueltas = (ESTADO.posiciones||[]).filter(p=>p.estado==='resuelta');
-  const max = (ESTADO.parametros && ESTADO.parametros.max_posiciones) || META.max_posiciones || 15;
+  const max = ESTADO.parametros.max_posiciones||15;
   document.getElementById('conteoPosiciones').textContent = activas.length+' de '+max+' activas';
   document.getElementById('chipPosiciones').textContent = resueltas.length ? resueltas.length+' resueltas' : '';
   const cuerpo = document.getElementById('cuerpoPosiciones');
@@ -741,6 +961,7 @@ function pintarPosiciones(){
       (ultimaNota ? '<div class="pos-nota">'+esc(ultimaNota.fecha)+': '+esc(ultimaNota.texto)+'</div>' : '<div class="pos-nota">Sin notas aún</div>')+
       '</div>';
   }
+  // Reserva
   const reserva = ESTADO.posiciones_reserva||[];
   if (reserva.length) {
     html += '<div class="subtitulo-bloque">En reserva — candidatas cuando se libere lugar</div>';
@@ -761,8 +982,16 @@ function abrirPosicion(id){
   const pos = POS_ACTUAL;
   document.getElementById('posTitulo').textContent = pos.nombre;
   document.getElementById('posDatos').textContent = 'Demanda '+dineroCorto(pos.demanda_anual)+'/año · '+pos.clientes+' clientes cotizan'+(pos.kvi_imagen?' · KVI de imagen':'');
-  // Benchmark de la posición ya asociado por el backend (por su odoo_product_id/SKU).
-  const asociados = POS_BENCHMARK[pos.id] || [];
+  // Benchmark asociado por coincidencia con el nombre del SKU.
+  // TRANSITORIO: sigue siendo match difuso por nombre. Lo correcto es ligar la
+  // posición a su current_odoo_product_id (que ya existe en la tabla positions
+  // de la BD) y leer BENCHMARK[ese_id] directo. Pendiente documentado: unificar
+  // las posiciones del JSON con la tabla positions y anclar por odoo_product_id.
+  const skuLower = pos.sku.toLowerCase();
+  const asociados = benchmarkLista().filter(b => {
+    const bp = (b.producto||'').toLowerCase();
+    return bp.includes(skuLower.slice(0,18)) || skuLower.includes(bp.slice(0,18));
+  });
   document.getElementById('posBenchmark').innerHTML = asociados.length
     ? '<div class="mensaje" style="background:var(--agua-claro);border:1px solid var(--agua);color:var(--tinta)">Benchmark: '+
       asociados.map(b=>esc(b.competidor)+' '+dinero(b.precio_sin_iva)+' ('+esc(b.fecha_captura)+')').join(' · ')+'</div>'
@@ -793,7 +1022,7 @@ async function guardarPosicion(){
   try {
     await guardarEstadoCompleto('Pricing: posición actualizada — '+pos.nombre);
     cerrarVelo('veloPosicion');
-    await cargarTodo();
+    pintarPosiciones(); pintarAtencion();
     aviso('exito','Posición guardada');
   } catch(e) { aviso('error','No se pudo guardar: '+e.message); }
 }
@@ -806,7 +1035,7 @@ async function cerrarPosicion(){
   try {
     await guardarEstadoCompleto('Pricing: posición resuelta — '+POS_ACTUAL.nombre);
     cerrarVelo('veloPosicion');
-    await cargarTodo();
+    pintarPosiciones(); pintarAtencion();
     aviso('exito','Posición marcada como resuelta');
   } catch(e) { aviso('error', e.message); }
 }
@@ -814,7 +1043,7 @@ async function cerrarPosicion(){
 // ---------------- Experimentos: crear y decidir
 function abrirNuevoExperimento(productoId){
   const activos = (ESTADO.experimentos||[]).filter(e=>e.estatus==='activo');
-  if (activos.length >= ((ESTADO.parametros && ESTADO.parametros.max_experimentos)||META.max_experimentos||3)) {
+  if (activos.length >= (ESTADO.parametros.max_experimentos||3)) {
     aviso('error','Ya hay '+activos.length+' experimentos activos. Cierra uno antes de abrir otro.'); return;
   }
   document.getElementById('expPrecio').value='';
@@ -838,9 +1067,10 @@ function expActualizarContexto(){
     extra = '<br>Para generar la misma contribución necesitas <strong>+'+pct(req)+'</strong> de volumen.';
   }
   let bench = '';
-  const b = p.benchmark.cheapest;
-  if (b) { bench = '<br>Contra '+esc(b.competidor)+' ('+dinero(b.precio_sin_iva)+').'; }
-  const piso = p.piso;
+  const b = benchmarkDe(p);
+  if (b) { const dif = (precio - b.precio_sin_iva)/b.precio_sin_iva;
+    bench = '<br>Contra '+esc(b.competidor)+' ('+dinero(b.precio_sin_iva)+') quedarías '+(dif>=0?'+':'')+pct(dif)+'.'; }
+  const piso = pisoDe(p);
   const alertaPiso = mNuevo < piso ? '<br><strong>Ojo:</strong> quedaría debajo del piso de '+pct(piso)+'.' : '';
   caja.innerHTML = 'Margen resultante: <strong>'+pct(mNuevo)+'</strong> (hoy '+pct(mActual)+', costo '+dinero(p.costo)+').'+extra+bench+alertaPiso;
   caja.style.display='block';
@@ -861,6 +1091,7 @@ async function crearExperimento(){
       precio_anterior:p.precio, precio_prueba:precio, dias, usuario:USUARIO, posicion_id:posicionId
     })});
     SHA = r.sha;
+    // Vincular a la posición si aplica
     if (posicionId) {
       const est = await llamar('/luca/pricing/estado');
       ESTADO = est.estado; SHA = est.sha;
@@ -917,6 +1148,7 @@ async function decidirExperimento(decision){
   try {
     await llamar('/luca/pricing/experimentos/'+EXP_ACTUAL.id+'/decidir', { method:'POST',
       body: JSON.stringify({ decision, motivo, dias_extension:30, usuario:USUARIO }) });
+    // Actualizar posición ligada
     if (EXP_ACTUAL.posicion_id && decision !== 'extender') {
       const est = await llamar('/luca/pricing/estado');
       ESTADO = est.estado; SHA = est.sha;
@@ -950,16 +1182,16 @@ function pintarCatalogo(){
   ).slice(0, 200);
   document.getElementById('cuerpoCatalogo').innerHTML = lista.map(p => {
     const m = margenActual(p);
-    const b = p.benchmark.cheapest;
+    const b = benchmarkDe(p);
     let compHtml = '';
     let chipComp = '';
     if (b) {
-      const dif = b.dif_vs_precio;
-      const viejo = b.vencido;
+      const dif = (p.precio - b.precio_sin_iva)/b.precio_sin_iva;
+      const viejo = benchVencido(b);
       compHtml = '<div class="detalle">Competencia: '+esc(b.competidor)+' '+dinero(b.precio_sin_iva)+
         ' · estás <strong>'+(dif>=0?'+':'')+pct(dif)+'</strong>'+(viejo?' <span style="color:var(--revision)">(dato viejo)</span>':'')+'</div>';
-      chipComp = b.posicion==='arriba' ? '<span class="chip chip-sube">Arriba '+pct(dif)+'</span>'
-        : b.posicion==='abajo' ? '<span class="chip chip-baja">Abajo '+pct(-dif)+'</span>'
+      chipComp = dif > 0.02 ? '<span class="chip chip-sube">Arriba '+pct(dif)+'</span>'
+        : dif < -0.02 ? '<span class="chip chip-baja">Abajo '+pct(-dif)+'</span>'
         : '<span class="chip chip-ok">En mercado</span>';
     }
     const chips = chipComp +
@@ -969,7 +1201,7 @@ function pintarCatalogo(){
     return '<div class="fila clicable" onclick="abrirProducto('+p.id+')">'+
       '<div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
       '<div class="detalle">Costo '+dinero(p.costo)+' · Precio '+dinero(p.precio)+' · Margen '+pct(m)+
-      ' · Regla '+pct(p.objetivo)+' · '+esc(NOMBRES_FUENTE[p.fuente]||'')+
+      ' · Regla '+pct(margenRegla(p))+' · '+esc(NOMBRES_FUENTE[p.fuente]||'')+
       (p.proveedor?' · '+esc(p.proveedor):'')+'</div>'+compHtml+'</div>'+
       '<div class="derecha">'+chips+'</div></div>';
   }).join('') || '<div class="vacio">Sin resultados.</div>';
@@ -982,11 +1214,11 @@ function abrirProducto(id){
   document.getElementById('prodTitulo').textContent = p.nombre;
   let detalle = 'Costo '+dinero(p.costo)+' · Precio '+dinero(p.precio)+' · Margen actual '+pct(margenActual(p))+
     ' · Categoría: '+p.categoria+(p.linea?' ('+p.linea.toUpperCase()+')':'');
-  const bProd = p.benchmark.cheapest;
+  const bProd = benchmarkDe(p);
   if (bProd) {
-    const dif = bProd.dif_vs_precio;
+    const dif = (p.precio - bProd.precio_sin_iva)/bProd.precio_sin_iva;
     detalle += ' — Competencia: '+bProd.competidor+' a '+dinero(bProd.precio_sin_iva)+
-      ', estás '+(dif>=0?'+':'')+pct(dif)+(bProd.vencido?' (dato viejo)':'');
+      ', estás '+(dif>=0?'+':'')+pct(dif)+(benchVencido(bProd)?' (dato viejo)':'');
   } else {
     detalle += ' — Sin dato de competencia capturado';
   }
@@ -1007,7 +1239,8 @@ function prodCambioExcepcion(){
   const tipo = document.getElementById('prodExcepcionTipo').value;
   document.getElementById('prodCampoValor').style.display = tipo ? 'block' : 'none';
   document.getElementById('prodCampoMotivo').style.display = tipo ? 'block' : 'none';
-  document.getElementById('prodEtiquetaValor').textContent = (FORMULARIOS.excepcion_label_valor || {})[tipo] || '';
+  document.getElementById('prodEtiquetaValor').textContent =
+    tipo==='margen' ? 'Margen (%) — ej. 35 para 35%' : 'Precio tope (sin IVA)';
 }
 async function guardarProducto(){
   if (!PROD_ACTUAL) return;
@@ -1037,15 +1270,48 @@ async function guardarProducto(){
       method: 'POST',
       body: JSON.stringify({ odoo_product_id: idProd, clasificacion: sens })
     });
-    // Fuente, excepciones y solo_licitación siguen en el JSON de estado.
+    SENSIBILIDAD[idProd] = sens;
+    // Si estaba en la bandera de pendientes, ya quedó clasificado: quitarlo.
+    PENDIENTES_CLASIF = PENDIENTES_CLASIF.filter(q => q.odoo_product_id !== idProd);
+    // Fuente, excepciones y solo_licitación siguen en el JSON de estado, igual que antes.
     await guardarEstadoCompleto('Pricing: clasificación de '+nom);
+    PRODUCTOS = PRODUCTOS.map(p => p.id===idProd ? clasificar(p) : p);
     cerrarVelo('veloProducto');
-    await cargarTodo();
+    pintarTodo();
     aviso('exito','Clasificación guardada');
   } catch(e) { aviso('error','No se pudo guardar: '+e.message); }
 }
 
-// ---------------- Diccionario (definiciones y nombres vienen del backend)
+// ---------------- Diccionario
+const DICCIONARIO = {
+  'Clasificación de sensibilidad': {
+    kvi_concentracion: 'Productos donde buscamos crecer volumen agresivamente para negociar mejor costo con el proveedor. Son pocos, muy vendidos, y el precio competitivo en ellos nos da imagen de precio con todos los clientes. Cuando su costo baja, el precio baja también.',
+    kvi_estandar: 'Productos importantes en ventas donde queremos ser competitivos, pero sin sacrificar margen hasta tener acceso directo al fabricante.',
+    critico_cuenta: 'Productos que pocas cuentas grandes nos compran regularmente. Si subimos el precio las arriesgamos; si lo bajamos regalamos margen a clientes que ya nos compran. Se tocan solo con decisión deliberada.',
+    kvi_licitacion: 'Productos donde el precio decide en licitaciones, pero no en pedidos normales. Mantienen precio de lista estándar; el precio de combate se decide en cada licitación.',
+    ganador_silencioso: 'Productos que los clientes recompran sin pedir cotización. Aquí la estabilidad del precio vale más que cualquier descuento.',
+    cosecha: 'Productos con margen por encima de su regla, de forma documentada y consciente. Se mantienen así y se revisan una vez al año.',
+    acompanamiento: 'El resto del catálogo. Siguen la regla de margen de su categoría, sin agresividad ni tratamiento especial.'
+  },
+  'Fuente de compra': {
+    directa: 'Lo compramos directo al fabricante. Tenemos el mejor costo posible y podemos ser agresivos en el precio de venta.',
+    transicion: 'Estamos negociando para pasar a compra directa con el fabricante. Se permiten pruebas de precio mientras avanza la negociación.',
+    intermediario: 'Lo compramos a un distribuidor. Nuestro costo incluye el margen del intermediario, lo que limita cuánto podemos bajar el precio de venta.',
+    intermediario_riesgo: 'Lo compramos a un intermediario y nuestro costo está por encima del precio público de algún competidor. Hay que revisar el proveedor antes de hacer cualquier cambio de precio.'
+  },
+  '¿Qué pasa cuando baja mi costo?': {
+    traslada: 'La baja se traslada al precio: cuando el proveedor nos da mejor costo, bajamos el precio de venta en la misma proporción. Ganamos competitividad en lugar de margen. Aplica a: KVI de concentración y línea Smart.',
+    cosecha_regla: 'La baja se queda como margen: mantenemos el precio de venta y ganamos más en cada venta. La herramienta lo muestra como "cosecha consciente" para que sea una decisión visible, no un accidente. Aplica a: todo lo demás.'
+  },
+  'Posiciones y sus estados': {
+    posicion: 'Una posición es una necesidad del cliente que el catálogo debe cubrir a precio competitivo (por ejemplo "toalla en rollo económica"). El producto que la llena puede cambiar cuando otro dé mejor costo — se gestiona la posición, no el SKU.',
+    pendiente_pos: 'Pendiente: la posición está identificada pero el trabajo no ha iniciado.',
+    en_negociacion_pos: 'En negociación: hay una conversación activa con proveedor para mejorar el costo de la posición.',
+    esperando_datos_pos: 'Esperando datos: falta información (benchmark, precios de graneleros) para decidir.',
+    en_experimento_pos: 'En experimento: la posición tiene un experimento de precio corriendo, ligado a ella.',
+    estable_pos: 'Estable: la posición funciona; solo se monitorea.'
+  }
+};
 function abrirDiccionario(){
   const cuerpo = document.getElementById('cuerpoDiccionario');
   let html = '';
@@ -1053,7 +1319,10 @@ function abrirDiccionario(){
     html += '<div class="dicc-grupo"><h4>'+esc(grupo)+'</h4>';
     for (const clave in DICCIONARIO[grupo]) {
       const def = DICCIONARIO[grupo][clave];
-      const nombre = DICC_NOMBRES[clave] || clave;
+      const nombre = NOMBRES_SENS[clave] || NOMBRES_FUENTE[clave] ||
+        ({traslada:'La baja se traslada al precio', cosecha_regla:'La baja se queda como margen',
+          posicion:'¿Qué es una posición?', pendiente_pos:'Pendiente', en_negociacion_pos:'En negociación',
+          esperando_datos_pos:'Esperando datos', en_experimento_pos:'En experimento', estable_pos:'Estable'})[clave] || clave;
       let conteo = '', lista = '';
       if (PRODUCTOS.length && (NOMBRES_SENS[clave] || NOMBRES_FUENTE[clave])) {
         const enCat = NOMBRES_SENS[clave]
@@ -1073,14 +1342,6 @@ function abrirDiccionario(){
   }
   cuerpo.innerHTML = html;
   abrirVelo('veloDiccionario');
-}
-
-// ---------------- Menús de edición (opciones desde el backend, no en el HTML)
-function opcionesHTML(arr){ return (arr||[]).map(o=>'<option value="'+esc(o.v)+'">'+esc(o.t)+'</option>').join(''); }
-function llenarFormularios(){
-  const f = document.getElementById('prodFuente'); if (f) f.innerHTML = opcionesHTML(FORMULARIOS.fuente);
-  const e = document.getElementById('prodExcepcionTipo'); if (e) e.innerHTML = opcionesHTML(FORMULARIOS.excepcion);
-  const s = document.getElementById('posEstado'); if (s) s.innerHTML = opcionesHTML(FORMULARIOS.estado);
 }
 
 // ---------------- Selectores
