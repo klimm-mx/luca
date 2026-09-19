@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Costos por Proveedor — Luca · Klimm</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --fondo:#F5F9FA; --superficie:#FFFFFF; --tinta:#16323B; --tinta-suave:#5A7480;
+  --agua:#0FA3C7; --agua-oscuro:#0B7E9A; --agua-claro:#E3F4F9;
+  --ok:#1B9E63; --ok-bg:#E8F6EF; --media:#C7871B; --media-bg:#FBF3E3;
+  --alerta:#C43D3D; --alerta-bg:#FBECEC; --revision:#B06A00; --revision-bg:#FFF6E8;
+  --borde:#DCE7EB; --radio:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--tinta);font-size:15px;line-height:1.5;padding-bottom:110px}
+.contenedor{max-width:880px;margin:0 auto;padding:0 20px}
+
+/* Encabezado */
+header{background:var(--superficie);border-bottom:1px solid var(--borde);padding:14px 0;margin-bottom:28px}
+header .contenedor{display:flex;align-items:baseline;justify-content:space-between}
+.marca{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.marca span{color:var(--agua)}
+.sistema{font-size:12px;color:var(--tinta-suave);letter-spacing:.8px;text-transform:uppercase}
+
+/* Tarjetas y secciones */
+.paso{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:22px;margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:600;color:var(--tinta-suave);margin-bottom:6px}
+input[type=text],input[type=password],select{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
+input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;border-color:var(--agua)}
+
+/* Encabezado de la herramienta */
+.encabezado-tool{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.encabezado-tool .titulo{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.encabezado-tool .titulo span{color:var(--agua)}
+.encabezado-tool .sub{font-size:11px;color:var(--tinta-suave);letter-spacing:.6px;text-transform:uppercase;margin-top:2px}
+
+/* Tarjetas resumen */
+.tarjetas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.tarjeta{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:12px 14px}
+.tarjeta .etiqueta{font-size:11px;color:var(--tinta-suave);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.tarjeta .valor{font-size:22px;font-weight:700;margin-top:2px}
+.tarjeta.atencion{background:var(--revision-bg);border-color:var(--revision)}
+.tarjeta.atencion .etiqueta,.tarjeta.atencion .valor{color:var(--revision)}
+
+/* Tarjeta manuales */
+.tarjeta-manuales{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.tarjeta-manuales .titulo{font-size:14px;font-weight:600}
+.tarjeta-manuales .detalle{font-size:12.5px;color:var(--tinta-suave);margin-top:2px}
+.tarjeta-manuales .derecha{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.tarjeta-manuales .conteo{font-size:22px;font-weight:700}
+
+/* Secciones colapsables */
+.seccion{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);margin-bottom:8px;overflow:hidden}
+.seccion.atencion{border-color:var(--revision);border-left:4px solid var(--revision)}
+.seccion-cabeza{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.seccion-cabeza:hover{background:var(--fondo)}
+.seccion-cabeza .izq{display:flex;align-items:center;gap:10px}
+.seccion-cabeza .nombre{font-size:14px;font-weight:600}
+.seccion-cabeza .conteo{font-size:13px;color:var(--tinta-suave)}
+.seccion-cuerpo{display:none;border-top:1px solid var(--borde)}
+.seccion.abierta .seccion-cuerpo{display:block}
+
+/* Chips */
+.chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.3px}
+.chip-revision{background:var(--revision-bg);color:var(--revision);border:1px solid var(--revision)}
+.chip-info{background:var(--agua-claro);color:var(--agua-oscuro)}
+.chip-sube{background:var(--alerta-bg);color:var(--alerta)}
+.chip-baja{background:var(--ok-bg);color:var(--ok)}
+
+/* Filas de producto */
+.fila{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--borde)}
+.fila:last-child{border-bottom:none}
+.fila input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer}
+.fila .info{flex:1;min-width:0}
+.fila .nombre-prod{font-size:14px}
+.fila .cambio-precio{font-size:12px;color:var(--tinta-suave);margin-top:2px}
+.fila .cambio-precio a{color:var(--agua-oscuro)}
+.editar-url{cursor:pointer;opacity:0.25;font-size:11px;user-select:none}
+.editar-url:hover{opacity:0.7}
+.fila-acciones{padding:10px 16px;display:flex;justify-content:flex-end;gap:10px;background:var(--fondo);border-top:1px solid var(--borde)}
+.enlace{background:none;border:none;color:var(--agua-oscuro);cursor:pointer;font-size:13px;font-weight:600;text-decoration:underline;font-family:inherit}
+
+/* Botones */
+.boton{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.boton-principal{background:var(--agua);color:#fff}
+.boton-principal:hover{background:var(--agua-oscuro)}
+.boton-principal:disabled{background:var(--borde);color:var(--tinta-suave);cursor:not-allowed}
+.boton-secundario{background:var(--superficie);color:var(--tinta);border:1px solid var(--borde)}
+.boton-chico{padding:9px 14px;font-size:13px}
+
+/* Barra fija inferior */
+.barra-final{position:fixed;bottom:0;left:0;right:0;background:var(--superficie);border-top:1px solid var(--borde);padding:14px 0;box-shadow:0 -4px 20px rgba(22,50,59,.08);display:none;z-index:30}
+.barra-final.visible{display:block}
+.barra-final .contenedor{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.resumen-texto{font-size:14px}
+.resumen-texto strong{font-size:16px}
+
+/* Estados y mensajes */
+.mensaje{padding:14px 16px;border-radius:var(--radio);margin-bottom:16px;font-size:14px}
+.mensaje-error{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
+.mensaje-exito{background:var(--ok-bg);border:1px solid var(--ok);color:var(--ok)}
+.mensaje-info{background:#eef4ff;border:1px solid #4a7fd0;color:#2c5aa0}
+.cargando{display:flex;align-items:center;gap:12px;padding:20px;justify-content:center;color:var(--tinta-suave)}
+.girador{width:22px;height:22px;border:3px solid var(--borde);border-top-color:var(--agua);border-radius:50%;animation:girar .8s linear infinite}
+@keyframes girar{to{transform:rotate(360deg)}}
+.nota-pie{font-size:12px;color:var(--tinta-suave);text-align:center;margin-top:8px}
+.vacio{padding:16px;font-size:13px;color:var(--tinta-suave);text-align:center}
+
+/* Modal de configuración */
+.velo{position:fixed;inset:0;background:rgba(22,50,59,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.velo.visible{display:flex}
+.modal{background:var(--superficie);border-radius:var(--radio);padding:26px;max-width:460px;width:100%}
+.modal h3{margin-bottom:6px}
+.modal p{font-size:13px;color:var(--tinta-suave);margin-bottom:16px}
+.modal .campo{margin-bottom:14px}
+
+@media(max-width:640px){.tarjetas{grid-template-columns:repeat(2,1fr)}.barra-final .contenedor{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="contenedor">
+    <div class="marca">Klimm <span>· Costos</span></div>
+    <div class="sistema">Sistema Luca</div>
+  </div>
+</header>
+
+<div class="contenedor">
+
+  <div id="avisoGlobal"></div>
+
+  <div class="encabezado-tool">
+    <div>
+      <div class="titulo">Costos <span>· proveedores en línea</span></div>
+      <div class="sub" id="subtitulo">Cargando…</div>
+    </div>
+    <button class="boton boton-principal" id="botonRevisar" onclick="revisarCostos()">Revisar costos</button>
+  </div>
+
+  <div id="zonaCargando" style="display:none" class="paso">
+    <div class="cargando"><div class="girador"></div><span id="textoCargando">Revisando costos… esto puede tardar uno o dos minutos</span></div>
+  </div>
+
+  <div id="contenidoPrincipal">
+
+    <div class="tarjetas">
+      <div class="tarjeta"><div class="etiqueta">Aumentos</div><div class="valor" id="numAumentos">—</div></div>
+      <div class="tarjeta"><div class="etiqueta">Bajadas</div><div class="valor" id="numBajadas">—</div></div>
+      <div class="tarjeta atencion"><div class="etiqueta">Atención especial</div><div class="valor" id="numAtencion">—</div></div>
+      <div class="tarjeta"><div class="etiqueta">Sin mapear</div><div class="valor" id="numCandidatos">—</div></div>
+    </div>
+
+    <div class="tarjeta-manuales">
+      <div>
+        <div class="titulo">Costos de actualización manual</div>
+        <div class="detalle">Productos cuyo costo se actualiza a mano — descarga el Excel, captura y súbelo</div>
+      </div>
+      <div class="derecha">
+        <span class="conteo" id="numCostoManual">—</span>
+        <button class="boton boton-secundario boton-chico" onclick="exportarCostos()">Exportar a Excel</button>
+        <button class="boton boton-principal boton-chico" onclick="document.getElementById('archivoCostos').click()">Subir Excel</button>
+        <input type="file" id="archivoCostos" accept=".xlsx" style="display:none" onchange="importarCostos(event)">
+      </div>
+    </div>
+
+    <div class="tarjeta-manuales">
+      <div>
+        <div class="titulo">Benchmark de actualización manual</div>
+        <div class="detalle">Precios de competidor capturados a mano — sin proveedores manuales aún</div>
+      </div>
+      <div class="derecha">
+        <span class="conteo" id="numBenchmarkManual">—</span>
+        <button class="boton boton-secundario boton-chico" onclick="exportarBenchmark()">Exportar a Excel</button>
+      </div>
+    </div>
+
+    <div id="secciones"></div>
+
+  </div>
+</div>
+
+<!-- Barra de confirmación -->
+<div class="barra-final" id="barraFinal">
+  <div class="contenedor">
+    <div class="resumen-texto" id="resumenFinal"></div>
+    <button class="boton boton-principal" id="botonAplicar" onclick="aplicarCambios()">Aplicar cambios seleccionados</button>
+  </div>
+</div>
+
+<!-- Configuración inicial -->
+<div class="velo" id="veloConfig">
+  <div class="modal">
+    <h3>Conectar con Luca</h3>
+    <p>Configuración de una sola vez en este navegador. Pide estos datos al administrador.</p>
+    <div class="campo">
+      <label for="confUrl">Dirección del backend</label>
+      <input type="text" id="confUrl" value="https://klimm-backend.onrender.com">
+    </div>
+    <div class="campo">
+      <label for="confClave">Clave de acceso</label>
+      <input type="password" id="confClave" placeholder="Clave del backend">
+    </div>
+    <div class="campo">
+      <label for="confUsuario">Tu nombre (para el registro de aprobaciones)</label>
+      <input type="text" id="confUsuario" placeholder="Ej. Francisco">
+    </div>
+    <button class="boton boton-principal" style="width:100%" onclick="guardarConfig()">Guardar y empezar</button>
+  </div>
+</div>
+
+<script>
+/* ================= CONFIGURACIÓN ================= */
+let BACKEND = localStorage.getItem('luca_backend') || localStorage.getItem('solon_backend') || '';
+let CLAVE = localStorage.getItem('luca_clave') || localStorage.getItem('solon_clave') || '';
+let USUARIO = localStorage.getItem('luca_usuario') || '';
+
+if (!BACKEND || !CLAVE || !USUARIO) {
+  document.getElementById('veloConfig').classList.add('visible');
+  if (BACKEND) document.getElementById('confUrl').value = BACKEND;
+} else {
+  iniciar();
+}
+
+function guardarConfig(){
+  const url = document.getElementById('confUrl').value.trim().replace(/\/$/,'');
+  const clave = document.getElementById('confClave').value.trim();
+  const usuario = document.getElementById('confUsuario').value.trim();
+  if(!url || !clave || !usuario){ alert('Completa los tres campos'); return; }
+  localStorage.setItem('luca_backend', url);
+  localStorage.setItem('luca_clave', clave);
+  localStorage.setItem('luca_usuario', usuario);
+  BACKEND = url; CLAVE = clave; USUARIO = usuario;
+  document.getElementById('veloConfig').classList.remove('visible');
+  iniciar();
+}
+
+async function llamar(ruta, opciones = {}){
+  const resp = await fetch(BACKEND + ruta, {
+    ...opciones,
+    headers: { 'Content-Type':'application/json', 'x-backend-key': CLAVE, ...(opciones.headers||{}) }
+  });
+  const data = await resp.json();
+  if(!resp.ok) throw new Error(data.error || ('Error ' + resp.status));
+  return data;
+}
+
+function mostrarMensaje(tipo, texto){
+  document.getElementById('avisoGlobal').innerHTML =
+    '<div class="mensaje mensaje-' + tipo + '">' + texto + '</div>';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ================= ESTADO ================= */
+let cambiosActuales = [];   // cambios de la última corrida consultada
+let candidatosActuales = [];
+let costosManuales = [];     // carril costo (es_fuente_costo=TRUE)
+let benchmarkManuales = [];  // carril benchmark (es_fuente_costo=FALSE)
+let corridaActualId = null;
+
+/* ================= INICIO ================= */
+async function iniciar(){
+  try {
+    const provData = await llamar('/luca/costos/proveedores');
+    const activos = provData.proveedores.filter(p => p.tiene_tienda);
+    document.getElementById('subtitulo').textContent =
+      'Luca · ' + (activos.length ? activos.map(p => p.nombre).join(' y ') : 'sin proveedores configurados');
+    await cargarManuales();
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo conectar: ' + err.message);
+  }
+}
+
+async function cargarManuales(){
+  try {
+    const data = await llamar('/luca/costos/manuales');
+    // Separar por rol: el backend ya devuelve rol='costo'|'benchmark' por fila.
+    costosManuales = data.manuales.filter(m => m.rol === 'costo');
+    benchmarkManuales = data.manuales.filter(m => m.rol === 'benchmark');
+    document.getElementById('numCostoManual').textContent = costosManuales.length;
+    document.getElementById('numBenchmarkManual').textContent = benchmarkManuales.length;
+  } catch(err){
+    document.getElementById('numCostoManual').textContent = '?';
+    document.getElementById('numBenchmarkManual').textContent = '?';
+  }
+}
+
+/* ================= CORRIDA ================= */
+async function revisarCostos(){
+  const boton = document.getElementById('botonRevisar');
+  boton.disabled = true;
+  document.getElementById('zonaCargando').style.display = 'block';
+  document.getElementById('avisoGlobal').innerHTML = '';
+  try {
+    const data = await llamar('/luca/costos/revisar', {
+      method: 'POST',
+      body: JSON.stringify({ usuario: USUARIO })
+    });
+    corridaActualId = data.corrida_id;
+    await cargarCorrida(corridaActualId);
+    mostrarMensaje('exito', 'Revisión completada. Revisa los cambios y aprueba los que quieras aplicar.');
+  } catch(err){
+    mostrarMensaje('error', 'Error al revisar: ' + err.message);
+  } finally {
+    boton.disabled = false;
+    document.getElementById('zonaCargando').style.display = 'none';
+  }
+}
+
+async function cargarCorrida(id){
+  const data = await llamar('/luca/costos/corrida/' + id);
+  cambiosActuales = data.cambios.filter(c => c.decision === 'pendiente');
+  candidatosActuales = data.candidatos;
+  await cargarManuales();
+  pintarTodo();
+}
+
+/* ================= PINTADO ================= */
+function pintarTodo(){
+  const atencion = cambiosActuales.filter(c => c.categoria === 'atencion_especial');
+  const aumentos = cambiosActuales.filter(c => c.categoria === 'aumento');
+  const bajadas = cambiosActuales.filter(c => c.categoria === 'bajada');
+
+  document.getElementById('numAumentos').textContent = aumentos.length + atencion.filter(c=>Number(c.pct_cambio)>0).length;
+  document.getElementById('numBajadas').textContent = bajadas.length + atencion.filter(c=>Number(c.pct_cambio)<0).length;
+  document.getElementById('numAtencion').textContent = atencion.length;
+  document.getElementById('numCandidatos').textContent = candidatosActuales.length;
+
+  const cont = document.getElementById('secciones');
+  cont.innerHTML = '';
+
+  cont.appendChild(seccionCambios('Atención especial', atencion, true));
+  cont.appendChild(seccionCambios('Aumentos normales', aumentos, false));
+  cont.appendChild(seccionCambios('Bajadas normales', bajadas, false));
+  cont.appendChild(seccionCandidatos());
+
+  actualizarBarra();
+}
+
+function seccionCambios(titulo, lista, esAtencion){
+  const sec = document.createElement('div');
+  sec.className = 'seccion' + (esAtencion ? ' atencion' : '');
+
+  const chipExtra = esAtencion ? '<span class="chip chip-revision">CAMBIO ≥15%</span>' : '';
+  sec.innerHTML =
+    '<div class="seccion-cabeza" onclick="this.parentElement.classList.toggle(\'abierta\')">' +
+      '<div class="izq"><span class="nombre">' + titulo + '</span>' + chipExtra + '</div>' +
+      '<span class="conteo">' + lista.length + ' productos ⌄</span>' +
+    '</div>' +
+    '<div class="seccion-cuerpo"></div>';
+
+  const cuerpo = sec.querySelector('.seccion-cuerpo');
+  if (!lista.length) {
+    cuerpo.innerHTML = '<div class="vacio">Sin productos en esta categoría</div>';
+    return sec;
+  }
+
+  for (const c of lista) {
+    const fila = document.createElement('div');
+    fila.className = 'fila';
+    const pct = Number(c.pct_cambio);
+    const chipClase = pct > 0 ? 'chip-sube' : 'chip-baja';
+    const signo = pct > 0 ? '+' : '';
+    fila.innerHTML =
+      '<input type="checkbox" data-cambio-id="' + c.id + '" onchange="actualizarBarra()">' +
+      '<div class="info">' +
+        '<div class="nombre-prod">' + escaparHtml(c.nombre_producto) + '</div>' +
+        '<div class="cambio-precio">$' + Number(c.costo_anterior).toFixed(2) + ' → $' + Number(c.costo_nuevo).toFixed(2) +
+          (c.url_variante ? ' · <a href="' + escaparHtml(c.url_variante) + '" target="_blank" rel="noopener">ver en tienda</a> <span class="editar-url" title="Corregir URL del mapeo" ondblclick="editarUrlMapeo(' + c.odoo_product_id + ',' + c.odoo_partner_id + ', this)" data-url="' + escaparHtml(c.url_variante) + '">✎</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<span class="chip ' + chipClase + '">' + signo + pct.toFixed(1) + '%</span>';
+    cuerpo.appendChild(fila);
+  }
+
+  const acciones = document.createElement('div');
+  acciones.className = 'fila-acciones';
+  acciones.innerHTML =
+    '<button class="enlace" onclick="marcarSeccion(this, true)">Seleccionar todos</button>' +
+    '<button class="enlace" onclick="marcarSeccion(this, false)">Quitar selección</button>';
+  cuerpo.appendChild(acciones);
+
+  return sec;
+}
+
+function seccionCandidatos(){
+  const sec = document.createElement('div');
+  sec.className = 'seccion';
+  sec.innerHTML =
+    '<div class="seccion-cabeza" onclick="this.parentElement.classList.toggle(\'abierta\')">' +
+      '<div class="izq"><span class="nombre">Candidatos nuevos sin confirmar</span><span class="chip chip-info">REQUIERE REVISIÓN</span></div>' +
+      '<span class="conteo">' + candidatosActuales.length + ' productos ⌄</span>' +
+    '</div>' +
+    '<div class="seccion-cuerpo"></div>';
+
+  const cuerpo = sec.querySelector('.seccion-cuerpo');
+  if (!candidatosActuales.length) {
+    cuerpo.innerHTML = '<div class="vacio">No hay productos nuevos por mapear</div>';
+    return sec;
+  }
+
+  for (const c of candidatosActuales) {
+    const fila = document.createElement('div');
+    fila.className = 'fila';
+
+    const tieneUrl = c.url_sugerida && c.url_sugerida.trim();
+    const infoSugerencia = tieneUrl
+      ? '<div class="cambio-precio">Sugerencia: <a href="' + escaparHtml(c.url_sugerida) + '" target="_blank" rel="noopener">ver producto en el sitio</a> · similitud ' + Number(c.score_similitud).toFixed(0) + '%</div>'
+      : '<div class="cambio-precio" style="color:var(--texto-tenue)">No encontrado en la tienda &middot; asigna la URL manualmente si existe</div>';
+
+    const botonConfirmar = tieneUrl
+      ? '<button class="boton boton-secundario boton-chico" onclick="confirmarCandidato(' + c.odoo_product_id + ',' + c.odoo_partner_id + ', \'' + escaparHtml(c.url_sugerida) + '\')">Confirmar match</button>'
+      : '';
+
+    fila.innerHTML =
+      '<div class="info">' +
+        '<div class="nombre-prod">' + escaparHtml(c.nombre_producto) + '</div>' +
+        infoSugerencia +
+      '</div>' +
+      '<div style="display:flex;gap:8px;align-items:center">' +
+        botonConfirmar +
+        '<button class="boton boton-secundario boton-chico" onclick="asignarUrlManual(' + c.odoo_product_id + ',' + c.odoo_partner_id + ')">Asignar URL</button>' +
+        '<button class="boton boton-chico" style="background:transparent;border:1px solid var(--borde);color:var(--texto-tenue)" onclick="marcarNoAplica(' + c.odoo_product_id + ',' + c.odoo_partner_id + ')">No aplica</button>' +
+      '</div>';
+    cuerpo.appendChild(fila);
+  }
+  return sec;
+}
+
+function marcarSeccion(boton, valor){
+  const cuerpo = boton.closest('.seccion-cuerpo');
+  cuerpo.querySelectorAll('input[type=checkbox]').forEach(ch => { ch.checked = valor; });
+  actualizarBarra();
+}
+
+function actualizarBarra(){
+  const marcados = document.querySelectorAll('input[data-cambio-id]:checked').length;
+  const barra = document.getElementById('barraFinal');
+  if (marcados > 0) {
+    barra.classList.add('visible');
+    document.getElementById('resumenFinal').innerHTML =
+      '<strong>' + marcados + '</strong> cambio' + (marcados === 1 ? '' : 's') + ' seleccionado' + (marcados === 1 ? '' : 's') + ' para aplicar en Odoo';
+    document.getElementById('botonAplicar').textContent = 'Aplicar cambios seleccionados (' + marcados + ')';
+  } else {
+    barra.classList.remove('visible');
+  }
+}
+
+/* ================= ACCIONES ================= */
+async function aplicarCambios(){
+  const marcados = [...document.querySelectorAll('input[data-cambio-id]:checked')]
+    .map(ch => Number(ch.dataset.cambioId));
+  if (!marcados.length) return;
+
+  if (!confirm('Se van a actualizar ' + marcados.length + ' costos en Odoo. Esta acción queda registrada a tu nombre (' + USUARIO + '). ¿Continuar?')) return;
+
+  const boton = document.getElementById('botonAplicar');
+  const textoOriginal = boton.textContent;
+  boton.disabled = true;
+  boton.textContent = 'Guardando en Odoo…';
+  try {
+    // 1. Marcar como aprobados
+    await llamar('/luca/costos/decidir', {
+      method: 'POST',
+      body: JSON.stringify({ cambio_ids: marcados, decision: 'aprobado', usuario: USUARIO })
+    });
+    // 2. Aplicar a Odoo
+    const resultado = await llamar('/luca/costos/aplicar', { method: 'POST' });
+    let msg = 'Se actualizaron ' + resultado.aplicados + ' costos en Odoo correctamente.';
+    if (resultado.errores.length) {
+      msg += ' Atención: ' + resultado.errores.length + ' fallaron — vuelve a intentar o revisa con el administrador.';
+    }
+    mostrarMensaje(resultado.errores.length ? 'error' : 'exito', msg);
+    // 3. Recargar la corrida para refrescar los pendientes
+    if (corridaActualId) await cargarCorrida(corridaActualId);
+  } catch(err){
+    mostrarMensaje('error', 'Error al aplicar: ' + err.message);
+  } finally {
+    boton.disabled = false;
+    boton.textContent = textoOriginal;
+  }
+}
+
+async function confirmarCandidato(productId, partnerId, url){
+  if (!confirm('¿Confirmas que esta URL corresponde a este producto? A partir de ahora se actualizará automáticamente.')) return;
+  try {
+    await llamar('/luca/costos/mapeo', {
+      method: 'POST',
+      body: JSON.stringify({
+        odoo_product_id: productId,
+        odoo_partner_id: partnerId,
+        estado: 'automatico',
+        url_variante: url,
+        metodo_match: 'nombre'
+      })
+    });
+    candidatosActuales = candidatosActuales.filter(c => !(c.odoo_product_id === productId && c.odoo_partner_id === partnerId));
+    await cargarManuales();
+    pintarTodo();
+    mostrarMensaje('exito', 'Producto mapeado. Se incluirá en la próxima revisión automática.');
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo guardar el mapeo: ' + err.message);
+  }
+}
+
+async function editarUrlMapeo(productId, partnerId, el){
+  const urlActual = el.getAttribute('data-url') || '';
+  const nueva = prompt('Corregir URL del mapeo.\nEdita la URL y acepta para guardar:', urlActual);
+  if (!nueva || nueva.trim() === urlActual) return;
+  const urlLimpia = nueva.trim();
+  if (!/^https?:\/\//i.test(urlLimpia)) {
+    mostrarMensaje('error', 'La URL debe empezar con http:// o https://');
+    return;
+  }
+  try {
+    await llamar('/luca/costos/mapeo', {
+      method: 'POST',
+      body: JSON.stringify({
+        odoo_product_id: productId,
+        odoo_partner_id: partnerId,
+        estado: 'automatico',
+        url_variante: urlLimpia,
+        metodo_match: 'url_manual'
+      })
+    });
+    el.setAttribute('data-url', urlLimpia);
+    const link = el.previousElementSibling;
+    if (link && link.tagName === 'A') link.href = urlLimpia;
+    mostrarMensaje('exito', 'URL corregida. El precio se verificará contra la nueva URL en la próxima revisión.');
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo guardar: ' + err.message);
+  }
+}
+
+async function asignarUrlManual(productId, partnerId){
+  const url = prompt('Pega la URL exacta del producto en la tienda del proveedor:\n(incluye la variante si aplica)');
+  if (!url) return;
+  const urlLimpia = url.trim();
+  if (!/^https?:\/\//i.test(urlLimpia)) {
+    mostrarMensaje('error', 'La URL debe empezar con http:// o https://');
+    return;
+  }
+  try {
+    await llamar('/luca/costos/mapeo', {
+      method: 'POST',
+      body: JSON.stringify({
+        odoo_product_id: productId,
+        odoo_partner_id: partnerId,
+        estado: 'automatico',
+        url_variante: urlLimpia,
+        metodo_match: 'url_manual'
+      })
+    });
+    candidatosActuales = candidatosActuales.filter(c => !(c.odoo_product_id === productId && c.odoo_partner_id === partnerId));
+    pintarTodo();
+    mostrarMensaje('exito', 'URL asignada. El producto se actualizará automáticamente en la próxima revisión.');
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo guardar: ' + err.message);
+  }
+}
+
+async function marcarNoAplica(productId, partnerId){
+  if (!confirm('Se marcará este producto como "No aplica" — no volverá a aparecer como candidato, pero quedará en la lista de actualización manual. ¿Continuar?')) return;
+  try {
+    await llamar('/luca/costos/mapeo', {
+      method: 'POST',
+      body: JSON.stringify({
+        odoo_product_id: productId,
+        odoo_partner_id: partnerId,
+        estado: 'manual',
+        url_variante: null,
+        metodo_match: 'url_manual'
+      })
+    });
+    candidatosActuales = candidatosActuales.filter(c => !(c.odoo_product_id === productId && c.odoo_partner_id === partnerId));
+    await cargarManuales();
+    pintarTodo();
+    mostrarMensaje('exito', 'Producto marcado como "No aplica". Visible en la lista de actualización manual.');
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo guardar: ' + err.message);
+  }
+}
+
+/* ================= EXPORTAR MANUALES ================= */
+// Las dos primeras columnas (odoo_product_id, odoo_partner_id) son el ANCLA:
+// identifican cada fila sin depender del texto. Al re-importar, la herramienta
+// ancla por esos IDs e IGNORA Socio/Producto (son solo referencia legible para
+// la persona). Regla del sistema: agrupar/traducir siempre por ID, nunca por
+// nombre-texto.
+function exportarCostos(){
+  if (!costosManuales.length) { alert('No hay costos de actualización manual (o aún no cargan).'); return; }
+  const filas = costosManuales.map(m => ({
+    'odoo_product_id': m.odoo_product_id,
+    'odoo_partner_id': m.odoo_partner_id,
+    'Socio': m.socio,
+    'Producto': m.producto,
+    'Costo actual': m.costo_actual,
+    'Nuevo costo': ''
+  }));
+  const ws = XLSX.utils.json_to_sheet(filas);
+  // Las dos columnas de ancla van OCULTAS (hidden): siguen en el archivo para
+  // el re-anclaje, pero la persona no las ve ni las edita por error de dedo.
+  ws['!cols'] = [
+    { wch: 15, hidden: true },  // odoo_product_id (ancla, oculta)
+    { wch: 15, hidden: true },  // odoo_partner_id (ancla, oculta)
+    { wch: 25 }, { wch: 50 }, { wch: 14 }, { wch: 14 }
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Costos manual');
+  const fecha = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, 'costos_actualizacion_manual_' + fecha + '.xlsx');
+}
+
+function exportarBenchmark(){
+  if (!benchmarkManuales.length) { alert('No hay benchmark de actualización manual (o aún no cargan).'); return; }
+  const filas = benchmarkManuales.map(m => ({
+    'odoo_product_id': m.odoo_product_id,
+    'odoo_partner_id': m.odoo_partner_id,
+    'Socio': m.socio,
+    'Producto': m.producto,
+    'Precio actual': m.precio_competidor,
+    'Nuevo precio': ''
+  }));
+  const ws = XLSX.utils.json_to_sheet(filas);
+  // Columnas de ancla ocultas, igual que en costos.
+  ws['!cols'] = [
+    { wch: 15, hidden: true },  // odoo_product_id (ancla, oculta)
+    { wch: 15, hidden: true },  // odoo_partner_id (ancla, oculta)
+    { wch: 25 }, { wch: 50 }, { wch: 14 }, { wch: 14 }
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Benchmark manual');
+  const fecha = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, 'benchmark_actualizacion_manual_' + fecha + '.xlsx');
+}
+
+// Subir el Excel de costos lleno. Lee por ancla (odoo_product_id +
+// odoo_partner_id), clasifica cada fila en tres grupos y pide confirmación
+// ANTES de mandar nada al backend. El backend solo crea `cambios` pendientes;
+// la escritura a Odoo sigue pasando por aprobar → aplicar.
+async function importarCostos(event){
+  const archivo = event.target.files[0];
+  event.target.value = ''; // permite re-subir el mismo archivo si hace falta
+  if (!archivo) return;
+
+  // Índice del universo vivo por ancla, para validar contra lo que la
+  // herramienta realmente reconoce como costo manual.
+  const indice = {};
+  for (const m of costosManuales) {
+    indice[m.odoo_product_id + '|' + m.odoo_partner_id] = m;
+  }
+
+  let libro;
+  try {
+    const buffer = await archivo.arrayBuffer();
+    libro = XLSX.read(buffer, { type: 'array' });
+  } catch(err){
+    mostrarMensaje('error', 'No se pudo leer el archivo: ' + err.message);
+    return;
+  }
+  const hoja = libro.Sheets[libro.SheetNames[0]];
+  const filas = XLSX.utils.sheet_to_json(hoja, { defval: '' });
+
+  const seActualizan = [];   // costo nuevo válido y distinto del actual
+  const seQuedanIgual = [];  // sin captura, o igual al actual
+  const noSePudieron = [];   // no ancla, o costo inválido
+
+  for (const f of filas){
+    const pid = Number(f.odoo_product_id);
+    const sid = Number(f.odoo_partner_id);
+    const nombre = f.Producto || ('producto ' + (f.odoo_product_id || '?'));
+
+    if (!pid || !sid){
+      noSePudieron.push({ nombre, motivo: 'faltan los IDs de ancla en la fila' });
+      continue;
+    }
+    const ref = indice[pid + '|' + sid];
+    if (!ref){
+      noSePudieron.push({ nombre, motivo: 'no está en la lista de costos manuales vigente' });
+      continue;
+    }
+    const crudo = String(f['Nuevo costo']).trim();
+    if (crudo === ''){
+      seQuedanIgual.push({ nombre, motivo: 'sin costo nuevo' });
+      continue;
+    }
+    const nuevo = Number(crudo.replace(',', '.'));
+    if (!isFinite(nuevo) || nuevo <= 0){
+      noSePudieron.push({ nombre, motivo: 'el costo "' + crudo + '" no es un número válido' });
+      continue;
+    }
+    // "Se queda igual" si el costo nuevo coincide con el actual (a 2 decimales).
+    const actual = ref.costo_actual == null ? null : Number(ref.costo_actual);
+    if (actual != null && Math.abs(nuevo - actual) < 0.005){
+      seQuedanIgual.push({ nombre, motivo: 'mismo costo actual' });
+      continue;
+    }
+    seActualizan.push({ odoo_product_id: pid, odoo_partner_id: sid, costo_nuevo: nuevo, nombre });
+  }
+
+  // Resumen de confirmación.
+  let msg = 'Vas a procesar el archivo de costos:\n\n';
+  msg += '• ' + seActualizan.length + ' productos se ACTUALIZAN (costo nuevo)\n';
+  msg += '• ' + seQuedanIgual.length + ' productos se quedan igual\n';
+  if (noSePudieron.length){
+    msg += '• ' + noSePudieron.length + ' filas NO se pudieron leer:\n';
+    for (const r of noSePudieron.slice(0, 8)) msg += '    – ' + r.nombre + ': ' + r.motivo + '\n';
+    if (noSePudieron.length > 8) msg += '    … y ' + (noSePudieron.length - 8) + ' más\n';
+  }
+  if (!seActualizan.length){
+    msg += '\nNo hay nada que actualizar.';
+    alert(msg);
+    return;
+  }
+  // Muestra de los productos que se van a actualizar (hasta 10), para revisión
+  // visual antes de crear los cambios.
+  msg += '\nSe actualizan:\n';
+  for (const r of seActualizan.slice(0, 10)){
+    const antes = indice[r.odoo_product_id + '|' + r.odoo_partner_id];
+    const costoAntes = antes && antes.costo_actual != null ? Number(antes.costo_actual).toFixed(2) : '?';
+    msg += '    – ' + r.nombre + ': $' + costoAntes + ' → $' + r.costo_nuevo.toFixed(2) + '\n';
+  }
+  if (seActualizan.length > 10) msg += '    … y ' + (seActualizan.length - 10) + ' más\n';
+  msg += '\nSe crearán ' + seActualizan.length + ' cambios pendientes de aprobación. Nada se escribe a Odoo todavía. ¿Continuar?';
+  if (!confirm(msg)) return;
+
+  mostrarMensaje('info', 'Procesando el archivo y creando cambios pendientes…');
+  try {
+    const data = await llamar('/luca/costos/manuales/importar', {
+      method: 'POST',
+      body: JSON.stringify({ usuario: USUARIO, filas: seActualizan })
+    });
+    corridaActualId = data.corrida_id;
+    await cargarCorrida(corridaActualId);
+    mostrarMensaje('exito',
+      'Importación lista: ' + data.creados + ' cambios pendientes creados' +
+      (data.rechazados && data.rechazados.length ? ' · ' + data.rechazados.length + ' rechazados por el servidor' : '') +
+      '. Revísalos abajo y aprueba los que quieras aplicar.');
+  } catch(err){
+    mostrarMensaje('error', 'Error al importar: ' + err.message);
+  }
+}
+
+/* ================= UTILIDADES ================= */
+function escaparHtml(texto){
+  const div = document.createElement('div');
+  div.textContent = texto ?? '';
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>

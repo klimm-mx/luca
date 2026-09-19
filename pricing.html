@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Luca · Klimm</title>
+<style>
+:root{
+  --fondo:#F5F9FA; --superficie:#FFFFFF; --tinta:#16323B; --tinta-suave:#5A7480;
+  --agua:#0FA3C7; --agua-oscuro:#0B7E9A; --agua-claro:#E3F4F9;
+  --ok:#1B9E63; --ok-bg:#E8F6EF; --media:#C7871B; --media-bg:#FBF3E3;
+  --alerta:#C43D3D; --alerta-bg:#FBECEC; --revision:#B06A00; --revision-bg:#FFF6E8;
+  --borde:#DCE7EB; --radio:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--tinta);font-size:15px;line-height:1.5;padding-bottom:110px}
+.contenedor{max-width:980px;margin:0 auto;padding:0 20px}
+header{background:var(--superficie);border-bottom:1px solid var(--borde);padding:14px 0;margin-bottom:28px}
+header .contenedor{display:flex;align-items:baseline;justify-content:space-between}
+.marca{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.marca span{color:var(--agua)}
+.sistema{font-size:12px;color:var(--tinta-suave);letter-spacing:.8px;text-transform:uppercase;display:flex;align-items:center;gap:14px}
+.boton-ayuda{width:24px;height:24px;border-radius:50%;border:1px solid var(--borde);background:var(--superficie);color:var(--tinta-suave);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1}
+.boton-ayuda:hover{border-color:var(--agua);color:var(--agua-oscuro)}
+.paso{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:22px;margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:600;color:var(--tinta-suave);margin-bottom:6px}
+input[type=text],input[type=password],input[type=number],input[type=date],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--agua);outline-offset:-1px;border-color:var(--agua)}
+textarea{resize:vertical;min-height:64px}
+.encabezado-tool{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.encabezado-tool .titulo{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.encabezado-tool .titulo span{color:var(--agua)}
+.encabezado-tool .sub{font-size:11px;color:var(--tinta-suave);letter-spacing:.6px;text-transform:uppercase;margin-top:2px}
+.tarjetas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.tarjeta{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:12px 14px}
+.tarjeta .etiqueta{font-size:11px;color:var(--tinta-suave);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.tarjeta .valor{font-size:22px;font-weight:700;margin-top:2px}
+.tarjeta.atencion{background:var(--revision-bg);border-color:var(--revision)}
+.tarjeta.atencion .etiqueta,.tarjeta.atencion .valor{color:var(--revision)}
+.seccion{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);margin-bottom:8px;overflow:hidden}
+.seccion.atencion{border-color:var(--revision);border-left:4px solid var(--revision)}
+.seccion-cabeza{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.seccion-cabeza:hover{background:var(--fondo)}
+.seccion-cabeza .izq{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.seccion-cabeza .nombre{font-size:14px;font-weight:600}
+.seccion-cabeza .conteo{font-size:13px;color:var(--tinta-suave)}
+.seccion-cuerpo{display:none;border-top:1px solid var(--borde)}
+.seccion.abierta .seccion-cuerpo{display:block}
+.chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.3px;white-space:nowrap}
+.chip-revision{background:var(--revision-bg);color:var(--revision);border:1px solid var(--revision)}
+.chip-info{background:var(--agua-claro);color:var(--agua-oscuro)}
+.chip-sube{background:var(--alerta-bg);color:var(--alerta)}
+.chip-baja{background:var(--ok-bg);color:var(--ok)}
+.chip-neutro{background:var(--fondo);color:var(--tinta-suave);border:1px solid var(--borde)}
+.chip-ok{background:var(--ok-bg);color:var(--ok)}
+.chip-alerta{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
+.fila{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--borde)}
+.fila:last-child{border-bottom:none}
+.fila input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer;margin-top:3px}
+.fila .info{flex:1;min-width:0}
+.fila .nombre-prod{font-size:14px}
+.fila .detalle{font-size:12px;color:var(--tinta-suave);margin-top:2px}
+.fila .detalle strong{color:var(--tinta)}
+.fila .derecha{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.fila.clicable{cursor:pointer}
+.fila.clicable:hover{background:var(--fondo)}
+.fila.resaltada{background:var(--agua-claro);transition:background 1.5s}
+.editor-precio{display:flex;gap:10px;margin-top:8px;align-items:flex-end;flex-wrap:wrap}
+.editor-precio .campo-mini{width:130px}
+.editor-precio .campo-mini label{font-size:11px;margin-bottom:3px}
+.editor-precio .campo-mini input{padding:7px 10px;font-size:13px}
+.editor-precio .resultado{font-size:12px;color:var(--tinta-suave);padding-bottom:8px}
+.editor-precio .resultado.rojo{color:var(--alerta);font-weight:600}
+.subtitulo-bloque{padding:10px 16px;background:var(--fondo);border-bottom:1px solid var(--borde);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--tinta-suave)}
+.buscador{padding:12px 16px;border-bottom:1px solid var(--borde);display:flex;gap:10px;align-items:center}
+.buscador input{flex:1}
+.buscador select{width:auto}
+.boton{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.boton-principal{background:var(--agua);color:#fff}
+.boton-principal:hover{background:var(--agua-oscuro)}
+.boton-principal:disabled{background:var(--borde);color:var(--tinta-suave);cursor:not-allowed}
+.boton-secundario{background:var(--superficie);color:var(--tinta);border:1px solid var(--borde)}
+.boton-peligro{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
+.boton-chico{padding:9px 14px;font-size:13px}
+.barra-final{position:fixed;bottom:0;left:0;right:0;background:var(--superficie);border-top:1px solid var(--borde);padding:14px 0;box-shadow:0 -4px 20px rgba(22,50,59,.08);display:none;z-index:30}
+.barra-final.visible{display:block}
+.barra-final .contenedor{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.resumen-texto{font-size:14px}
+.resumen-texto strong{font-size:16px}
+.mensaje{padding:14px 16px;border-radius:var(--radio);margin-bottom:16px;font-size:14px}
+.mensaje-error{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
+.mensaje-exito{background:var(--ok-bg);border:1px solid var(--ok);color:var(--ok)}
+.cargando{display:flex;align-items:center;gap:12px;padding:20px;justify-content:center;color:var(--tinta-suave)}
+.girador{width:22px;height:22px;border:3px solid var(--borde);border-top-color:var(--agua);border-radius:50%;animation:girar .8s linear infinite}
+@keyframes girar{to{transform:rotate(360deg)}}
+.nota-pie{font-size:12px;color:var(--tinta-suave);text-align:center;margin-top:8px}
+.vacio{padding:16px;font-size:13px;color:var(--tinta-suave);text-align:center}
+.comparacion{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.comparacion .col{background:var(--fondo);border:1px solid var(--borde);border-radius:8px;padding:12px}
+.comparacion .col h4{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--tinta-suave);margin-bottom:8px}
+.comparacion .dato{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.comparacion .dato strong{font-size:14px}
+.pos-tarjeta{border-bottom:1px solid var(--borde);padding:14px 16px;cursor:pointer}
+.pos-tarjeta:hover{background:var(--fondo)}
+.pos-tarjeta:last-child{border-bottom:none}
+.pos-cabeza{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pos-nombre{font-size:14px;font-weight:600}
+.pos-detalle{font-size:12px;color:var(--tinta-suave);margin-top:3px}
+.pos-detalle strong{color:var(--tinta)}
+.pos-nota{font-size:12px;color:var(--tinta-suave);margin-top:5px;font-style:italic}
+.nota-item{padding:8px 10px;background:var(--fondo);border:1px solid var(--borde);border-radius:8px;margin-bottom:6px;font-size:13px}
+.nota-item .fecha{font-size:11px;color:var(--tinta-suave)}
+.fuente-tarjeta{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+.velo{position:fixed;inset:0;background:rgba(22,50,59,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;overflow-y:auto}
+#veloProducto{z-index:60}
+.velo.visible{display:flex}
+.modal{background:var(--superficie);border-radius:var(--radio);padding:26px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto}
+.modal.ancho{max-width:860px}
+.modal h3{margin-bottom:6px}
+.modal p{font-size:13px;color:var(--tinta-suave);margin-bottom:16px}
+.modal .campo{margin-bottom:14px}
+.modal .acciones{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
+.dicc-grupo{margin-bottom:18px}
+.dicc-grupo h4{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--agua-oscuro);margin-bottom:8px}
+.dicc-termino{padding:10px 12px;background:var(--fondo);border:1px solid var(--borde);border-radius:8px;margin-bottom:8px}
+.dicc-termino .nombre{font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.dicc-termino .nombre .conteo{font-size:12px;font-weight:400;color:var(--tinta-suave)}
+.dicc-termino .definicion{font-size:13px;color:var(--tinta-suave);margin-top:4px}
+.dicc-termino .ver-productos{font-size:12px;color:var(--agua-oscuro);cursor:pointer;text-decoration:underline;margin-top:4px;display:inline-block}
+.dicc-lista{font-size:12.5px;color:var(--tinta);margin-top:6px;display:none;padding-left:4px}
+.dicc-lista.visible{display:block}
+.dicc-lista div{padding:2px 0;border-bottom:1px dashed var(--borde)}
+.enlace{background:none;border:none;color:var(--agua-oscuro);cursor:pointer;font-size:13px;font-weight:600;text-decoration:underline;font-family:inherit}
+@media(max-width:640px){.tarjetas{grid-template-columns:repeat(2,1fr)}.barra-final .contenedor{flex-direction:column;align-items:stretch}.comparacion{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="contenedor">
+    <div class="marca">Klimm <span>· Pricing</span></div>
+    <div class="sistema">Sistema Luca <button class="boton-ayuda" onclick="abrirDiccionario()" title="Diccionario de términos">?</button></div>
+  </div>
+</header>
+
+<div class="contenedor">
+
+  <div id="avisoGlobal"></div>
+
+  <div class="encabezado-tool">
+    <div>
+      <div class="titulo">Pricing <span>· precios de venta</span></div>
+      <div class="sub" id="subtitulo">Cargando…</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="boton boton-secundario boton-chico" onclick="abrirCatalogo()">Catálogo</button>
+      <button class="boton boton-secundario boton-chico" onclick="abrirConfig()">Conexión</button>
+      <button class="boton boton-principal" id="botonCargar" onclick="cargarTodo()">Actualizar datos</button>
+    </div>
+  </div>
+
+  <div id="zonaCargando" style="display:none" class="paso">
+    <div class="cargando"><div class="girador"></div><span id="textoCargando">Leyendo catálogo y reglas…</span></div>
+  </div>
+
+  <div id="contenidoPrincipal" style="display:none">
+
+    <div class="tarjetas">
+      <div class="tarjeta" id="tarjetaAtencion"><div class="etiqueta">Requiere atención</div><div class="valor" id="numAtencion">—</div></div>
+      <div class="tarjeta"><div class="etiqueta">Experimentos activos</div><div class="valor" id="numExperimentos">—</div></div>
+      <div class="tarjeta"><div class="etiqueta">Precios por revisar</div><div class="valor" id="numPendientes">—</div></div>
+      <div class="tarjeta"><div class="etiqueta">Benchmark vencido</div><div class="valor" id="numBenchViejo">—</div></div>
+    </div>
+
+    <div class="seccion atencion abierta" id="secAtencion">
+      <div class="seccion-cabeza" onclick="alternar('secAtencion')">
+        <div class="izq"><span class="nombre">Requiere atención hoy</span><span class="conteo" id="conteoAtencion"></span></div>
+        <span class="chip chip-revision">Prioridad</span>
+      </div>
+      <div class="seccion-cuerpo" id="cuerpoAtencion"></div>
+    </div>
+
+    <div class="seccion" id="secExperimentos">
+      <div class="seccion-cabeza" onclick="alternar('secExperimentos')">
+        <div class="izq"><span class="nombre">Experimentos de precio</span><span class="conteo" id="conteoExperimentos"></span></div>
+        <button class="boton boton-secundario boton-chico" onclick="event.stopPropagation();abrirNuevoExperimento()">Nuevo experimento</button>
+      </div>
+      <div class="seccion-cuerpo" id="cuerpoExperimentos"></div>
+    </div>
+
+    <div class="seccion" id="secPendientes">
+      <div class="seccion-cabeza" onclick="alternar('secPendientes')">
+        <div class="izq"><span class="nombre">Revisión de precios pendiente</span><span class="conteo" id="conteoPendientes"></span></div>
+        <span class="chip chip-info" id="chipPendientes"></span>
+      </div>
+      <div class="seccion-cuerpo" id="cuerpoPendientes"></div>
+    </div>
+
+    <div class="seccion" id="secBenchmark">
+      <div class="seccion-cabeza" onclick="alternar('secBenchmark')">
+        <div class="izq"><span class="nombre">Benchmark de competidores</span><span class="conteo" id="conteoBenchmark"></span></div>
+      </div>
+      <div class="seccion-cuerpo" id="cuerpoBenchmark"></div>
+    </div>
+
+    <div class="seccion" id="secPosiciones">
+      <div class="seccion-cabeza" onclick="alternar('secPosiciones')">
+        <div class="izq"><span class="nombre">Posiciones activas</span><span class="conteo" id="conteoPosiciones"></span></div>
+        <span class="chip chip-info" id="chipPosiciones"></span>
+      </div>
+      <div class="seccion-cuerpo" id="cuerpoPosiciones"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="barra-final" id="barraFinal">
+  <div class="contenedor">
+    <div class="resumen-texto" id="resumenBarra"></div>
+    <button class="boton boton-principal" id="botonAplicar" onclick="aplicarSeleccionados()">Aplicar a Odoo</button>
+  </div>
+</div>
+
+<div class="velo" id="veloConfig">
+  <div class="modal">
+    <h3>Conexión al backend</h3>
+    <p>La misma dirección y clave de las demás herramientas de Luca.</p>
+    <div class="campo"><label>Dirección del backend</label><input type="text" id="confBackend" placeholder="https://klimm-backend.onrender.com"></div>
+    <div class="campo"><label>Clave de acceso</label><input type="password" id="confClave"></div>
+    <div class="campo"><label>Tu nombre (para el historial)</label><input type="text" id="confUsuario" placeholder="Ej. Gonzalo"></div>
+    <div class="acciones">
+      <button class="boton boton-secundario" onclick="cerrarVelo('veloConfig')">Cancelar</button>
+      <button class="boton boton-principal" onclick="guardarConfig()">Guardar y conectar</button>
+    </div>
+  </div>
+</div>
+
+<div class="velo" id="veloDiccionario">
+  <div class="modal">
+    <h3>Diccionario de términos</h3>
+    <p>Qué significa cada clasificación y regla que usa esta herramienta.</p>
+    <div id="cuerpoDiccionario"></div>
+    <div class="acciones"><button class="boton boton-secundario" onclick="cerrarVelo('veloDiccionario')">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="velo" id="veloExperimento">
+  <div class="modal">
+    <h3>Nuevo experimento de precio</h3>
+    <p>Un cambio de precio con hipótesis y fecha de revisión. La herramienta guarda la foto inicial y crea el recordatorio en Odoo.</p>
+    <div class="campo"><label>Producto</label><select id="expProducto" onchange="expActualizarContexto()"></select></div>
+    <div class="campo"><label>Posición relacionada (opcional)</label><select id="expPosicion"><option value="">Ninguna</option></select></div>
+    <div class="campo"><label>Precio de prueba (sin IVA)</label><input type="number" step="0.01" id="expPrecio" oninput="expActualizarContexto()"></div>
+    <div id="expContexto" class="mensaje" style="display:none;background:var(--agua-claro);border:1px solid var(--agua);color:var(--tinta)"></div>
+    <div class="campo"><label>Hipótesis — qué esperas que pase y en cuánto tiempo</label><textarea id="expHipotesis" placeholder="Ej. Con este precio, los pedidos suben de 3 a 5 en 60 días"></textarea></div>
+    <div class="campo"><label>Plazo de revisión</label>
+      <select id="expDias"><option value="60">60 días</option><option value="90">90 días</option></select>
+    </div>
+    <div class="acciones">
+      <button class="boton boton-secundario" onclick="cerrarVelo('veloExperimento')">Cancelar</button>
+      <button class="boton boton-principal" id="botonCrearExp" onclick="crearExperimento()">Iniciar experimento</button>
+    </div>
+  </div>
+</div>
+
+<div class="velo" id="veloDecidir">
+  <div class="modal">
+    <h3 id="decidirTitulo">Revisar experimento</h3>
+    <p id="decidirHipotesis"></p>
+    <div id="decidirComparacion"></div>
+    <div class="campo"><label>Motivo de la decisión (obligatorio)</label><textarea id="decidirMotivo" placeholder="Ej. El volumen respondió por encima de la meta"></textarea></div>
+    <div class="acciones">
+      <button class="boton boton-secundario" onclick="cerrarVelo('veloDecidir')">Cerrar</button>
+      <button class="boton boton-secundario" onclick="decidirExperimento('extender')">Extender 30 días</button>
+      <button class="boton boton-peligro" onclick="decidirExperimento('revertir')">Revertir precio</button>
+      <button class="boton boton-principal" onclick="decidirExperimento('confirmar')">Confirmar precio nuevo</button>
+    </div>
+    <div class="nota-pie"><button class="enlace" onclick="decidirExperimento('cancelar')">Cancelar experimento antes de tiempo</button></div>
+  </div>
+</div>
+
+<div class="velo" id="veloProducto">
+  <div class="modal">
+    <h3 id="prodTitulo">Producto</h3>
+    <p id="prodDetalle"></p>
+    <div class="campo"><label>Clasificación de sensibilidad</label><select id="prodSensibilidad"></select></div>
+    <div class="campo"><label>Fuente de compra</label><select id="prodFuente"></select></div>
+    <div class="campo"><label>Excepción de margen</label><select id="prodExcepcionTipo" onchange="prodCambioExcepcion()"></select></div>
+    <div class="campo" id="prodCampoValor" style="display:none"><label id="prodEtiquetaValor">Valor</label><input type="number" step="0.01" id="prodExcepcionValor"></div>
+    <div class="campo" id="prodCampoMotivo" style="display:none"><label>Motivo de la excepción (obligatorio)</label><input type="text" id="prodExcepcionMotivo"></div>
+    <div class="campo"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="prodSoloLicitacion" style="width:16px;height:16px"> Solo licitación — fuera del pricing normal</label></div>
+    <div class="acciones">
+      <button class="boton boton-secundario" onclick="cerrarVelo('veloProducto')">Cancelar</button>
+      <button class="boton boton-principal" onclick="guardarProducto()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="velo" id="veloCatalogo">
+  <div class="modal ancho">
+    <h3>Catálogo y clasificación</h3>
+    <p id="catalogoSub">Consulta y edita la clasificación de cualquier producto. Los cambios de clasificación no tocan precios en Odoo.</p>
+    <div class="buscador" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:10px">
+      <input type="text" id="busqueda" placeholder="Buscar producto…" oninput="pintarCatalogo()">
+      <select id="filtroSensibilidad" onchange="pintarCatalogo()"></select>
+    </div>
+    <div id="cuerpoCatalogo" style="border:1px solid var(--borde);border-radius:8px;max-height:55vh;overflow-y:auto"></div>
+    <div class="acciones"><button class="boton boton-secundario" onclick="cerrarVelo('veloCatalogo')">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="velo" id="veloPosicion">
+  <div class="modal">
+    <h3 id="posTitulo">Posición</h3>
+    <p id="posDatos"></p>
+    <div id="posBenchmark"></div>
+    <div class="campo"><label>SKU que llena la posición hoy</label><input type="text" id="posSku"></div>
+    <div class="campo"><label>Estado</label><select id="posEstado"></select></div>
+    <div class="campo"><label>Objetivo</label><textarea id="posObjetivo"></textarea></div>
+    <div class="campo"><label>Agregar nota</label><textarea id="posNotaNueva" placeholder="Qué pasó, con fecha automática"></textarea></div>
+    <div id="posNotas"></div>
+    <div id="posHistorialSku" class="nota-pie" style="text-align:left"></div>
+    <div class="acciones">
+      <button class="boton boton-peligro boton-chico" onclick="cerrarPosicion()">Marcar resuelta</button>
+      <button class="boton boton-secundario" onclick="cerrarVelo('veloPosicion')">Cancelar</button>
+      <button class="boton boton-principal" onclick="guardarPosicion()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================ Conexión
+// [ETAPA 5c] Este panel es una CÁSCARA: ya NO contiene la lógica de pricing.
+// Toda la lógica (clasificar, márgenes/pisos, la estrategia de "evaluar",
+// coherencia, candidatos, benchmark, vocabulario y diccionario) vive en el
+// backend, detrás de la clave, y llega ya calculada por GET /luca/pricing/evaluacion.
+// El panel solo pinta lo que el backend le manda. "Ver código fuente" ya no
+// deja deducir el método. La aritmética de margen que queda (1 - costo/precio)
+// es la definición estándar de margen: no revela nada.
+let BACKEND = localStorage.getItem('luca_backend') || '';
+let CLAVE = localStorage.getItem('luca_clave') || '';
+let USUARIO = localStorage.getItem('luca_usuario') || '';
+let SHA = null, ESTADO = null, PRODUCTOS = [], EXP_ACTUAL = null, POS_ACTUAL = null;
+let PENDIENTES_CLASIF = []; // productos nuevos sin clasificar: [{odoo_product_id, nombre}]
+
+// Todo lo de abajo llega del backend (detrás de la clave). En el código fuente
+// arrancan vacíos: ni reglas, ni umbrales, ni vocabulario, ni benchmark.
+let COHERENCIA = [];          // problemas de coherencia ya calculados
+let CANDIDATOS = [];          // candidatos a experimento ya calculados
+let BENCHMARK_PANEL = { registros: [], total: 0, vencidas: 0 };
+let POS_BENCHMARK = {};       // benchmark por posición, ya asociado
+let DICCIONARIO = {};         // definiciones (se llenan al cargar)
+let DICC_NOMBRES = {};        // nombres a mostrar de cada término
+let META = {};                // umbrales/máximos para pintar (no son método)
+let NOMBRES_SENS = {}, NOMBRES_FUENTE = {}, NOMBRES_POS_ESTADO = {}, CHIP_POS_ESTADO = {};
+let FORMULARIOS = { fuente: [], excepcion: [], excepcion_label_valor: {}, estado: [] }; // opciones de menús, del backend
+
+function abrirConfig(){
+  document.getElementById('confBackend').value = BACKEND;
+  document.getElementById('confClave').value = CLAVE;
+  document.getElementById('confUsuario').value = USUARIO;
+  abrirVelo('veloConfig');
+}
+function guardarConfig(){
+  BACKEND = document.getElementById('confBackend').value.trim().replace(/\/$/,'');
+  CLAVE = document.getElementById('confClave').value.trim();
+  USUARIO = document.getElementById('confUsuario').value.trim();
+  localStorage.setItem('luca_backend', BACKEND);
+  localStorage.setItem('luca_clave', CLAVE);
+  localStorage.setItem('luca_usuario', USUARIO);
+  cerrarVelo('veloConfig');
+  cargarTodo();
+}
+async function llamar(ruta, opciones={}){
+  const resp = await fetch(BACKEND + ruta, { ...opciones,
+    headers: { 'Content-Type':'application/json', 'x-backend-key': CLAVE, ...(opciones.headers||{}) } });
+  const data = await resp.json().catch(()=>({ok:false,error:'Respuesta no válida del backend'}));
+  if(!resp.ok || data.ok === false) throw new Error(data.error || ('Error '+resp.status));
+  return data;
+}
+
+// ============================================================ Utilidades
+function abrirVelo(id){ document.getElementById(id).classList.add('visible'); }
+function cerrarVelo(id){ document.getElementById(id).classList.remove('visible'); }
+function alternar(id){ document.getElementById(id).classList.toggle('abierta'); }
+function dinero(n){ return '$' + Number(n).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function dineroCorto(n){ return n>=1e6 ? '$'+(n/1e6).toFixed(1)+'M' : '$'+Math.round(n/1000)+'k'; }
+function pct(n){ return (n*100).toFixed(1) + '%'; }
+function esc(t){ const d=document.createElement('div'); d.textContent=t??''; return d.innerHTML; }
+function aviso(tipo, texto){
+  document.getElementById('avisoGlobal').innerHTML = '<div class="mensaje mensaje-'+tipo+'">'+esc(texto)+'</div>';
+  setTimeout(()=>{ document.getElementById('avisoGlobal').innerHTML=''; }, 9000);
+}
+function diasEntre(iso){ return Math.floor((Date.now() - new Date(iso+'T00:00:00').getTime()) / 86400000); }
+function hoyISO(){ return new Date().toISOString().slice(0,10); }
+
+// Único cálculo que queda en el panel: el margen es (precio-costo)/precio. Es la
+// definición estándar de margen; se conserva para que el editor manual muestre
+// el margen al instante mientras tecleas, sin ir al servidor por cada tecla.
+function margenActual(p){ return p.precio > 0 ? 1 - p.costo/p.precio : null; }
+
+async function guardarEstadoCompleto(mensaje){
+  const r = await llamar('/luca/pricing/estado', { method:'POST',
+    body: JSON.stringify({ estado: ESTADO, sha: SHA, mensaje }) });
+  SHA = r.sha;
+}
+
+// ============================================================ Carga
+// Una sola llamada trae TODO ya calculado por el backend.
+async function cargarTodo(){
+  if (!BACKEND || !CLAVE) { abrirConfig(); return; }
+  document.getElementById('zonaCargando').style.display='block';
+  document.getElementById('contenidoPrincipal').style.display='none';
+  try {
+    const data = await llamar('/luca/pricing/evaluacion');
+    ESTADO = data.estado; SHA = data.sha;
+    PRODUCTOS = data.productos || [];
+    COHERENCIA = data.coherencia || [];
+    CANDIDATOS = data.candidatos || [];
+    BENCHMARK_PANEL = data.benchmarkPanel || { registros:[], total:0, vencidas:0 };
+    POS_BENCHMARK = data.posBenchmark || {};
+    DICCIONARIO = data.diccionario || {};
+    DICC_NOMBRES = data.diccionarioNombres || {};
+    const L = data.labels || {};
+    NOMBRES_SENS = L.NOMBRES_SENS || {}; NOMBRES_FUENTE = L.NOMBRES_FUENTE || {};
+    NOMBRES_POS_ESTADO = L.NOMBRES_POS_ESTADO || {}; CHIP_POS_ESTADO = L.CHIP_POS_ESTADO || {};
+    META = data.meta || {};
+    FORMULARIOS = data.formularios || { fuente: [], excepcion: [], excepcion_label_valor: {}, estado: [] };
+    llenarFormularios();
+    // Pendientes de clasificación (productos nuevos) — no bloqueante, endpoint sin cambios
+    llamar('/luca/pricing/sensibilidad/pendientes').then(r => { PENDIENTES_CLASIF = r.por_clasificar || []; pintarAtencion(); }).catch(()=>{});
+    pintarTodo();
+    document.getElementById('subtitulo').textContent = PRODUCTOS.length + ' productos · reglas v' + (META.version||1);
+  } catch(e) { aviso('error','No se pudo cargar: '+e.message); }
+  document.getElementById('zonaCargando').style.display='none';
+  document.getElementById('contenidoPrincipal').style.display='block';
+}
+
+// ============================================================ Pintado general
+let SELECCION = {}; // id → {precio: number|null}  null = usar sugerido
+
+function pintarTodo(){
+  pintarAtencion();
+  pintarExperimentos();
+  pintarPendientes();
+  pintarBenchmark();
+  pintarPosiciones();
+  pintarCatalogo();
+  llenarSelectores();
+}
+
+// ---------------- Requiere atención
+function pintarAtencion(){
+  const items = [];
+  for (const q of PENDIENTES_CLASIF)
+    items.push({ tipo:'sinClasificar', pend:q, texto:'Producto nuevo sin clasificación de sensibilidad — clasifícalo para que el pricing lo trate bien' });
+  for (const p of PRODUCTOS) {
+    if (p.soloLic) continue;
+    const m = margenActual(p);
+    if (m !== null && m < p.piso) items.push({ tipo:'piso', p, texto:'Margen actual '+pct(m)+' — debajo del piso de '+pct(p.piso) });
+  }
+  for (const p of PRODUCTOS) if (p.fuente === 'intermediario_riesgo')
+    items.push({ tipo:'fuente', p, texto:'Costo por encima del precio público de un competidor — revisar proveedor antes de tocar el precio' });
+  for (const e of (ESTADO.experimentos||[])) if (e.estatus==='activo' && diasEntre(e.fecha_revision) >= 0)
+    items.push({ tipo:'exp', exp:e, texto:'Experimento vencido — revisar y decidir' });
+  for (const c of COHERENCIA)
+    items.push({ tipo:'coherencia', p:{ id:c.grande_id, nombre:c.grande_nombre }, texto:'Coherencia entre presentaciones: '+c.detalle });
+  const diasEst = (ESTADO.parametros && ESTADO.parametros.posicion_dias_estancada) || 45;
+  for (const pos of (ESTADO.posiciones||[])) {
+    if (pos.estado === 'resuelta' || pos.estado === 'estable') continue;
+    const ultima = pos.notas.length ? pos.notas[0].fecha : pos.creada;
+    if (diasEntre(ultima) > diasEst)
+      items.push({ tipo:'posicion', pos, texto:'Posición estancada — sin movimiento desde '+ultima });
+  }
+
+  document.getElementById('numAtencion').textContent = items.length;
+  document.getElementById('tarjetaAtencion').classList.toggle('atencion', items.length>0);
+  document.getElementById('conteoAtencion').textContent = items.length ? items.length+' pendientes' : '';
+  const cuerpo = document.getElementById('cuerpoAtencion');
+  if (!items.length) { cuerpo.innerHTML = '<div class="vacio">Nada urgente hoy. Así debe verse un buen día.</div>'; return; }
+  cuerpo.innerHTML = items.map(it => {
+    if (it.tipo==='exp') return filaAtencion(it.exp.producto, it.texto, 'Decidir', "abrirDecidir('"+it.exp.id+"')");
+    if (it.tipo==='posicion') return filaAtencion(it.pos.nombre, it.texto, 'Posición', "abrirPosicion('"+it.pos.id+"')");
+    if (it.tipo==='piso') return filaAtencion(it.p.nombre, it.texto, 'Bajo piso', 'irAPendiente('+it.p.id+')');
+    if (it.tipo==='sinClasificar') return filaAtencion(it.pend.nombre, it.texto, 'Clasificar', 'abrirProducto('+it.pend.odoo_product_id+')');
+    return filaAtencion(it.p.nombre, it.texto, it.tipo==='fuente'?'Proveedor':'Coherencia', 'abrirProducto('+it.p.id+')');
+  }).join('');
+}
+function filaAtencion(nombre, texto, chip, accion){
+  return '<div class="fila clicable" onclick="'+accion+'">'+
+    '<div class="info"><div class="nombre-prod">'+esc(nombre)+'</div>'+
+    '<div class="detalle">'+esc(texto)+'</div></div>'+
+    '<div class="derecha"><span class="chip chip-revision">'+esc(chip)+'</span></div></div>';
+}
+function abrirSeccion(id){ document.getElementById(id).classList.add('abierta'); document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+function irAPendiente(id){
+  abrirSeccion('secPendientes');
+  setTimeout(()=>{
+    const fila = document.getElementById('pend-'+id);
+    if (fila) { fila.scrollIntoView({behavior:'smooth', block:'center'}); fila.classList.add('resaltada'); setTimeout(()=>fila.classList.remove('resaltada'), 2500); }
+    else aviso('error','Este producto no tiene propuesta de precio pendiente — revisa su clasificación o costo en el Catálogo');
+  }, 350);
+}
+
+// ---------------- Experimentos + candidatos sugeridos (candidatos ya vienen del backend)
+function pintarExperimentos(){
+  const activos = (ESTADO.experimentos||[]).filter(e=>e.estatus==='activo');
+  const max = (ESTADO.parametros && ESTADO.parametros.max_experimentos) || META.max_experimentos || 3;
+  document.getElementById('numExperimentos').textContent = activos.length + ' / ' + max;
+  document.getElementById('conteoExperimentos').textContent = activos.length ? activos.length+' activos' : 'ninguno activo';
+  const cuerpo = document.getElementById('cuerpoExperimentos');
+  let html = '';
+  for (const e of activos) {
+    const dias = diasEntre(e.fecha_revision);
+    const chip = dias >= 0 ? '<span class="chip chip-revision">Vencido</span>'
+      : '<span class="chip chip-info">'+(-dias)+' días restantes</span>';
+    html += '<div class="fila clicable" onclick="abrirDecidir(\''+e.id+'\')">'+
+      '<div class="info"><div class="nombre-prod">'+esc(e.producto)+'</div>'+
+      '<div class="detalle">'+dinero(e.precio_anterior)+' → <strong>'+dinero(e.precio_prueba)+'</strong> · '+esc(e.hipotesis)+'</div></div>'+
+      '<div class="derecha">'+chip+'</div></div>';
+  }
+  if (!activos.length) html += '<div class="vacio">Sin experimentos activos.</div>';
+  const cands = CANDIDATOS;
+  if (cands.length) {
+    html += '<div class="subtitulo-bloque">Candidatos sugeridos — según cotizaciones de 90 días y margen disponible</div>';
+    if (activos.length >= max) html += '<div class="vacio" style="color:var(--revision)">Tienes '+max+' experimentos activos — cierra uno antes de arrancar otro.</div>';
+    for (const c of cands) {
+      const bench = c.benchmark_texto ? ' · vs '+c.benchmark_texto : '';
+      html += '<div class="fila">'+
+        '<div class="info"><div class="nombre-prod">'+esc(c.nombre)+'</div>'+
+        '<div class="detalle"><strong>'+c.cot+'</strong> cotizaciones en 90 días · margen '+pct(c.margenActual)+' vs regla '+pct(c.objetivo)+bench+'</div></div>'+
+        '<div class="derecha"><button class="boton boton-secundario boton-chico" onclick="abrirNuevoExperimento('+c.id+')">Experimentar</button></div></div>';
+    }
+  }
+  const cerrados = (ESTADO.experimentos||[]).filter(e=>e.estatus!=='activo').slice(0,5);
+  if (cerrados.length) {
+    html += '<div class="subtitulo-bloque">Últimos cerrados</div>';
+    for (const e of cerrados) html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(e.producto)+'</div>'+
+      '<div class="detalle">'+esc(e.motivo_cierre||'')+'</div></div>'+
+      '<div class="derecha"><span class="chip chip-neutro">'+esc(e.estatus)+'</span></div></div>';
+  }
+  cuerpo.innerHTML = html;
+}
+
+// ---------------- Revisión de precios (con edición manual)
+let FILTRO_BUSQUEDA = '';
+function filtrarPendientes(texto){ FILTRO_BUSQUEDA = (texto||'').trim().toLowerCase(); pintarPendientes(); }
+
+// Renderiza una fila de propuesta. La propuesta (p.ev) y su atención (p.atencion)
+// vienen ya decididas por el backend; el piso (p.piso) también. Aquí solo se
+// pinta y se recalcula el margen del precio tecleado (aritmética genérica).
+function filaPropuesta(p, ev, motivoAtencion){
+  const sel = SELECCION[p.id];
+  const precioUsado = sel && sel.precio != null ? sel.precio : ev.sugerido;
+  const mNuevo = 1 - p.costo/precioUsado;
+  const bajoPiso = mNuevo < p.piso;
+  const editado = sel && sel.precio != null && Math.abs(sel.precio - ev.sugerido) > 0.005;
+  const bTxt = p.benchmark.texto_vs_sugerido;
+  const brecha = bTxt ? ' · vs ' + bTxt : '';
+  const chips =
+    (motivoAtencion || '')+
+    (ev.sugerido > p.precio ? '<span class="chip chip-sube">Sube</span>' : '<span class="chip chip-baja">Baja</span>')+
+    (ev.critico ? '<span class="chip chip-revision">Crítico — decide</span>' : '')+
+    (editado ? '<span class="chip chip-info">Editado</span>' : '')+
+    (bajoPiso ? '<span class="chip chip-alerta">Bajo piso</span>' : '');
+  let editor = '';
+  if (sel) {
+    editor = '<div class="editor-precio">'+
+      '<div class="campo-mini"><label>Precio manual</label><input type="number" step="0.01" id="edit-precio-'+p.id+'" value="'+precioUsado.toFixed(2)+'" oninput="editarPrecio('+p.id+', this.value)"></div>'+
+      '<div class="campo-mini"><label>Margen %</label><input type="number" step="0.1" id="edit-margen-'+p.id+'" value="'+(mNuevo*100).toFixed(1)+'" oninput="editarMargen('+p.id+', this.value)"></div>'+
+      '<div class="resultado'+(bajoPiso?' rojo':'')+'" id="edit-res-'+p.id+'">'+(bajoPiso?'Debajo del piso de '+pct(p.piso):'Margen resultante: '+pct(mNuevo))+'</div>'+
+      '</div>';
+  }
+  return '<div class="fila" id="pend-'+p.id+'">'+
+    '<input type="checkbox" onchange="marcar('+p.id+', this.checked)" '+(sel?'checked':'')+'>'+
+    '<div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
+    '<div class="detalle">costo '+dinero(p.costo)+' · '+dinero(p.precio)+' → <strong>'+dinero(precioUsado)+'</strong> · margen '+pct(margenActual(p))+
+    ' → <strong>'+pct(mNuevo)+'</strong>'+brecha+'<br>'+esc(ev.motivo)+'</div>'+editor+'</div>'+
+    '<div class="derecha">'+chips+'</div></div>';
+}
+
+function pintarPendientes(){
+  const umbral = META.umbral_cambio_grande || 0.10;
+  const atencion = [], normal = [];
+  for (const p of PRODUCTOS) {
+    const ev = p.ev;
+    if (ev && ev.proponer) {
+      p._propuesta = ev;
+      const ai = p.atencion || { es:false };
+      (ai.es ? atencion : normal).push({ p, ev, ai });
+    } else { p._propuesta = null; }
+  }
+  const filtra = arr => FILTRO_BUSQUEDA
+    ? arr.filter(x => x.p.nombre.toLowerCase().includes(FILTRO_BUSQUEDA))
+    : arr;
+  const atencionF = filtra(atencion), normalF = filtra(normal);
+
+  document.getElementById('numPendientes').textContent = atencion.length + normal.length;
+  document.getElementById('conteoPendientes').textContent = (atencion.length + normal.length)
+    ? atencion.length+' de atención · '+normal.length+' normales' : 'al día';
+  document.getElementById('chipPendientes').textContent = atencion.length
+    ? atencion.length+' requieren atención inmediata' : '';
+
+  const cuerpo = document.getElementById('cuerpoPendientes');
+  let html = '';
+
+  html += '<div style="margin-bottom:12px"><input type="text" id="buscadorPend" placeholder="Buscar producto por nombre…" '+
+    'value="'+esc(FILTRO_BUSQUEDA)+'" oninput="filtrarPendientes(this.value)" '+
+    'style="width:100%;padding:8px 12px;border:1px solid var(--linea,#ddd);border-radius:8px;font-size:14px"></div>';
+
+  html += '<div class="subtitulo-bloque">Atención inmediata — estás perdiendo o el precio cambia ≥'+pct(umbral)+' ('+atencionF.length+')</div>';
+  if (!atencionF.length) html += '<div class="vacio">'+(FILTRO_BUSQUEDA?'Nada coincide con la búsqueda.':'Nada urgente ahora mismo.')+'</div>';
+  for (const {p, ev, ai} of atencionF) {
+    const motivo = (ai.perdiendo ? '<span class="chip chip-alerta">Perdiendo</span>' : '')+
+                   (ai.cambioGrande ? '<span class="chip chip-revision">Cambio ≥'+pct(umbral)+'</span>' : '');
+    html += filaPropuesta(p, ev, motivo);
+  }
+
+  html += '<div class="subtitulo-bloque">Actualización normal — cada uno según la regla de su clasificación ('+normalF.length+')</div>';
+  if (!normalF.length) html += '<div class="vacio">'+(FILTRO_BUSQUEDA?'Nada coincide con la búsqueda.':'Sin cambios normales pendientes.')+'</div>';
+  for (const {p, ev} of normalF) html += filaPropuesta(p, ev, '');
+
+  cuerpo.innerHTML = html;
+  const bus = document.getElementById('buscadorPend');
+  if (bus && FILTRO_BUSQUEDA) { bus.focus(); bus.setSelectionRange(bus.value.length, bus.value.length); }
+  actualizarBarra();
+}
+function marcar(id, activo){
+  if (activo) SELECCION[id] = SELECCION[id] || { precio: null };
+  else delete SELECCION[id];
+  pintarPendientes();
+}
+function editarPrecio(id, valor){
+  const p = PRODUCTOS.find(x=>x.id===id); if (!p || !SELECCION[id]) return;
+  const precio = parseFloat(valor);
+  if (!precio || precio<=0) return;
+  SELECCION[id].precio = precio;
+  const m = 1 - p.costo/precio;
+  const inMargen = document.getElementById('edit-margen-'+id);
+  if (inMargen && document.activeElement !== inMargen) inMargen.value = (m*100).toFixed(1);
+  actualizarResultadoEdicion(id, p, m);
+}
+function editarMargen(id, valor){
+  const p = PRODUCTOS.find(x=>x.id===id); if (!p || !SELECCION[id]) return;
+  const m = parseFloat(valor)/100;
+  if (isNaN(m) || m>=1) return;
+  const precio = Math.round((p.costo/(1-m))*100)/100;
+  SELECCION[id].precio = precio;
+  const inPrecio = document.getElementById('edit-precio-'+id);
+  if (inPrecio && document.activeElement !== inPrecio) inPrecio.value = precio.toFixed(2);
+  actualizarResultadoEdicion(id, p, m);
+}
+function actualizarResultadoEdicion(id, p, m){
+  const res = document.getElementById('edit-res-'+id);
+  const bajoPiso = m < p.piso;
+  if (res) { res.textContent = bajoPiso ? 'Debajo del piso de '+pct(p.piso) : 'Margen resultante: '+pct(m);
+    res.classList.toggle('rojo', bajoPiso); }
+  actualizarBarra();
+}
+function actualizarBarra(){
+  const n = Object.keys(SELECCION).length;
+  const barra = document.getElementById('barraFinal');
+  barra.classList.toggle('visible', n>0);
+  if (n>0) document.getElementById('resumenBarra').innerHTML =
+    '<strong>'+n+'</strong> cambio'+(n>1?'s':'')+' de precio seleccionado'+(n>1?'s':'')+' — se escribirán a Odoo con tu aprobación';
+}
+async function aplicarSeleccionados(){
+  const cambios = [], bajoPiso = [];
+  for (const p of PRODUCTOS) {
+    const sel = SELECCION[p.id];
+    if (!sel || !p._propuesta) continue;
+    const precio = sel.precio != null ? sel.precio : p._propuesta.sugerido;
+    const m = 1 - p.costo/precio;
+    if (m < p.piso) bajoPiso.push(p.nombre);
+    const editado = sel.precio != null && Math.abs(sel.precio - p._propuesta.sugerido) > 0.005;
+    cambios.push({ id:p.id, nombre:p.nombre, precio_anterior:p.precio, precio_nuevo:precio,
+      motivo: editado ? 'Precio ajustado manualmente (regla sugería '+dinero(p._propuesta.sugerido)+')' : p._propuesta.motivo,
+      regla: editado ? 'manual' : p._propuesta.regla });
+  }
+  if (!cambios.length) return;
+  if (bajoPiso.length) {
+    const ok = confirm('Atención: '+bajoPiso.length+' precio(s) quedarían DEBAJO del piso de su categoría:\n\n'+bajoPiso.slice(0,8).join('\n')+
+      (bajoPiso.length>8?'\n…':'')+'\n\n¿Confirmas aplicarlos de todas formas?');
+    if (!ok) return;
+  }
+  const boton = document.getElementById('botonAplicar');
+  boton.disabled = true; boton.textContent = 'Aplicando…';
+  try {
+    const r = await llamar('/luca/pricing/precios/aplicar', { method:'POST',
+      body: JSON.stringify({ cambios, usuario: USUARIO }) });
+    SHA = r.sha;
+    const fallidos = r.resultados.filter(x=>!x.ok).length;
+    aviso(fallidos? 'error':'exito', fallidos
+      ? (cambios.length-fallidos)+' aplicados, '+fallidos+' fallaron — vuelve a cargar y reintenta'
+      : cambios.length+' precios actualizados en Odoo y registrados en el historial');
+    SELECCION = {};
+    await cargarTodo();
+  } catch(e) { aviso('error','No se pudo aplicar: '+e.message); }
+  boton.disabled = false; boton.textContent = 'Aplicar a Odoo';
+}
+
+// ---------------- Benchmark (registros ya armados por el backend)
+function pintarBenchmark(){
+  const registros = BENCHMARK_PANEL.registros || [];
+  document.getElementById('numBenchViejo').textContent = BENCHMARK_PANEL.vencidas || 0;
+  document.getElementById('conteoBenchmark').textContent = (BENCHMARK_PANEL.total||0) ? BENCHMARK_PANEL.total+' registros' : 'sin datos aún';
+  const cuerpo = document.getElementById('cuerpoBenchmark');
+  let html = '';
+  html += '<div class="subtitulo-bloque">Precios capturados</div>';
+  if (!registros.length) html += '<div class="vacio">Todavía no hay precios de competidor. Usa "Capturar precio" para los manuales.</div>';
+  else {
+    for (const b of registros) {
+      let comp = '';
+      if (b.tu_precio != null) { comp = ' · tu precio '+dinero(b.tu_precio)+' ('+(b.dif_vs_tu_precio>=0?'+':'')+pct(b.dif_vs_tu_precio)+')'; }
+      const viejo = b.vencido ? ' <span class="chip chip-revision">Desactualizado</span>' : '';
+      html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(b.producto)+'</div>'+
+        '<div class="detalle">'+esc(b.competidor)+': <strong>'+dinero(b.precio_sin_iva)+'</strong>'+comp+
+        ' · capturado '+esc(b.fecha_captura)+(b.nota?' · '+esc(b.nota):'')+'</div></div>'+
+        '<div class="derecha">'+viejo+'</div></div>';
+    }
+  }
+  cuerpo.innerHTML = html;
+}
+// ---------------- Posiciones activas
+function pintarPosiciones(){
+  const activas = (ESTADO.posiciones||[]).filter(p=>p.estado!=='resuelta');
+  const resueltas = (ESTADO.posiciones||[]).filter(p=>p.estado==='resuelta');
+  const max = (ESTADO.parametros && ESTADO.parametros.max_posiciones) || META.max_posiciones || 15;
+  document.getElementById('conteoPosiciones').textContent = activas.length+' de '+max+' activas';
+  document.getElementById('chipPosiciones').textContent = resueltas.length ? resueltas.length+' resueltas' : '';
+  const cuerpo = document.getElementById('cuerpoPosiciones');
+  let html = '';
+  for (const pos of activas) {
+    const chip = '<span class="chip '+(CHIP_POS_ESTADO[pos.estado]||'chip-neutro')+'">'+esc(NOMBRES_POS_ESTADO[pos.estado]||pos.estado)+'</span>'+
+      (pos.kvi_imagen?' <span class="chip chip-info">KVI de imagen</span>':'');
+    const ultimaNota = pos.notas.length ? pos.notas[0] : null;
+    html += '<div class="pos-tarjeta" onclick="abrirPosicion(\''+pos.id+'\')">'+
+      '<div class="pos-cabeza"><div class="pos-nombre">'+esc(pos.nombre)+'</div><div>'+chip+'</div></div>'+
+      '<div class="pos-detalle">SKU: <strong>'+esc(pos.sku)+'</strong> · demanda '+dineroCorto(pos.demanda_anual)+'/año · '+pos.clientes+' clientes</div>'+
+      '<div class="pos-detalle">'+esc(pos.objetivo)+'</div>'+
+      (ultimaNota ? '<div class="pos-nota">'+esc(ultimaNota.fecha)+': '+esc(ultimaNota.texto)+'</div>' : '<div class="pos-nota">Sin notas aún</div>')+
+      '</div>';
+  }
+  const reserva = ESTADO.posiciones_reserva||[];
+  if (reserva.length) {
+    html += '<div class="subtitulo-bloque">En reserva — candidatas cuando se libere lugar</div>';
+    html += '<div style="padding:12px 16px;font-size:13px;color:var(--tinta-suave)">'+
+      reserva.map(r=>esc(r.nombre)+' ('+dineroCorto(r.demanda)+')').join(' · ')+'</div>';
+  }
+  if (resueltas.length) {
+    html += '<div class="subtitulo-bloque">Resueltas</div>';
+    for (const pos of resueltas) html += '<div class="fila"><div class="info"><div class="nombre-prod">'+esc(pos.nombre)+'</div>'+
+      '<div class="detalle">'+esc((pos.notas[0]&&pos.notas[0].texto)||'')+'</div></div>'+
+      '<div class="derecha"><span class="chip chip-ok">Resuelta</span></div></div>';
+  }
+  cuerpo.innerHTML = html || '<div class="vacio">Sin posiciones activas.</div>';
+}
+function abrirPosicion(id){
+  POS_ACTUAL = (ESTADO.posiciones||[]).find(p=>p.id===id);
+  if (!POS_ACTUAL) return;
+  const pos = POS_ACTUAL;
+  document.getElementById('posTitulo').textContent = pos.nombre;
+  document.getElementById('posDatos').textContent = 'Demanda '+dineroCorto(pos.demanda_anual)+'/año · '+pos.clientes+' clientes cotizan'+(pos.kvi_imagen?' · KVI de imagen':'');
+  // Benchmark de la posición ya asociado por el backend (por su odoo_product_id/SKU).
+  const asociados = POS_BENCHMARK[pos.id] || [];
+  document.getElementById('posBenchmark').innerHTML = asociados.length
+    ? '<div class="mensaje" style="background:var(--agua-claro);border:1px solid var(--agua);color:var(--tinta)">Benchmark: '+
+      asociados.map(b=>esc(b.competidor)+' '+dinero(b.precio_sin_iva)+' ('+esc(b.fecha_captura)+')').join(' · ')+'</div>'
+    : '';
+  document.getElementById('posSku').value = pos.sku;
+  document.getElementById('posEstado').value = pos.estado;
+  document.getElementById('posObjetivo').value = pos.objetivo;
+  document.getElementById('posNotaNueva').value = '';
+  document.getElementById('posNotas').innerHTML = pos.notas.slice(0,6).map(n =>
+    '<div class="nota-item"><div class="fecha">'+esc(n.fecha)+(n.usuario?' · '+esc(n.usuario):'')+'</div>'+esc(n.texto)+'</div>').join('');
+  document.getElementById('posHistorialSku').innerHTML = pos.sku_historial.length
+    ? 'Historial de SKU: '+pos.sku_historial.map(h=>esc(h.sku)+' ('+esc(h.desde)+' → '+esc(h.hasta)+')').join(' · ')
+    : '';
+  abrirVelo('veloPosicion');
+}
+async function guardarPosicion(){
+  if (!POS_ACTUAL) return;
+  const pos = POS_ACTUAL;
+  const nuevoSku = document.getElementById('posSku').value.trim();
+  if (nuevoSku && nuevoSku !== pos.sku) {
+    pos.sku_historial.unshift({ sku: pos.sku, desde: pos.sku_desde||pos.creada, hasta: hoyISO() });
+    pos.sku = nuevoSku; pos.sku_desde = hoyISO();
+  }
+  pos.estado = document.getElementById('posEstado').value;
+  pos.objetivo = document.getElementById('posObjetivo').value.trim();
+  const nota = document.getElementById('posNotaNueva').value.trim();
+  if (nota) pos.notas.unshift({ fecha: hoyISO(), texto: nota, usuario: USUARIO });
+  try {
+    await guardarEstadoCompleto('Pricing: posición actualizada — '+pos.nombre);
+    cerrarVelo('veloPosicion');
+    await cargarTodo();
+    aviso('exito','Posición guardada');
+  } catch(e) { aviso('error','No se pudo guardar: '+e.message); }
+}
+async function cerrarPosicion(){
+  if (!POS_ACTUAL) return;
+  const nota = document.getElementById('posNotaNueva').value.trim();
+  if (!nota) { aviso('error','Escribe una nota con el resultado antes de marcar la posición como resuelta'); return; }
+  POS_ACTUAL.estado = 'resuelta';
+  POS_ACTUAL.notas.unshift({ fecha: hoyISO(), texto: 'RESUELTA: '+nota, usuario: USUARIO });
+  try {
+    await guardarEstadoCompleto('Pricing: posición resuelta — '+POS_ACTUAL.nombre);
+    cerrarVelo('veloPosicion');
+    await cargarTodo();
+    aviso('exito','Posición marcada como resuelta');
+  } catch(e) { aviso('error', e.message); }
+}
+
+// ---------------- Experimentos: crear y decidir
+function abrirNuevoExperimento(productoId){
+  const activos = (ESTADO.experimentos||[]).filter(e=>e.estatus==='activo');
+  if (activos.length >= ((ESTADO.parametros && ESTADO.parametros.max_experimentos)||META.max_experimentos||3)) {
+    aviso('error','Ya hay '+activos.length+' experimentos activos. Cierra uno antes de abrir otro.'); return;
+  }
+  document.getElementById('expPrecio').value='';
+  document.getElementById('expHipotesis').value='';
+  document.getElementById('expContexto').style.display='none';
+  if (productoId) document.getElementById('expProducto').value = productoId;
+  abrirVelo('veloExperimento');
+  expActualizarContexto();
+}
+function expActualizarContexto(){
+  const id = parseInt(document.getElementById('expProducto').value);
+  const precio = parseFloat(document.getElementById('expPrecio').value);
+  const p = PRODUCTOS.find(x=>x.id===id);
+  const caja = document.getElementById('expContexto');
+  if (!p || !precio) { caja.style.display='none'; return; }
+  const mNuevo = 1 - p.costo/precio;
+  const mActual = margenActual(p);
+  let extra = '';
+  if (mNuevo < mActual && mNuevo > 0) {
+    const req = (mActual/mNuevo - 1);
+    extra = '<br>Para generar la misma contribución necesitas <strong>+'+pct(req)+'</strong> de volumen.';
+  }
+  let bench = '';
+  const b = p.benchmark.cheapest;
+  if (b) { bench = '<br>Contra '+esc(b.competidor)+' ('+dinero(b.precio_sin_iva)+').'; }
+  const piso = p.piso;
+  const alertaPiso = mNuevo < piso ? '<br><strong>Ojo:</strong> quedaría debajo del piso de '+pct(piso)+'.' : '';
+  caja.innerHTML = 'Margen resultante: <strong>'+pct(mNuevo)+'</strong> (hoy '+pct(mActual)+', costo '+dinero(p.costo)+').'+extra+bench+alertaPiso;
+  caja.style.display='block';
+}
+async function crearExperimento(){
+  const id = parseInt(document.getElementById('expProducto').value);
+  const precio = parseFloat(document.getElementById('expPrecio').value);
+  const hipotesis = document.getElementById('expHipotesis').value.trim();
+  const dias = parseInt(document.getElementById('expDias').value);
+  const posicionId = document.getElementById('expPosicion').value || null;
+  const p = PRODUCTOS.find(x=>x.id===id);
+  if (!p || !precio || !hipotesis) { aviso('error','Producto, precio de prueba e hipótesis son obligatorios'); return; }
+  const boton = document.getElementById('botonCrearExp');
+  boton.disabled = true; boton.textContent = 'Creando…';
+  try {
+    const r = await llamar('/luca/pricing/experimentos/crear', { method:'POST', body: JSON.stringify({
+      producto_id:p.id, producto:p.nombre, hipotesis,
+      precio_anterior:p.precio, precio_prueba:precio, dias, usuario:USUARIO, posicion_id:posicionId
+    })});
+    SHA = r.sha;
+    if (posicionId) {
+      const est = await llamar('/luca/pricing/estado');
+      ESTADO = est.estado; SHA = est.sha;
+      const pos = (ESTADO.posiciones||[]).find(x=>x.id===posicionId);
+      if (pos) {
+        pos.estado = 'en_experimento';
+        pos.experimento_id = r.experimento.id;
+        pos.notas.unshift({ fecha:hoyISO(), texto:'Experimento iniciado: '+p.nombre+' a '+dinero(precio)+' — '+hipotesis, usuario:USUARIO });
+        await guardarEstadoCompleto('Pricing: posición ligada a experimento — '+pos.nombre);
+      }
+    }
+    cerrarVelo('veloExperimento');
+    aviso('exito','Experimento iniciado: precio de prueba en Odoo y recordatorio creado para dentro de '+dias+' días');
+    await cargarTodo();
+  } catch(e) { aviso('error', e.message); }
+  boton.disabled = false; boton.textContent = 'Iniciar experimento';
+}
+async function abrirDecidir(expId){
+  EXP_ACTUAL = (ESTADO.experimentos||[]).find(e=>e.id===expId);
+  if (!EXP_ACTUAL) return;
+  document.getElementById('decidirTitulo').textContent = EXP_ACTUAL.producto;
+  document.getElementById('decidirHipotesis').textContent = 'Hipótesis: ' + EXP_ACTUAL.hipotesis +
+    ' · Precio: ' + dinero(EXP_ACTUAL.precio_anterior) + ' → ' + dinero(EXP_ACTUAL.precio_prueba);
+  document.getElementById('decidirMotivo').value = '';
+  document.getElementById('decidirComparacion').innerHTML =
+    '<div class="cargando"><div class="girador"></div><span>Trayendo resultados…</span></div>';
+  abrirVelo('veloDecidir');
+  try {
+    const r = await llamar('/luca/pricing/experimentos/'+expId+'/comparar');
+    const a = r.foto_inicial, b = r.foto_actual;
+    document.getElementById('decidirComparacion').innerHTML =
+      '<div class="comparacion">'+
+      '<div class="col"><h4>Antes (60 días previos)</h4>'+
+        '<div class="dato"><span>Pedidos</span><strong>'+a.pedidos+'</strong></div>'+
+        '<div class="dato"><span>Clientes</span><strong>'+a.clientes+'</strong></div>'+
+        '<div class="dato"><span>Unidades</span><strong>'+a.unidades+'</strong></div>'+
+        '<div class="dato"><span>Contribución</span><strong>'+dinero(a.contribucion)+'</strong></div></div>'+
+      '<div class="col"><h4>Desde el cambio ('+esc(b.desde)+')</h4>'+
+        '<div class="dato"><span>Pedidos</span><strong>'+b.pedidos+'</strong></div>'+
+        '<div class="dato"><span>Clientes</span><strong>'+b.clientes+'</strong></div>'+
+        '<div class="dato"><span>Unidades</span><strong>'+b.unidades+'</strong></div>'+
+        '<div class="dato"><span>Contribución</span><strong>'+dinero(b.contribucion)+'</strong></div></div>'+
+      '</div>'+
+      '<p style="font-size:12.5px;color:var(--tinta-suave)">La contribución (ingreso menos costo) es la métrica decisiva: si creció, el experimento funcionó.</p>';
+  } catch(e) {
+    document.getElementById('decidirComparacion').innerHTML =
+      '<div class="mensaje mensaje-error">No se pudo traer la comparación: '+esc(e.message)+'</div>';
+  }
+}
+async function decidirExperimento(decision){
+  const motivo = document.getElementById('decidirMotivo').value.trim();
+  if (!motivo) { aviso('error','El motivo es obligatorio para cualquier decisión'); return; }
+  if (!EXP_ACTUAL) return;
+  try {
+    await llamar('/luca/pricing/experimentos/'+EXP_ACTUAL.id+'/decidir', { method:'POST',
+      body: JSON.stringify({ decision, motivo, dias_extension:30, usuario:USUARIO }) });
+    if (EXP_ACTUAL.posicion_id && decision !== 'extender') {
+      const est = await llamar('/luca/pricing/estado');
+      ESTADO = est.estado; SHA = est.sha;
+      const pos = (ESTADO.posiciones||[]).find(x=>x.id===EXP_ACTUAL.posicion_id);
+      if (pos) {
+        pos.estado = decision === 'confirmar' ? 'estable' : 'pendiente';
+        pos.experimento_id = null;
+        pos.notas.unshift({ fecha:hoyISO(), texto:'Experimento '+decision+': '+motivo, usuario:USUARIO });
+        await guardarEstadoCompleto('Pricing: posición actualizada por experimento — '+pos.nombre);
+      }
+    }
+    cerrarVelo('veloDecidir');
+    aviso('exito','Experimento '+({confirmar:'confirmado',revertir:'revertido',extender:'extendido',cancelar:'cancelado'})[decision]);
+    await cargarTodo();
+  } catch(e) { aviso('error', e.message); }
+}
+
+// ---------------- Catálogo (en modal)
+function abrirCatalogo(){
+  pintarCatalogo();
+  abrirVelo('veloCatalogo');
+}
+function pintarCatalogo(){
+  const sub = document.getElementById('catalogoSub');
+  if (sub) sub.textContent = PRODUCTOS.length + ' productos · consulta y edita clasificación, fuente de compra y excepciones. Los cambios de clasificación no tocan precios en Odoo.';
+  const q = (document.getElementById('busqueda').value||'').toLowerCase();
+  const fs = document.getElementById('filtroSensibilidad').value;
+  const lista = PRODUCTOS.filter(p =>
+    (!q || p.nombre.toLowerCase().includes(q)) &&
+    (!fs || p.sensibilidad===fs || (fs==='solo_licitacion' && p.soloLic))
+  ).slice(0, 200);
+  document.getElementById('cuerpoCatalogo').innerHTML = lista.map(p => {
+    const m = margenActual(p);
+    const b = p.benchmark.cheapest;
+    let compHtml = '';
+    let chipComp = '';
+    if (b) {
+      const dif = b.dif_vs_precio;
+      const viejo = b.vencido;
+      compHtml = '<div class="detalle">Competencia: '+esc(b.competidor)+' '+dinero(b.precio_sin_iva)+
+        ' · estás <strong>'+(dif>=0?'+':'')+pct(dif)+'</strong>'+(viejo?' <span style="color:var(--revision)">(dato viejo)</span>':'')+'</div>';
+      chipComp = b.posicion==='arriba' ? '<span class="chip chip-sube">Arriba '+pct(dif)+'</span>'
+        : b.posicion==='abajo' ? '<span class="chip chip-baja">Abajo '+pct(-dif)+'</span>'
+        : '<span class="chip chip-ok">En mercado</span>';
+    }
+    const chips = chipComp +
+      '<span class="chip chip-neutro">'+esc(NOMBRES_SENS[p.sensibilidad]||p.sensibilidad)+'</span>'+
+      (p.soloLic ? '<span class="chip chip-info">Solo licitación</span>' : '')+
+      (p.fuente==='intermediario_riesgo' ? '<span class="chip chip-revision">Proveedor</span>' : '');
+    return '<div class="fila clicable" onclick="abrirProducto('+p.id+')">'+
+      '<div class="info"><div class="nombre-prod">'+esc(p.nombre)+'</div>'+
+      '<div class="detalle">Costo '+dinero(p.costo)+' · Precio '+dinero(p.precio)+' · Margen '+pct(m)+
+      ' · Regla '+pct(p.objetivo)+' · '+esc(NOMBRES_FUENTE[p.fuente]||'')+
+      (p.proveedor?' · '+esc(p.proveedor):'')+'</div>'+compHtml+'</div>'+
+      '<div class="derecha">'+chips+'</div></div>';
+  }).join('') || '<div class="vacio">Sin resultados.</div>';
+}
+let PROD_ACTUAL = null;
+function abrirProducto(id){
+  PROD_ACTUAL = PRODUCTOS.find(p=>p.id===id);
+  if (!PROD_ACTUAL) return;
+  const p = PROD_ACTUAL;
+  document.getElementById('prodTitulo').textContent = p.nombre;
+  let detalle = 'Costo '+dinero(p.costo)+' · Precio '+dinero(p.precio)+' · Margen actual '+pct(margenActual(p))+
+    ' · Categoría: '+p.categoria+(p.linea?' ('+p.linea.toUpperCase()+')':'');
+  const bProd = p.benchmark.cheapest;
+  if (bProd) {
+    const dif = bProd.dif_vs_precio;
+    detalle += ' — Competencia: '+bProd.competidor+' a '+dinero(bProd.precio_sin_iva)+
+      ', estás '+(dif>=0?'+':'')+pct(dif)+(bProd.vencido?' (dato viejo)':'');
+  } else {
+    detalle += ' — Sin dato de competencia capturado';
+  }
+  document.getElementById('prodDetalle').textContent = detalle;
+  const selS = document.getElementById('prodSensibilidad');
+  selS.innerHTML = Object.entries(NOMBRES_SENS).map(([k,v])=>'<option value="'+k+'">'+v+'</option>').join('');
+  selS.value = p.sensibilidad;
+  document.getElementById('prodFuente').value = (ESTADO.fuente||{})[p.nombre] || '';
+  const ex = p.excepcion;
+  document.getElementById('prodExcepcionTipo').value = ex ? ex.tipo : '';
+  document.getElementById('prodExcepcionValor').value = ex ? (ex.tipo==='margen' ? Math.round(ex.valor*1000)/10 : ex.precio) : '';
+  document.getElementById('prodExcepcionMotivo').value = ex ? (ex.motivo||'') : '';
+  document.getElementById('prodSoloLicitacion').checked = p.soloLic;
+  prodCambioExcepcion();
+  abrirVelo('veloProducto');
+}
+function prodCambioExcepcion(){
+  const tipo = document.getElementById('prodExcepcionTipo').value;
+  document.getElementById('prodCampoValor').style.display = tipo ? 'block' : 'none';
+  document.getElementById('prodCampoMotivo').style.display = tipo ? 'block' : 'none';
+  document.getElementById('prodEtiquetaValor').textContent = (FORMULARIOS.excepcion_label_valor || {})[tipo] || '';
+}
+async function guardarProducto(){
+  if (!PROD_ACTUAL) return;
+  const nom = PROD_ACTUAL.nombre;
+  const idProd = PROD_ACTUAL.id;
+  ESTADO.fuente = ESTADO.fuente || {};
+  ESTADO.excepciones = ESTADO.excepciones || {};
+  ESTADO.solo_licitacion = ESTADO.solo_licitacion || [];
+  const sens = document.getElementById('prodSensibilidad').value;
+  const fuente = document.getElementById('prodFuente').value;
+  if (fuente) ESTADO.fuente[nom] = fuente; else delete ESTADO.fuente[nom];
+  const exTipo = document.getElementById('prodExcepcionTipo').value;
+  if (exTipo) {
+    const valor = parseFloat(document.getElementById('prodExcepcionValor').value);
+    const motivo = document.getElementById('prodExcepcionMotivo').value.trim();
+    if (!valor || !motivo) { aviso('error','La excepción necesita valor y motivo'); return; }
+    ESTADO.excepciones[nom] = exTipo==='margen'
+      ? { tipo:'margen', valor: valor/100, motivo }
+      : { tipo:'tope', precio: valor, motivo };
+  } else delete ESTADO.excepciones[nom];
+  const soloLic = document.getElementById('prodSoloLicitacion').checked;
+  ESTADO.solo_licitacion = ESTADO.solo_licitacion.filter(n=>n!==nom);
+  if (soloLic) ESTADO.solo_licitacion.push(nom);
+  try {
+    // Sensibilidad → base de datos (product_attributes), al instante y por id.
+    await llamar('/luca/pricing/sensibilidad', {
+      method: 'POST',
+      body: JSON.stringify({ odoo_product_id: idProd, clasificacion: sens })
+    });
+    // Fuente, excepciones y solo_licitación siguen en el JSON de estado.
+    await guardarEstadoCompleto('Pricing: clasificación de '+nom);
+    cerrarVelo('veloProducto');
+    await cargarTodo();
+    aviso('exito','Clasificación guardada');
+  } catch(e) { aviso('error','No se pudo guardar: '+e.message); }
+}
+
+// ---------------- Diccionario (definiciones y nombres vienen del backend)
+function abrirDiccionario(){
+  const cuerpo = document.getElementById('cuerpoDiccionario');
+  let html = '';
+  for (const grupo in DICCIONARIO) {
+    html += '<div class="dicc-grupo"><h4>'+esc(grupo)+'</h4>';
+    for (const clave in DICCIONARIO[grupo]) {
+      const def = DICCIONARIO[grupo][clave];
+      const nombre = DICC_NOMBRES[clave] || clave;
+      let conteo = '', lista = '';
+      if (PRODUCTOS.length && (NOMBRES_SENS[clave] || NOMBRES_FUENTE[clave])) {
+        const enCat = NOMBRES_SENS[clave]
+          ? PRODUCTOS.filter(p=>p.sensibilidad===clave)
+          : PRODUCTOS.filter(p=>p.fuente===clave);
+        conteo = '<span class="conteo">'+enCat.length+' productos</span>';
+        if (enCat.length && enCat.length <= 60) {
+          const idLista = 'dicc-'+clave;
+          lista = '<span class="ver-productos" onclick="document.getElementById(\''+idLista+'\').classList.toggle(\'visible\')">Ver productos</span>'+
+            '<div class="dicc-lista" id="'+idLista+'">'+enCat.map(p=>'<div>'+esc(p.nombre)+'</div>').join('')+'</div>';
+        }
+      }
+      html += '<div class="dicc-termino"><div class="nombre">'+esc(nombre)+conteo+'</div>'+
+        '<div class="definicion">'+esc(def)+'</div>'+lista+'</div>';
+    }
+    html += '</div>';
+  }
+  cuerpo.innerHTML = html;
+  abrirVelo('veloDiccionario');
+}
+
+// ---------------- Menús de edición (opciones desde el backend, no en el HTML)
+function opcionesHTML(arr){ return (arr||[]).map(o=>'<option value="'+esc(o.v)+'">'+esc(o.t)+'</option>').join(''); }
+function llenarFormularios(){
+  const f = document.getElementById('prodFuente'); if (f) f.innerHTML = opcionesHTML(FORMULARIOS.fuente);
+  const e = document.getElementById('prodExcepcionTipo'); if (e) e.innerHTML = opcionesHTML(FORMULARIOS.excepcion);
+  const s = document.getElementById('posEstado'); if (s) s.innerHTML = opcionesHTML(FORMULARIOS.estado);
+}
+
+// ---------------- Selectores
+function llenarSelectores(){
+  document.getElementById('expProducto').innerHTML =
+    PRODUCTOS.map(p=>'<option value="'+p.id+'">'+esc(p.nombre)+'</option>').join('');
+  const activas = (ESTADO.posiciones||[]).filter(p=>p.estado!=='resuelta');
+  document.getElementById('expPosicion').innerHTML = '<option value="">Ninguna</option>'+
+    activas.map(p=>'<option value="'+p.id+'">'+esc(p.nombre)+'</option>').join('');
+  const fs = document.getElementById('filtroSensibilidad');
+  if (fs.options.length <= 1) {
+    fs.innerHTML = '<option value="">Todas las clasificaciones</option>'+
+      Object.entries(NOMBRES_SENS).map(([k,v])=>'<option value="'+k+'">'+v+'</option>').join('')+
+      '<option value="solo_licitacion">Solo licitación</option>';
+  }
+}
+
+// ---------------- Arranque
+if (BACKEND && CLAVE) cargarTodo(); else abrirConfig();
+</script>
+</body>
+</html>
