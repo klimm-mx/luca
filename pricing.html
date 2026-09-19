@@ -412,61 +412,18 @@ const CHIP_POS_ESTADO = {
   en_experimento:'chip-info', estable:'chip-ok', resuelta:'chip-ok'
 };
 
-// ============================================================ Semillas (se aplican una sola vez si el estado no las tiene)
-const POSICIONES_SEED = [
- {nombre:'Papel higiénico económico', sku:'Papel Higiénico Dalia (HD200)', estado:'en_negociacion', objetivo:'Conseguir costo directo con PSF / Papel Oro; hoy el costo vía Chrisalim está invertido', demanda:3377278, clientes:149, kvi:true},
- {nombre:'Toalla en rollo económica', sku:'Toalla Fapsa TR03610', estado:'pendiente', objetivo:'Encontrar bobina que compita con Marli (~$0.28/m) — proveedor alternativo o negociación PSF', demanda:2239265, clientes:101, kvi:true},
- {nombre:'Multiusos líquido a granel (20L)', sku:'Multiusos Klimm Smart (3 aromas)', estado:'esperando_datos', objetivo:'Calibrar margen de combate con precios de graneleros y arrancar experimento', demanda:1767708, clientes:158, kvi:true},
- {nombre:'Jabón para manos a granel (20L)', sku:'Jabón Klimm Smart Cereza 20L', estado:'esperando_datos', objetivo:'Calibrar margen de combate con graneleros', demanda:1746946, clientes:122, kvi:true},
- {nombre:'Cloro', sku:'Cloro Al 5.5% 20L Klimm', estado:'estable', objetivo:'Topado por mercado; validar que el tope siga vigente con benchmark de granelero', demanda:1441103, clientes:157, kvi:true},
- {nombre:'Desengrasante a granel (20L)', sku:'Desengrasante Klimm Smart 20L', estado:'esperando_datos', objetivo:'Calibrar margen de combate con graneleros', demanda:1122196, clientes:49, kvi:false},
- {nombre:'Toalla interdoblada económica', sku:'Toalla Interdoblada Dalitas (TI19800)', estado:'en_negociacion', objetivo:'Compra directa PSF (pedido programado); corregir margen a regla tras el nuevo costo', demanda:956311, clientes:104, kvi:true},
- {nombre:'Detergente en polvo económico', sku:'Detergente Útil 10 kg', estado:'pendiente', objetivo:'Resolver el costo del Útil o proponer Roma por defecto', demanda:896352, clientes:129, kvi:true},
- {nombre:'Mechudos y mops', sku:'Mechudo pabilo 500 gr San José', estado:'pendiente', objetivo:'Definir el SKU económico de la posición y validar precio', demanda:610539, clientes:130, kvi:true},
- {nombre:'Bolsas de basura', sku:'Bolsas Anguiplast (jumbo y grandes)', estado:'estable', objetivo:'Ya competitivo; negociar volumen con Anguiplast cuando el crecimiento lo permita', demanda:576976, clientes:115, kvi:true},
- {nombre:'Sanitizantes', sku:'Sanitizante Klimm Smart', estado:'pendiente', objetivo:'Validar demanda real post-pandemia antes de invertir esfuerzo', demanda:558020, clientes:52, kvi:false},
- {nombre:'Limpiavidrios a granel (20L)', sku:'Limpiavidrios Klimm Smart 20L', estado:'esperando_datos', objetivo:'Calibrar con graneleros (misma ronda que multiusos)', demanda:527039, clientes:73, kvi:false},
- {nombre:'Cubetas', sku:'Cubeta con prensa Gorilla 20L', estado:'pendiente', objetivo:'Revisar costo vs mercado; conversión baja con margen en regla', demanda:526947, clientes:93, kvi:false},
- {nombre:'Fibras y discos', sku:'Fibra Scotch-Brite P94 / P96', estado:'estable', objetivo:'Canal licitación — el precio de combate se decide por cotización, no en lista', demanda:412817, clientes:158, kvi:true},
- {nombre:'Escobas', sku:'Escoba Perico Normal P-140', estado:'pendiente', objetivo:'Primera candidata a experimento de reventa en cuanto haya lugar libre', demanda:365381, clientes:142, kvi:true}
-];
-const RESERVA_SEED = [
- {nombre:'Guantes', demanda:362336},{nombre:'Textiles de limpieza (jerga/franela)', demanda:321072},
- {nombre:'Aromatizantes', demanda:287756},{nombre:'Quitasarro / ácido', demanda:263647},
- {nombre:'Jaladores', demanda:223711},{nombre:'Lavatrastes', demanda:138568},
- {nombre:'Recogedores', demanda:136417},{nombre:'Accesorios / despachadores', demanda:103329},
- {nombre:'Servilletas', demanda:102140}
-];
-const TAREAS_BENCH_SEED = [
- {id:'gran-jabon', etiqueta:'Jabón para manos 20L — granelero', claves:['jabón','20']},
- {id:'gran-multiusos', etiqueta:'Multiusos 20L — granelero', claves:['multiusos','20']},
- {id:'gran-desengrasante', etiqueta:'Desengrasante 20L (con y libre de sosa) — granelero', claves:['desengrasante','20']},
- {id:'gran-cloro', etiqueta:'Cloro 5.5% y 13% 20L — granelero', claves:['cloro','20']},
- {id:'gran-lavatrastes', etiqueta:'Lavatrastes 20L — granelero', claves:['lavatrastes','20']},
- {id:'gran-quitasarro', etiqueta:'Quitasarro / ácido — granelero', claves:['quitasarro']},
- {id:'gran-sanitizante', etiqueta:'Sanitizante 20L — granelero', claves:['sanitizante','20']}
-];
-
-function sembrarEstadoSiFalta(){
-  let cambio = false;
-  if (!Array.isArray(ESTADO.posiciones)) {
-    ESTADO.posiciones = POSICIONES_SEED.map((p,i)=>({
-      id:'pos-'+(i+1), nombre:p.nombre, sku:p.sku, sku_historial:[],
-      estado:p.estado, objetivo:p.objetivo, demanda_anual:p.demanda,
-      clientes:p.clientes, kvi_imagen:p.kvi, notas:[], experimento_id:null,
-      creada:hoyISO()
-    }));
-    cambio = true;
-  }
-  if (!Array.isArray(ESTADO.posiciones_reserva)) { ESTADO.posiciones_reserva = RESERVA_SEED.slice(); cambio = true; }
-  // Seed de ESTADO.benchmark_fuentes RETIRADO (5-ago-2026, Hallazgo 1): eran
-  // nombres hardcodeados ("Chrisalim"/"Mesones") de un scraper de Pricing ya
-  // retirado (Pendiente C). Ya no se siembra ni se usa.
-  if (!Array.isArray(ESTADO.benchmark_tareas)) { ESTADO.benchmark_tareas = TAREAS_BENCH_SEED.slice(); cambio = true; }
-  if (!ESTADO.parametros.max_posiciones) { ESTADO.parametros.max_posiciones = 15; cambio = true; }
-  if (!ESTADO.parametros.posicion_dias_estancada) { ESTADO.parametros.posicion_dias_estancada = 45; cambio = true; }
-  return cambio;
-}
+// ============================================================ Inicialización de estado
+// [ETAPA 5a seguridad, 19-sep-2026] Las "semillas" (posiciones estratégicas,
+// reserva y tareas de benchmark) se RETIRARON de esta página. Eran datos de
+// negociación sensibles —SKU, objetivo, demanda y clientes de cada posición—
+// escritos en texto plano y visibles con "ver código fuente". Ya vivían por
+// duplicado en el estado de Postgres (privado), que es la fuente de verdad, así
+// que aquí eran solo peso muerto: la siembra únicamente actuaba "si el estado no
+// las tenía", y el estado SÍ las tiene. Se deja la función como no-op para no
+// tocar su punto de llamada; el comportamiento es idéntico. Si algún día el
+// estado quedara vacío y hubiera que re-sembrar, los datos se recuperan del
+// respaldo (Postgres / historial de Git), NO de esta página pública.
+function sembrarEstadoSiFalta(){ return false; }
 async function guardarEstadoCompleto(mensaje){
   const r = await llamar('/luca/pricing/estado', { method:'POST',
     body: JSON.stringify({ estado: ESTADO, sha: SHA, mensaje }) });
@@ -564,7 +521,7 @@ function benchmarkTodos(prod){
   const id = (prod && typeof prod === 'object') ? prod.id : prod;
   return BENCHMARK[id] || [];
 }
-// Texto legible del benchmark: "Mesones $85.35 (+27%) · Chrisalim $86.72 (+25%)".
+// Texto legible del benchmark: "Competidor A $85.35 (+27%) · Competidor B $86.72 (+25%)".
 // precioUsado es tu precio propuesto, para calcular la brecha contra cada uno.
 function benchmarkTexto(prod, precioUsado){
   const entradas = benchmarkTodos(prod);
@@ -954,7 +911,7 @@ function pintarBenchmark(){
   let html = '';
 
   // Bloque "Fuentes automáticas" RETIRADO (5-ago-2026, Hallazgo 1). Mostraba
-  // ESTADO.benchmark_fuentes (nombres hardcodeados "Chrisalim"/"Mesones" en el JSON,
+  // ESTADO.benchmark_fuentes (nombres de proveedores hardcodeados en el JSON,
   // que no respetaban Odoo) y el estado de un scraper de Pricing que ya se retiró
   // (Pendiente C). El refresco del benchmark vive ahora en Costos (scraper.js ->
   // ofertas) y los nombres se resuelven desde Odoo (GET /benchmark). Este panel ya
