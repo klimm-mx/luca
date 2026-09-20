@@ -668,11 +668,12 @@ function asignarManual(indicePendiente, ocId, lineaId){
    Ese concepto se registra como línea de servicio, aparte de la cascada de match. */
 
 function reglasServicioDefault(){
-  // Semilla del caso conocido. El productoServicioId real se completa en config
-  // (es el id del producto "Servicio de entrega" que ya existe en Odoo).
-  return [
-    { rfc:'', textoContiene:'AMIDA DE COCO', productoServicioId:255, etiqueta:'Servicio de entrega' }
-  ];
+  // [ETAPA seguridad, 19-sep-2026] Las reglas de servicio (que incluyen nombre de
+  // proveedor + id de producto de Odoo, dato sensible) YA NO se hardcodean en esta
+  // página pública. Viven en el ESTADO privado (Postgres, detrás de la clave) y se
+  // siembran ahí una sola vez por el script de migración. Aquí el arranque es vacío;
+  // reglasServicio() toma lo que traiga el ESTADO.
+  return [];
 }
 function reglasServicio(){
   if(!ESTADO.reglasServicio) ESTADO.reglasServicio = reglasServicioDefault();
