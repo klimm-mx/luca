@@ -10,109 +10,100 @@
   --agua:#0FA3C7; --agua-oscuro:#0B7E9A; --agua-claro:#E3F4F9;
   --ok:#1B9E63; --ok-bg:#E8F6EF; --media:#C7871B; --media-bg:#FBF3E3;
   --alerta:#C43D3D; --alerta-bg:#FBECEC; --revision:#B06A00; --revision-bg:#FFF6E8;
-  --borde:#DCE7EB; --radio:10px;
+  --borde:#DCE7EB; --radio:12px; --sombra:0 1px 2px rgba(22,50,59,.04),0 8px 24px rgba(22,50,59,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--tinta);font-size:15px;line-height:1.5;padding-bottom:110px}
-.contenedor{max-width:880px;margin:0 auto;padding:0 20px}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--tinta);font-size:15px;line-height:1.5;padding-bottom:40px}
+.contenedor{max-width:760px;margin:0 auto;padding:0 20px}
+.num{font-variant-numeric:tabular-nums}
 
-header{background:var(--superficie);border-bottom:1px solid var(--borde);padding:14px 0;margin-bottom:28px}
-header .contenedor{display:flex;align-items:baseline;justify-content:space-between}
-.marca{font-size:20px;font-weight:700;letter-spacing:-.3px}
+header{background:var(--superficie);border-bottom:1px solid var(--borde);padding:14px 0;margin-bottom:20px}
+header .contenedor{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.marca{font-size:19px;font-weight:700;letter-spacing:-.3px}
 .marca span{color:var(--agua)}
-.sistema{font-size:12px;color:var(--tinta-suave);letter-spacing:.8px;text-transform:uppercase}
-
-.paso{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:22px;margin-bottom:18px}
-.paso-titulo{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.paso-num{width:26px;height:26px;border-radius:50%;background:var(--agua-claro);color:var(--agua-oscuro);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.paso-titulo h2{font-size:16px;font-weight:600}
+.sistema{font-size:11px;color:var(--tinta-suave);letter-spacing:.8px;text-transform:uppercase;font-weight:600}
 
 label{display:block;font-size:13px;font-weight:600;color:var(--tinta-suave);margin-bottom:6px}
-input[type=text],input[type=password],input[type=date],select{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
+input[type=text],input[type=password],select{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
 input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;border-color:var(--agua)}
 
-.zona-archivo{border:2px dashed var(--borde);border-radius:var(--radio);padding:28px;text-align:center;color:var(--tinta-suave);cursor:pointer}
-.zona-archivo.arrastre{border-color:var(--agua);background:var(--agua-claro)}
-.zona-archivo strong{color:var(--agua-oscuro)}
-.archivo-cargado{display:flex;align-items:center;justify-content:space-between;background:var(--ok-bg);border:1px solid var(--ok);border-radius:8px;padding:10px 14px;color:var(--ok);font-weight:600;margin-top:10px}
-.quitar{background:none;border:none;color:var(--tinta-suave);cursor:pointer;font-size:13px;text-decoration:underline}
-
-.boton{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.boton{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .boton-principal{background:var(--agua);color:#fff}
 .boton-principal:hover{background:var(--agua-oscuro)}
 .boton-principal:disabled{background:var(--borde);color:var(--tinta-suave);cursor:not-allowed}
 .boton-secundario{background:var(--superficie);color:var(--tinta);border:1px solid var(--borde)}
-.boton-peligro{background:var(--alerta);color:#fff}
-.boton-chico{padding:7px 14px;font-size:13px}
+.boton-chico{padding:8px 14px;font-size:13px}
 
-.tarjeta{border:1px solid var(--borde);border-radius:var(--radio);padding:16px;margin-bottom:12px;background:var(--superficie)}
-.tarjeta.verde{border-left:4px solid var(--ok)}
-.tarjeta.amarillo{border-left:4px solid var(--media);background:var(--media-bg)}
-.tarjeta.rojo{border-left:4px solid var(--alerta);background:var(--alerta-bg)}
-.tarjeta.parcial{border-left:4px solid var(--revision);background:var(--revision-bg)}
-.tarjeta.cerrada{opacity:.6}
-.tarjeta-encabezado{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.tarjeta-encabezado .titulo{font-weight:700;font-size:15px}
-.tarjeta-encabezado .sub{font-size:13px;color:var(--tinta-suave)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}
-.chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.3px}
-.chip-verde{background:var(--ok-bg);color:var(--ok)}
-.chip-amarillo{background:var(--media-bg);color:var(--media);border:1px solid var(--media)}
-.chip-rojo{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
-.chip-parcial{background:var(--revision-bg);color:var(--revision);border:1px solid var(--revision)}
-.chip-info{background:var(--agua-claro);color:var(--agua-oscuro)}
-.chip-gris{background:var(--fondo);color:var(--tinta-suave);border:1px solid var(--borde)}
+/* Barra de control (ingesta + volver a correr) */
+.control{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);box-shadow:var(--sombra);padding:16px 18px;margin-bottom:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.zona-archivo{flex:1;min-width:220px;border:1.5px dashed var(--borde);border-radius:9px;padding:14px;text-align:center;color:var(--tinta-suave);cursor:pointer;font-size:13.5px;background:var(--fondo)}
+.zona-archivo:hover,.zona-archivo.arrastre{border-color:var(--agua);background:var(--agua-claro)}
+.zona-archivo strong{color:var(--agua-oscuro)}
+.cfdi-info{font-size:12.5px;color:var(--ok);font-weight:600;margin-top:8px}
 
-.resumen-simple{font-size:14px;margin-top:8px}
-.detalle-lineas{margin-top:12px;border-top:1px solid var(--borde);padding-top:12px;display:none}
-.detalle-lineas.visible{display:block}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;color:var(--tinta-suave);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--borde)}
-td{padding:8px;border-bottom:1px solid var(--borde);vertical-align:top}
-tr:last-child td{border-bottom:none}
-.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.dif-mas{color:var(--alerta);font-weight:700}
-.dif-menos{color:var(--ok);font-weight:700}
-.linea-falta td{color:var(--tinta-suave)}
-.acciones-tarjeta{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center}
-.enlace-detalle{background:none;border:none;color:var(--agua-oscuro);cursor:pointer;font-size:13px;font-weight:600;text-decoration:underline;font-family:inherit;padding:0}
+/* Resumen (contadores) */
+.resumen{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:560px){.resumen{grid-template-columns:1fr}}
+.tile{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:14px 16px;position:relative;overflow:hidden}
+.tile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+.tile.ok::before{background:var(--ok)} .tile.atn::before{background:var(--media)} .tile.esp::before{background:var(--tinta-suave)}
+.tile .cifra{font-size:30px;font-weight:700;line-height:1}
+.tile.ok .cifra{color:var(--ok)} .tile.atn .cifra{color:var(--media)} .tile.esp .cifra{color:var(--tinta-suave)}
+.tile .rot{font-size:12.5px;color:var(--tinta-suave);margin-top:5px}
 
-.aviso{font-size:12.5px;color:var(--revision);margin-top:8px;padding-left:18px;position:relative}
-.aviso::before{content:'⚠';position:absolute;left:0}
+.titulo-sec{font-size:12px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--tinta-suave);margin:20px 0 10px}
 
-.mensaje{padding:14px 16px;border-radius:var(--radio);margin-bottom:16px;font-size:14px}
+/* Tarjetas del tablero */
+.tarjeta{background:var(--superficie);border:1px solid var(--borde);border-left-width:5px;border-radius:var(--radio);box-shadow:var(--sombra);overflow:hidden;margin-bottom:12px}
+.tarjeta.t-precio{border-left-color:var(--media)} .tarjeta.t-parcial{border-left-color:var(--revision)}
+.tarjeta.t-cfdi{border-left-color:var(--alerta)} .tarjeta.t-ok{border-left-color:var(--ok)}
+.tarjeta.t-esp{border-left-color:var(--tinta-suave)} .tarjeta.t-odoo{border-left-color:var(--agua)}
+.cuerpo{padding:15px 17px}
+.fila-tit{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.titp{font-size:15.5px;font-weight:700;line-height:1.3}
+.quien{font-size:12.5px;color:var(--tinta-suave);margin-top:2px}
+.etq{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.t-precio .etq{background:var(--media-bg);color:var(--media)} .t-parcial .etq{background:var(--revision-bg);color:var(--revision)}
+.t-cfdi .etq{background:var(--alerta-bg);color:var(--alerta)} .t-ok .etq{background:var(--ok-bg);color:var(--ok)}
+.t-esp .etq{background:#EEF3F5;color:var(--tinta-suave)} .t-odoo .etq{background:var(--agua-claro);color:var(--agua-oscuro)}
+.porque{font-size:13.5px;color:var(--tinta);margin-top:7px}
+.evid{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.ev{background:var(--fondo);border:1px solid var(--borde);border-radius:8px;padding:7px 10px;min-width:92px}
+.ev .k{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--tinta-suave);font-weight:600}
+.ev .v{font-size:14px;font-weight:700;margin-top:1px}
+.ev .v .up{color:var(--media)} .ev .v .dn{color:var(--ok)}
+
+.acciones{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.acciones select{margin-bottom:2px}
+.btn{font-family:inherit;font-size:14px;font-weight:600;padding:11px 14px;border-radius:9px;cursor:pointer;border:1px solid var(--borde);background:var(--superficie);color:var(--tinta);text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
+.btn:hover{border-color:var(--agua)}
+.btn.primaria{background:var(--agua);border-color:var(--agua);color:#fff} .btn.primaria:hover{background:var(--agua-oscuro)}
+.btn.peligro{color:var(--alerta);border-color:#E6C9C9} .btn.peligro:hover{background:var(--alerta-bg);border-color:var(--alerta)}
+.btn .rec{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;background:rgba(255,255,255,.22);padding:2px 8px;border-radius:20px}
+.btn .money{opacity:.85;font-size:12px;font-weight:500} .btn.secundaria .money{color:var(--tinta-suave)}
+
+.enpausa{background:#EEF3F5;padding:12px 17px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.enpausa .txt{font-size:13px;color:var(--tinta-suave);font-weight:600}
+.enlace{background:none;border:none;color:var(--tinta-suave);font-size:13px;font-family:inherit;cursor:pointer;text-decoration:underline}
+.detalle{margin-top:11px;font-size:12.5px}
+.detalle table{width:100%;border-collapse:collapse}
+.detalle th{text-align:left;color:var(--tinta-suave);font-weight:600;padding:4px 6px;border-bottom:1px solid var(--borde);font-size:11px}
+.detalle td{padding:5px 6px;border-bottom:1px solid var(--borde)}
+.detalle .up{color:var(--media);font-weight:700} .detalle .dn{color:var(--ok);font-weight:700}
+
+.vacio{padding:30px 18px;text-align:center;color:var(--tinta-suave);font-size:14px;background:var(--superficie);border:1px dashed var(--borde);border-radius:var(--radio)}
+.mensaje{padding:13px 16px;border-radius:var(--radio);margin-bottom:16px;font-size:14px}
 .mensaje-error{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
 .mensaje-exito{background:var(--ok-bg);border:1px solid var(--ok);color:var(--ok)}
-.cargando{display:flex;align-items:center;gap:12px;padding:20px;justify-content:center;color:var(--tinta-suave)}
-.girador{width:22px;height:22px;border:3px solid var(--borde);border-top-color:var(--agua);border-radius:50%;animation:girar .8s linear infinite}
+.cargando{display:flex;align-items:center;gap:12px;padding:16px;justify-content:center;color:var(--tinta-suave)}
+.girador{width:20px;height:20px;border:3px solid var(--borde);border-top-color:var(--agua);border-radius:50%;animation:girar .8s linear infinite}
 @keyframes girar{to{transform:rotate(360deg)}}
-.nota-pie{font-size:12px;color:var(--tinta-suave);margin-top:8px}
-
-.estado-inicio{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px}
-.dato-inicio{flex:1;min-width:140px;background:var(--fondo);border:1px solid var(--borde);border-radius:8px;padding:12px 14px}
-.dato-inicio .cifra{font-size:24px;font-weight:700}
-.dato-inicio .etiqueta{font-size:12px;color:var(--tinta-suave)}
-
-.fila-fechas{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
-.fila-fechas>div{flex:1;min-width:150px}
+.pie{font-size:12px;color:var(--tinta-suave);text-align:center;margin-top:22px}
 
 .velo{position:fixed;inset:0;background:rgba(22,50,59,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
 .velo.visible{display:flex}
-.modal{background:var(--superficie);border-radius:var(--radio);padding:26px;max-width:460px;width:100%;max-height:90vh;overflow-y:auto}
-.modal h3{margin-bottom:6px}
-.modal p{font-size:13px;color:var(--tinta-suave);margin-bottom:16px}
-.modal .campo{margin-bottom:14px}
-
-.barra-final{position:fixed;bottom:0;left:0;right:0;background:var(--superficie);border-top:1px solid var(--borde);padding:14px 0;box-shadow:0 -4px 20px rgba(22,50,59,.08);display:none;z-index:30}
-.barra-final.visible{display:block}
-.barra-final .contenedor{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.resumen-texto{font-size:14px}
-.resumen-texto strong{font-size:16px}
-
-@media(max-width:640px){
-  .barra-final .contenedor{flex-direction:column;align-items:stretch}
-  .fila-fechas{flex-direction:column}
-}
+.modal{background:var(--superficie);border-radius:var(--radio);padding:24px;max-width:440px;width:100%}
+.modal h3{margin-bottom:6px} .modal p{font-size:13px;color:var(--tinta-suave);margin-bottom:16px} .modal .campo{margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -120,102 +111,41 @@ tr:last-child td{border-bottom:none}
 <header>
   <div class="contenedor">
     <div class="marca">Klimm <span>· Conciliador de Compras</span></div>
-    <div class="sistema">Sistema Luca</div>
+    <div class="sistema">Sistema Luca · Revisión</div>
   </div>
 </header>
 
 <div class="contenedor">
-
   <div id="avisoGlobal"></div>
 
-  <!-- INICIO: estado del conciliador -->
-  <section class="paso" id="pasoInicio">
-    <div class="paso-titulo"><div class="paso-num">●</div><h2>Estado del conciliador</h2></div>
-    <div class="estado-inicio">
-      <div class="dato-inicio"><div class="cifra" id="cifraPendientes">—</div><div class="etiqueta">Órdenes de compra pendientes de cortes anteriores</div></div>
-      <div class="dato-inicio"><div class="cifra" id="cifraProveedores">—</div><div class="etiqueta">Proveedores en el catálogo</div></div>
-    </div>
-    <div class="nota-pie" id="notaUltimoGuardado" style="text-align:left"></div>
-  </section>
-
-  <!-- PASO 1: Período y compras de Odoo -->
-  <section class="paso">
-    <div class="paso-titulo"><div class="paso-num">1</div><h2>Período del corte</h2></div>
-    <div class="fila-fechas">
-      <div><label for="fechaDesde">Desde (lunes)</label><input type="date" id="fechaDesde"></div>
-      <div><label for="fechaHasta">Hasta (domingo)</label><input type="date" id="fechaHasta"></div>
-      <div style="flex:0"><button class="boton boton-principal" id="botonTraer" onclick="traerCompras()">Traer compras de Odoo</button></div>
-    </div>
-    <div id="resultadoCompras"></div>
-  </section>
-
-  <!-- PASO 2: CFDIs -->
-  <section class="paso" id="pasoCfdi" style="display:none">
-    <div class="paso-titulo"><div class="paso-num">2</div><h2>Sube los CFDIs de los proveedores</h2></div>
+  <!-- Control: subir CFDIs + volver a correr -->
+  <div class="control">
     <div class="zona-archivo" id="zonaCfdi" onclick="document.getElementById('entradaCfdi').click()">
-      <strong>Haz clic para elegir los XML</strong> o arrástralos aquí<br>
-      <span style="font-size:12.5px">Puedes soltar varios a la vez. Solo archivos .xml del SAT.</span>
+      <strong>Subir CFDIs</strong> — arrastra los .xml del SAT o haz clic
+      <div class="cfdi-info" id="cfdiInfo"></div>
     </div>
     <input type="file" id="entradaCfdi" accept=".xml" multiple style="display:none">
-    <div id="listaCfdis"></div>
-  </section>
-
-  <!-- PASO 3: Extracto de Clara -->
-  <section class="paso" id="pasoClara" style="display:none">
-    <div class="paso-titulo"><div class="paso-num">3</div><h2>Sube el extracto de la tarjeta (Clara)</h2></div>
-    <div class="zona-archivo" id="zonaClara" onclick="document.getElementById('entradaClara').click()">
-      <strong>Haz clic para elegir el CSV</strong> o arrástralo aquí<br>
-      <span style="font-size:12.5px">El archivo que descargas del portal de Clara con los cargos del período.</span>
-    </div>
-    <input type="file" id="entradaClara" accept=".csv,.txt" style="display:none">
-    <div id="resultadoClara"></div>
-    <div class="acciones-tarjeta" id="accionClara" style="display:none">
-      <button class="boton boton-secundario boton-chico" onclick="omitirClara()">Esta semana no hay cargos de tarjeta — continuar sin extracto</button>
-    </div>
-  </section>
-
-  <!-- PASO 4: Conciliación -->
-  <section class="paso" id="pasoConciliar" style="display:none">
-    <div class="paso-titulo"><div class="paso-num">4</div><h2>Conciliación: órdenes de compra vs CFDI</h2></div>
-    <p class="nota-pie" style="text-align:left;margin-bottom:12px">Cada tarjeta es una orden de compra. Cualquier diferencia, aunque sea mínima, se notifica para que investigues su origen. Verde: diferencia ≤ 1% (puedes escribir a Odoo, pero verifica). Amarillo: diferencia 1–5% (notificar verbalmente al proveedor). Rojo: diferencia > 5% (escalar). Naranja: compra incompleta, se arrastra al siguiente corte.</p>
-    <div id="listaConciliacion"></div>
-    <div id="reporteMedicion"></div>
-  </section>
-
-  <!-- PASO 5: Tarjeta -->
-  <section class="paso" id="pasoTarjeta" style="display:none">
-    <div class="paso-titulo"><div class="paso-num">5</div><h2>Verificación de la tarjeta: extracto vs Odoo</h2></div>
-    <p class="nota-pie" style="text-align:left;margin-bottom:12px">Cada cargo del extracto debe tener un pago registrado en Odoo con el diario de Clara. Un cargo sin registro es una alerta que hay que investigar antes de cerrarla.</p>
-    <div id="listaTarjeta"></div>
-  </section>
-
-  <div id="zonaCargando" style="display:none" class="paso">
-    <div class="cargando"><div class="girador"></div><span id="textoCargando">Procesando…</span></div>
+    <button class="boton boton-secundario" onclick="cargarPool(true)" title="Re-lee Odoo y recalcula: lo que arreglaste allá cuadra y se va.">↻ Volver a correr</button>
   </div>
 
+  <div id="zonaCargando" style="display:none"><div class="cargando"><div class="girador"></div><span id="textoCargando">Procesando…</span></div></div>
+
+  <!-- Resumen -->
+  <div class="resumen" id="resumen"></div>
+
+  <!-- Tablero -->
+  <div id="tablero"></div>
+
+  <div class="pie">Odoo es la fuente de verdad. Si un caso es raro, déjalo pendiente, arréglalo en Odoo y dale “Volver a correr”: cuadrará solo.</div>
 </div>
 
-<!-- Barra de cierre -->
-<div class="barra-final" id="barraFinal">
-  <div class="contenedor">
-    <div class="resumen-texto" id="resumenFinal"></div>
-    <button class="boton boton-principal" onclick="guardarYTerminar()">Guardar avance</button>
-  </div>
-</div>
-
-<!-- Modal: configuración inicial -->
+<!-- Modal: configuración -->
 <div class="velo" id="veloConfig">
   <div class="modal">
     <h3>Conectar con Luca</h3>
     <p>Configuración de una sola vez en este navegador. Pide estos datos al administrador.</p>
-    <div class="campo">
-      <label for="confUrl">Dirección del backend</label>
-      <input type="text" id="confUrl" value="https://klimm-backend.onrender.com">
-    </div>
-    <div class="campo">
-      <label for="confClave">Clave de acceso</label>
-      <input type="password" id="confClave" placeholder="Clave del backend">
-    </div>
+    <div class="campo"><label for="confUrl">Dirección del backend</label><input type="text" id="confUrl" value="https://klimm-backend.onrender.com"></div>
+    <div class="campo"><label for="confClave">Clave de acceso</label><input type="password" id="confClave" placeholder="Clave del backend"></div>
     <button class="boton boton-principal" style="width:100%" onclick="guardarConfig()">Guardar y empezar</button>
   </div>
 </div>
@@ -224,46 +154,10 @@ tr:last-child td{border-bottom:none}
 <div class="velo" id="veloProveedor">
   <div class="modal">
     <h3>Proveedor nuevo detectado</h3>
-    <p>Este RFC apareció en un CFDI y todavía no está en el catálogo. Regístralo para poder continuar.</p>
+    <p>Este RFC apareció en un CFDI y todavía no está en el catálogo. Regístralo para continuar.</p>
     <div class="campo"><label>RFC</label><input type="text" id="provRfc" readonly style="background:var(--fondo)"></div>
     <div class="campo"><label>Razón social (viene del CFDI)</label><input type="text" id="provRazon"></div>
-    <div class="campo">
-      <label for="provClara">Nombre como aparece en el extracto de Clara (opcional)</label>
-      <input type="text" id="provClara" placeholder="Ej. HOME DEPOT MEXICO CDMX">
-      <div class="nota-pie" style="text-align:left">Si este proveedor no se paga con tarjeta, déjalo vacío.</div>
-    </div>
     <button class="boton boton-principal" style="width:100%" onclick="registrarProveedor()">Registrar y continuar</button>
-  </div>
-</div>
-
-<!-- Modal: elegir diario de Clara -->
-<div class="velo" id="veloDiario">
-  <div class="modal">
-    <h3>¿Cuál es el diario de la tarjeta Clara?</h3>
-    <p>Elección de una sola vez. Es el diario o cuenta de Odoo donde se registran los pagos hechos con la tarjeta Clara.</p>
-    <div class="campo"><select id="selectDiario"></select></div>
-    <button class="boton boton-principal" style="width:100%" onclick="guardarDiario()">Guardar</button>
-  </div>
-</div>
-
-<!-- Modal: cerrar discrepancia con motivo -->
-<div class="velo" id="veloMotivo">
-  <div class="modal">
-    <h3>Cerrar con motivo</h3>
-    <p id="motivoDescripcion"></p>
-    <div class="campo">
-      <label for="selectMotivo">Motivo</label>
-      <select id="selectMotivo">
-        <option value="Caja chica">Caja chica</option>
-        <option value="Comisión bancaria">Comisión bancaria</option>
-        <option value="Gasto recurrente sin registrar aún">Gasto recurrente sin registrar aún</option>
-        <option value="Error de captura en Odoo">Error de captura en Odoo</option>
-        <option value="Otro">Otro (escríbelo abajo)</option>
-      </select>
-    </div>
-    <div class="campo"><label for="motivoTexto">Detalle (opcional)</label><input type="text" id="motivoTexto" placeholder="Nota breve de qué es este cargo"></div>
-    <p class="nota-pie" style="text-align:left">Cerrar no lo vuelve correcto: queda registrado como discrepancia conocida y, si vuelve a aparecer, se alertará de nuevo.</p>
-    <button class="boton boton-principal" style="width:100%" onclick="confirmarCierre()">Cerrar discrepancia</button>
   </div>
 </div>
 
@@ -271,18 +165,16 @@ tr:last-child td{border-bottom:none}
 /* ================= CONFIGURACIÓN ================= */
 let BACKEND = localStorage.getItem('luca_backend') || '';
 let CLAVE = localStorage.getItem('luca_clave') || '';
-
 if (!BACKEND || !CLAVE) document.getElementById('veloConfig').classList.add('visible');
 
 function guardarConfig(){
   const url = document.getElementById('confUrl').value.trim().replace(/\/$/,'');
   const clave = document.getElementById('confClave').value.trim();
   if(!url || !clave){ alert('Completa los dos campos'); return; }
-  localStorage.setItem('luca_backend', url);
-  localStorage.setItem('luca_clave', clave);
+  localStorage.setItem('luca_backend', url); localStorage.setItem('luca_clave', clave);
   BACKEND = url; CLAVE = clave;
   document.getElementById('veloConfig').classList.remove('visible');
-  cargarEstado();
+  arrancar();
 }
 
 async function llamar(ruta, opciones = {}){
@@ -296,159 +188,73 @@ async function llamar(ruta, opciones = {}){
 }
 
 function avisar(html, tipo){
-  document.getElementById('avisoGlobal').innerHTML =
-    html ? `<div class="mensaje mensaje-${tipo}">${html}</div>` : '';
+  document.getElementById('avisoGlobal').innerHTML = html ? `<div class="mensaje mensaje-${tipo}">${html}</div>` : '';
   if(html) window.scrollTo({top:0, behavior:'smooth'});
 }
 function cargando(txt){
   const z = document.getElementById('zonaCargando');
-  if(txt){ document.getElementById('textoCargando').textContent = txt; z.style.display='block'; }
-  else z.style.display='none';
+  if(txt){ document.getElementById('textoCargando').textContent = txt; z.style.display='block'; } else z.style.display='none';
 }
 function esc(s){ return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function dinero(n){ return '$' + Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
 
-/* ================= ESTADO PERSISTENTE (vive en Odoo vía backend) ================= */
+/* Bitácora (Frente 1f): registra el evento en el backend. Best-effort: no rompe la UI. */
+function registrarBitacora(tipo, registro){
+  try{ llamar('/api/bitacora', { method:'POST', body: JSON.stringify({ tipo, registro }) }).catch(()=>{}); }catch(e){}
+}
+
+/* ================= ESTADO PERSISTENTE (vive en Postgres vía backend) ================= */
 let ESTADO = {
-  version: 1,
-  diarioClaraId: null,
-  proveedores: {},            // RFC -> {razon, nombreClara}
-  catalogoProductos: {},      // RFC -> {descNormalizada -> {lineaProductoId, producto}}
-  ocsAbiertas: {},            // ocId -> objeto OC con líneas y cobertura acumulada
-  cfdisUsados: [],            // UUIDs ya aplicados en cortes anteriores
-  discrepanciasCerradas: [],  // {tipo, ref, motivo, detalle, fecha}
-  ultimoGuardado: null
+  version: 1, diarioClaraId: null, proveedores: {}, catalogoProductos: {},
+  ocsAbiertas: {}, cfdisUsados: [], discrepanciasCerradas: [], ultimoGuardado: null
 };
 let estadoSucio = false;
 
 async function cargarEstado(){
-  try{
-    cargando('Cargando el estado del conciliador…');
-    const d = await llamar('/api/estado');
-    if(d.estado && d.estado.version) ESTADO = d.estado;
-    pintarInicio();
-  }catch(e){
-    avisar('No se pudo cargar el estado guardado: ' + esc(e.message) + '. Puedes continuar, pero revisa la conexión antes de guardar.', 'error');
-  }finally{ cargando(null); }
+  const d = await llamar('/api/estado');
+  if(d.estado && d.estado.version) ESTADO = d.estado;
 }
-
 async function guardarEstado(silencioso){
   try{
     ESTADO.ultimoGuardado = new Date().toISOString();
     await llamar('/api/estado', { method:'POST', body: JSON.stringify({ estado: ESTADO }) });
     estadoSucio = false;
-    if(!silencioso) avisar('Avance guardado. Puedes cerrar la página con confianza; el siguiente corte retomará desde aquí.', 'exito');
-    pintarInicio();
-  }catch(e){
-    avisar('No se pudo guardar el avance: ' + esc(e.message) + '. Inténtalo de nuevo antes de cerrar la página.', 'error');
-  }
+    if(!silencioso) avisar('Avance guardado.', 'exito');
+  }catch(e){ avisar('No se pudo guardar el avance: ' + esc(e.message), 'error'); }
 }
+window.addEventListener('beforeunload', e => { if(estadoSucio){ e.preventDefault(); e.returnValue=''; } });
 
-function pintarInicio(){
-  const pend = Object.values(ESTADO.ocsAbiertas).length;
-  document.getElementById('cifraPendientes').textContent = pend;
-  document.getElementById('cifraProveedores').textContent = Object.keys(ESTADO.proveedores).length;
-  document.getElementById('notaUltimoGuardado').textContent = ESTADO.ultimoGuardado
-    ? 'Último guardado: ' + new Date(ESTADO.ultimoGuardado).toLocaleString('es-MX')
-    : 'Primera vez que se usa el conciliador en esta cuenta.';
-}
+/* ================= CFDIs (parseo en el navegador) ================= */
+let CFDIS = [];
+let COLA_PROVEEDORES = [];
 
-window.addEventListener('beforeunload', e => {
-  if(estadoSucio){ e.preventDefault(); e.returnValue = ''; }
-});
-
-/* ================= PASO 1: PERÍODO Y COMPRAS ================= */
-(function fechasPorDefecto(){
-  const hoy = new Date();
-  const dia = hoy.getDay();                       // 0=domingo … 1=lunes
-  const lunesPasado = new Date(hoy);
-  lunesPasado.setDate(hoy.getDate() - ((dia + 6) % 7) - 7);
-  const domingoPasado = new Date(lunesPasado);
-  domingoPasado.setDate(lunesPasado.getDate() + 6);
-  document.getElementById('fechaDesde').value = lunesPasado.toISOString().slice(0,10);
-  document.getElementById('fechaHasta').value = domingoPasado.toISOString().slice(0,10);
-})();
-
-let COMPRAS_NUEVAS = [];   // OCs traídas de Odoo este corte (aún no en estado)
-
-async function traerCompras(){
-  const desde = document.getElementById('fechaDesde').value;
-  const hasta = document.getElementById('fechaHasta').value;
-  if(!desde || !hasta){ avisar('Elige las dos fechas del período.', 'error'); return; }
-  avisar('', '');
-  try{
-    cargando('Trayendo las compras de Odoo…');
-    const d = await llamar(`/api/compras?desde=${desde}&hasta=${hasta}`);
-    COMPRAS_NUEVAS = d.compras.filter(c => !ESTADO.ocsAbiertas[c.id]);
-    // Incorporar las nuevas al estado como OCs abiertas
-    for(const c of COMPRAS_NUEVAS){
-      ESTADO.ocsAbiertas[c.id] = {
-        id: c.id, nombre: c.nombre, proveedor: c.proveedor, rfc: (c.rfc||'').toUpperCase(),
-        fecha: c.fecha, subtotalOC: c.subtotal,
-        lineas: c.lineas.map(l => ({
-          id: l.id, producto: l.producto, descripcion: l.descripcion,
-          pedida: l.cantidadPedida, precioOC: l.precioUnitario,
-          cubierta: 0, importeReal: 0
-        })),
-        cfdis: [], preparadaEnOdoo: false
-      };
-    }
-    estadoSucio = true;
-    const abiertas = Object.values(ESTADO.ocsAbiertas).length;
-    const arrastradas = abiertas - COMPRAS_NUEVAS.length;
-    document.getElementById('resultadoCompras').innerHTML =
-      `<div class="archivo-cargado"><span>Se encontraron ${COMPRAS_NUEVAS.length} órdenes de compra nuevas en el período` +
-      (arrastradas ? ` + ${arrastradas} pendientes de cortes anteriores` : '') +
-      `. Total a conciliar: ${abiertas}.</span></div>`;
-    document.getElementById('pasoCfdi').style.display = 'block';
-    pintarInicio();
-    pintarConciliacion();
-  }catch(e){
-    avisar('No se pudieron traer las compras de Odoo: ' + esc(e.message), 'error');
-  }finally{ cargando(null); }
-}
-
-/* ================= PASO 2: CFDIs ================= */
-let CFDIS = [];             // CFDIs cargados en esta sesión
-let COLA_PROVEEDORES = [];  // RFCs pendientes de registrar
-
-function conectarZona(zonaId, entradaId, manejador){
-  const zona = document.getElementById(zonaId);
-  const entrada = document.getElementById(entradaId);
-  entrada.addEventListener('change', () => manejador(entrada.files));
+document.getElementById('entradaCfdi').addEventListener('change', e => archivosCfdi(e.target.files));
+(function(){
+  const zona = document.getElementById('zonaCfdi');
   zona.addEventListener('dragover', e => { e.preventDefault(); zona.classList.add('arrastre'); });
   zona.addEventListener('dragleave', () => zona.classList.remove('arrastre'));
-  zona.addEventListener('drop', e => { e.preventDefault(); zona.classList.remove('arrastre'); manejador(e.dataTransfer.files); });
-}
-conectarZona('zonaCfdi', 'entradaCfdi', archivosCfdi);
-conectarZona('zonaClara', 'entradaClara', archivoClara);
+  zona.addEventListener('drop', e => { e.preventDefault(); zona.classList.remove('arrastre'); archivosCfdi(e.dataTransfer.files); });
+})();
 
 async function archivosCfdi(files){
   const errores = [], repetidos = [];
   for(const f of files){
     if(!/\.xml$/i.test(f.name)) { errores.push(f.name + ' (no es XML)'); continue; }
     try{
-      const texto = await f.text();
-      const cfdi = parsearCfdi(texto, f.name);
-      if(ESTADO.cfdisUsados.includes(cfdi.uuid) || CFDIS.some(c => c.uuid === cfdi.uuid)){
-        repetidos.push(f.name); continue;
-      }
+      const cfdi = parsearCfdi(await f.text(), f.name);
+      if(ESTADO.cfdisUsados.includes(cfdi.uuid) || CFDIS.some(c => c.uuid === cfdi.uuid)){ repetidos.push(f.name); continue; }
       CFDIS.push(cfdi);
       const rfc = cfdi.rfc;
-      if(!ESTADO.proveedores[rfc] && !COLA_PROVEEDORES.some(p => p.rfc === rfc)){
-        COLA_PROVEEDORES.push({ rfc, razon: cfdi.emisor });
-      }
+      if(!ESTADO.proveedores[rfc] && !COLA_PROVEEDORES.some(p => p.rfc === rfc)) COLA_PROVEEDORES.push({ rfc, razon: cfdi.emisor });
     }catch(e){ errores.push(f.name + ' (' + e.message + ')'); }
   }
-  pintarCfdis();
+  document.getElementById('cfdiInfo').textContent = CFDIS.length ? `${CFDIS.length} CFDI${CFDIS.length>1?'s':''} cargado${CFDIS.length>1?'s':''} en esta sesión` : '';
   let msg = '';
-  if(repetidos.length) msg += 'Estos CFDIs ya se habían aplicado en un corte anterior y se omitieron: ' + repetidos.map(esc).join(', ') + '. ';
+  if(repetidos.length) msg += 'Ya aplicados antes (omitidos): ' + repetidos.map(esc).join(', ') + '. ';
   if(errores.length) msg += 'No se pudieron leer: ' + errores.map(esc).join(', ') + '.';
-  avisar(msg, errores.length ? 'error' : (msg ? 'exito' : ''));
+  if(msg) avisar(msg, errores.length ? 'error' : 'exito'); else avisar('','');
   procesarColaProveedores();
-  document.getElementById('pasoClara').style.display = 'block';
-  document.getElementById('accionClara').style.display = 'flex';
   aplicarCfdis();
 }
 
@@ -460,33 +266,16 @@ function parsearCfdi(xmlTexto, nombreArchivo){
   const emisor = doc.getElementsByTagNameNS('*','Emisor')[0];
   const timbre = doc.getElementsByTagNameNS('*','TimbreFiscalDigital')[0];
   const conceptos = [...doc.getElementsByTagNameNS('*','Concepto')].map(c => ({
-    descripcion: c.getAttribute('Descripcion') || '',
-    cantidad: parseFloat(c.getAttribute('Cantidad') || '0'),
-    valorUnitario: parseFloat(c.getAttribute('ValorUnitario') || '0'),
-    importe: parseFloat(c.getAttribute('Importe') || '0'),
-    claveSat: c.getAttribute('ClaveProdServ') || '',
-    noIdentificacion: c.getAttribute('NoIdentificacion') || ''
+    descripcion: c.getAttribute('Descripcion') || '', cantidad: parseFloat(c.getAttribute('Cantidad') || '0'),
+    valorUnitario: parseFloat(c.getAttribute('ValorUnitario') || '0'), importe: parseFloat(c.getAttribute('Importe') || '0'),
+    claveSat: c.getAttribute('ClaveProdServ') || '', noIdentificacion: c.getAttribute('NoIdentificacion') || ''
   }));
   return {
-    archivo: nombreArchivo,
-    uuid: timbre ? timbre.getAttribute('UUID') : ('SIN-UUID-' + nombreArchivo),
-    fecha: (comp.getAttribute('Fecha') || '').slice(0,10),
-    subtotal: parseFloat(comp.getAttribute('SubTotal') || '0'),
-    total: parseFloat(comp.getAttribute('Total') || '0'),
-    rfc: (emisor ? emisor.getAttribute('Rfc') : '').toUpperCase(),
-    emisor: emisor ? (emisor.getAttribute('Nombre') || '') : '',
-    conceptos
+    archivo: nombreArchivo, uuid: timbre ? timbre.getAttribute('UUID') : ('SIN-UUID-' + nombreArchivo),
+    fecha: (comp.getAttribute('Fecha') || '').slice(0,10), subtotal: parseFloat(comp.getAttribute('SubTotal') || '0'),
+    total: parseFloat(comp.getAttribute('Total') || '0'), rfc: (emisor ? emisor.getAttribute('Rfc') : '').toUpperCase(),
+    emisor: emisor ? (emisor.getAttribute('Nombre') || '') : '', conceptos
   };
-}
-
-function pintarCfdis(){
-  if(!CFDIS.length){ document.getElementById('listaCfdis').innerHTML = ''; return; }
-  const porRfc = {};
-  for(const c of CFDIS) (porRfc[c.rfc] = porRfc[c.rfc] || []).push(c);
-  document.getElementById('listaCfdis').innerHTML = Object.entries(porRfc).map(([rfc, lista]) =>
-    `<div class="archivo-cargado" style="background:var(--agua-claro);border-color:var(--agua);color:var(--agua-oscuro)">
-      <span><strong>${esc(lista[0].emisor || rfc)}</strong> — ${lista.length} CFDI${lista.length>1?'s':''} · ${dinero(lista.reduce((s,c)=>s+c.subtotal,0))} subtotal</span>
-    </div>`).join('');
 }
 
 function procesarColaProveedores(){
@@ -494,85 +283,54 @@ function procesarColaProveedores(){
   const p = COLA_PROVEEDORES[0];
   document.getElementById('provRfc').value = p.rfc;
   document.getElementById('provRazon').value = p.razon;
-  document.getElementById('provClara').value = '';
   document.getElementById('veloProveedor').classList.add('visible');
 }
-
 function registrarProveedor(){
   const rfc = document.getElementById('provRfc').value;
   const razon = document.getElementById('provRazon').value.trim();
-  const nombreClara = document.getElementById('provClara').value.trim();
   if(!razon){ alert('La razón social no puede quedar vacía'); return; }
-  ESTADO.proveedores[rfc] = { razon, nombreClara };
-  estadoSucio = true;
-  COLA_PROVEEDORES.shift();
+  ESTADO.proveedores[rfc] = { razon, nombreClara: '' };
+  estadoSucio = true; COLA_PROVEEDORES.shift();
   document.getElementById('veloProveedor').classList.remove('visible');
-  pintarInicio();
-  if(COLA_PROVEEDORES.length) procesarColaProveedores();
-  else { guardarEstado(true); aplicarCfdis(); }
+  if(COLA_PROVEEDORES.length) procesarColaProveedores(); else { guardarEstado(true); aplicarCfdis(); }
 }
 
-/* ============ MATCHING: CFDIs → líneas de OC (cruce 1) ============ */
-/* MODELO POOL: el emparejamiento ya NO se parte por RFC. Se arman dos canastas
-   de la semana (demanda de todas las OCs vs. conceptos de todos los CFDIs) y se
-   llenan huecos producto↔producto sin importar el proveedor. El RFC deja de ser
-   filtro de entrada y queda como metadato de procedencia. */
-
-const UMBRAL_SIMILITUD = 0.55;   // similitud de texto mínima para auto-asignar
-
+/* ================= MOTOR: CANASTAS (pool producto↔producto) ================= */
+const UMBRAL_SIMILITUD = 0.55;
 function similitud(a, b){
   const ta = new Set(norm(a).split(' ').filter(x => x.length > 2));
   const tb = new Set(norm(b).split(' ').filter(x => x.length > 2));
   if(!ta.size || !tb.size) return 0;
-  let comunes = 0;
-  for(const t of ta) if(tb.has(t)) comunes++;
+  let comunes = 0; for(const t of ta) if(tb.has(t)) comunes++;
   return comunes / Math.min(ta.size, tb.size);
 }
+let ASIGNACIONES_PENDIENTES = [];
+let MEDICION_CORTE = null;
+let SERVICIOS_DETECTADOS = [];
 
-let ASIGNACIONES_PENDIENTES = []; // conceptos de CFDI que no se pudieron asignar solos
-let MEDICION_CORTE = null;        // reporte de medición del último corte (quién resolvió qué)
-
-/* Catálogo aprendido GLOBAL: descNormalizada -> { producto }.
-   Antes vivía indexado por RFC (catalogoProductos[rfc][desc]); ahora una
-   equivalencia de nombre sirve para cualquier proveedor. Esta función migra el
-   catálogo viejo al global la primera vez, sin perder nada de lo aprendido. */
 function catalogoGlobal(){
   if(!ESTADO.catalogoGlobal){
     ESTADO.catalogoGlobal = {};
-    // migrar lo aprendido por RFC en versiones anteriores
     const viejo = ESTADO.catalogoProductos || {};
-    for(const rfc of Object.keys(viejo)){
-      for(const desc of Object.keys(viejo[rfc] || {})){
-        if(!ESTADO.catalogoGlobal[desc]) ESTADO.catalogoGlobal[desc] = viejo[rfc][desc];
-      }
-    }
+    for(const rfc of Object.keys(viejo)) for(const desc of Object.keys(viejo[rfc] || {}))
+      if(!ESTADO.catalogoGlobal[desc]) ESTADO.catalogoGlobal[desc] = viejo[rfc][desc];
   }
   return ESTADO.catalogoGlobal;
 }
-
-/* Todas las líneas con saldo pendiente de TODAS las OCs abiertas (canasta A). */
 function lineasConSaldo(){
   const fuera = [];
   for(const oc of Object.values(ESTADO.ocsAbiertas)){
     if(oc.preparadaEnOdoo) continue;
-    for(const l of oc.lineas){
-      if(l.cubierta < l.pedida) fuera.push({ oc, linea: l });
-    }
+    for(const l of oc.lineas) if(l.cubierta < l.pedida) fuera.push({ oc, linea: l });
   }
   return fuera;
 }
-
-/* Intenta colocar un concepto en una línea de la canasta A.
-   Devuelve { destino, origen } o { destino:null } si nadie lo resolvió con confianza.
-   Origen ∈ 'catalogo' | 'similitud'  (la IA y lo manual se marcan aparte). */
 function ubicarConcepto(con, poolLineas, catalogo){
   const clave = norm(con.descripcion);
-  // 1) catálogo aprendido (global)
   if(catalogo[clave]){
     const cand = poolLineas.find(x => x.linea.producto === catalogo[clave].producto && x.linea.cubierta < x.linea.pedida);
     if(cand) return { destino: cand, origen: 'catalogo' };
   }
-  // 2) similitud de texto contra todo el pool
   let mejor = { puntos: 0 };
   for(const x of poolLineas){
     if(x.linea.cubierta >= x.linea.pedida) continue;
@@ -583,68 +341,45 @@ function ubicarConcepto(con, poolLineas, catalogo){
   return { destino: null };
 }
 
+/* aplicarCfdis: IDEMPOTENTE. Resetea la cobertura de las OCs no preparadas y
+   re-aplica TODOS los CFDIs de la sesión sobre el pool actual. Así, subir CFDIs
+   en varias tandas o "volver a correr" no duplica cantidades (§7 re-lectura). */
 function aplicarCfdis(){
-  if(COLA_PROVEEDORES.length) return; // primero registrar proveedores
-  ASIGNACIONES_PENDIENTES = [];
-  SERVICIOS_DETECTADOS = [];
+  if(COLA_PROVEEDORES.length) return;
+  ASIGNACIONES_PENDIENTES = []; SERVICIOS_DETECTADOS = [];
+  for(const oc of Object.values(ESTADO.ocsAbiertas)){
+    if(oc.preparadaEnOdoo) continue;
+    for(const l of oc.lineas){ l.cubierta = 0; l.importeReal = 0; }
+    oc.cfdis = [];
+  }
   const catalogo = catalogoGlobal();
   const medicion = { catalogo:0, similitud:0, servicio:0, ia:0, manual:0, pendientes:0, total:0 };
-  const marcador = {};
-  const paraIA = []; // conceptos que ni catálogo ni similitud resolvieron → candidatos a IA
-
+  const marcador = {}; const paraIA = [];
   for(const cfdi of CFDIS){
     for(const con of cfdi.conceptos){
       medicion.total++;
-
-      // 0) regla de excepción: servicio de entrega sin OC (AMIDA DE COCO y afines)
       const servicio = reglaServicio(cfdi, con);
-      if(servicio){
-        registrarServicio(cfdi, con, servicio, marcador);
-        medicion.servicio++;
-        continue;
-      }
-
-      const pool = lineasConSaldo();
-      const r = ubicarConcepto(con, pool, catalogo);
-      if(r.destino){
-        aplicarConcepto(r.destino.oc, r.destino.linea, con, cfdi, marcador);
-        medicion[r.origen]++;
-      }else{
-        // nadie lo resolvió con confianza → se deja para la capa de IA (si está activa)
-        paraIA.push({ cfdi, concepto: con });
-      }
+      if(servicio){ registrarServicio(cfdi, con, servicio, marcador); medicion.servicio++; continue; }
+      const r = ubicarConcepto(con, lineasConSaldo(), catalogo);
+      if(r.destino){ aplicarConcepto(r.destino.oc, r.destino.linea, con, cfdi, marcador); medicion[r.origen]++; }
+      else paraIA.push({ cfdi, concepto: con });
     }
   }
-
-  // 3) capa de IA como red de seguridad (solo lo que quedó sin resolver)
-  //    Se resuelve de forma asíncrona; mientras tanto, se pinta lo que ya cuadró.
-  MEDICION_CORTE = medicion;
-  estadoSucio = true;
-  pintarConciliacion();
-  prepararCruceTarjeta();
-
-  if(paraIA.length && IA_ACTIVA){
-    resolverConIA(paraIA, marcador, medicion);
-  }else{
-    // sin IA: todo lo no resuelto va directo a la cola manual
-    for(const p of paraIA){
-      ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto });
-      medicion.pendientes++;
-    }
-    pintarConciliacion();
-    pintarMedicion();
+  MEDICION_CORTE = medicion; estadoSucio = true;
+  pintarRevision();
+  if(paraIA.length && IA_ACTIVA){ resolverConIA(paraIA, marcador, medicion); }
+  else {
+    for(const p of paraIA){ ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto }); medicion.pendientes++; }
+    pintarRevision();
   }
 }
-
 function aplicarConcepto(oc, linea, con, cfdi, marcador){
   linea.cubierta = +(linea.cubierta + con.cantidad).toFixed(4);
   linea.importeReal = +(linea.importeReal + con.importe).toFixed(2);
   if(!oc.cfdis.includes(cfdi.uuid)) oc.cfdis.push(cfdi.uuid);
   if(marcador) marcador[oc.id] = true;
-  // aprender la equivalencia para el futuro (catálogo GLOBAL)
   catalogoGlobal()[norm(con.descripcion)] = { producto: linea.producto };
 }
-
 function asignarManual(indicePendiente, ocId, lineaId){
   const pend = ASIGNACIONES_PENDIENTES[indicePendiente];
   if(!pend || pend.tipo !== 'concepto') return;
@@ -652,614 +387,299 @@ function asignarManual(indicePendiente, ocId, lineaId){
   const linea = oc && oc.lineas.find(l => l.id === parseInt(lineaId,10));
   if(!oc || !linea) return;
   aplicarConcepto(oc, linea, pend.concepto, pend.cfdi, null);
+  registrarBitacora('nombre', { descripcion: pend.concepto.descripcion, producto: linea.producto, metodo: 'manual' });
   ASIGNACIONES_PENDIENTES.splice(indicePendiente, 1);
   if(MEDICION_CORTE){ MEDICION_CORTE.manual++; MEDICION_CORTE.pendientes = Math.max(0, MEDICION_CORTE.pendientes-1); }
-  estadoSucio = true;
-  guardarEstado(true);
-  pintarConciliacion();
-  pintarMedicion();
+  estadoSucio = true; guardarEstado(true); pintarRevision();
 }
 
-/* ============ REGLA DE EXCEPCIÓN: servicios facturados sin OC ============ */
-/* Caso AMIDA DE COCO: un proveedor que SÍ tiene OCs factura además un servicio
-   (entrega) bajo un nombre que nunca tendrá OC. Mismo RFC + mismo texto siempre,
-   así que es una regla fija, no un caso de IA. Cada regla dice: "cuando el RFC es
-   X y el concepto contiene el texto Y, es el producto de servicio Odoo Z (id).
-   Ese concepto se registra como línea de servicio, aparte de la cascada de match. */
-
-function reglasServicioDefault(){
-  // [ETAPA seguridad, 19-sep-2026] Las reglas de servicio (que incluyen nombre de
-  // proveedor + id de producto de Odoo, dato sensible) YA NO se hardcodean en esta
-  // página pública. Viven en el ESTADO privado (Postgres, detrás de la clave) y se
-  // siembran ahí una sola vez por el script de migración. Aquí el arranque es vacío;
-  // reglasServicio() toma lo que traiga el ESTADO.
-  return [];
-}
-function reglasServicio(){
-  if(!ESTADO.reglasServicio) ESTADO.reglasServicio = reglasServicioDefault();
-  return ESTADO.reglasServicio;
-}
-/* ¿Este concepto cae en una regla de servicio? Devuelve la regla o null. */
+/* Reglas de servicio (semilla privada; el HTML público ya no la trae) */
+function reglasServicioDefault(){ return []; }
+function reglasServicio(){ if(!ESTADO.reglasServicio) ESTADO.reglasServicio = reglasServicioDefault(); return ESTADO.reglasServicio; }
 function reglaServicio(cfdi, con){
   const desc = norm(con.descripcion);
   for(const r of reglasServicio()){
     if(!r.textoContiene) continue;
     const rfcOk = !r.rfc || r.rfc.toUpperCase() === (cfdi.rfc||'').toUpperCase();
-    const txtOk = desc.includes(norm(r.textoContiene));
-    if(rfcOk && txtOk) return r;
+    if(rfcOk && desc.includes(norm(r.textoContiene))) return r;
   }
   return null;
 }
-/* Los servicios NO se imputan a una línea de OC: se acumulan en el estado para
-   añadirse como línea extra a la factura del proveedor en el paso de Odoo. */
-let SERVICIOS_DETECTADOS = []; // {cfdi, concepto, regla} de este corte
 function registrarServicio(cfdi, con, regla, marcador){
   SERVICIOS_DETECTADOS.push({ cfdi, concepto: con, regla });
-  // el CFDI cuenta como usado por su proveedor, para que el cruce bancario cuadre
   if(marcador) marcador['servicio:'+cfdi.rfc] = true;
 }
 
-/* ============ CAPA DE IA: red de seguridad para nombres no resueltos ============ */
-/* La IA solo se invoca para conceptos que ni el catálogo ni la similitud
-   resolvieron. Devuelve producto candidato + confianza. Arranca en modo (b):
-   propone y el operador confirma. Reusa Claude Haiku 4.5 vía el backend. */
-
-let IA_ACTIVA = (localStorage.getItem('luca_ia_activa') !== '0'); // encendida por defecto
-let IA_MODO = localStorage.getItem('luca_ia_modo') || 'proponer';  // 'proponer' (b) | 'auto' (a)
-let IA_UMBRAL = parseFloat(localStorage.getItem('luca_ia_umbral') || '0.85'); // confianza mínima
+/* ================= CAPA DE IA (paso 0: nombre → producto) ================= */
+let IA_ACTIVA = (localStorage.getItem('luca_ia_activa') !== '0');
+let IA_MODO = localStorage.getItem('luca_ia_modo') || 'proponer';
+let IA_UMBRAL = parseFloat(localStorage.getItem('luca_ia_umbral') || '0.85');
 
 async function resolverConIA(lista, marcador, medicion){
   try{
     cargando(`Consultando la IA para ${lista.length} concepto${lista.length!==1?'s':''} sin reconocer…`);
-    // candidatos: productos únicos con saldo (nombre) para que la IA elija de una lista acotada
     const pool = lineasConSaldo();
     const candidatos = [...new Set(pool.map(x => x.linea.producto))];
-    const payload = {
-      conceptos: lista.map((p,i) => ({ i, descripcion: p.concepto.descripcion })),
-      candidatos
-    };
-    const d = await llamar('/api/resolver-nombres', { method:'POST', body: JSON.stringify(payload) });
+    const d = await llamar('/api/resolver-nombres', { method:'POST', body: JSON.stringify({
+      conceptos: lista.map((p,i) => ({ i, descripcion: p.concepto.descripcion })), candidatos
+    })});
     const res = d.resultados || [];
     for(const p of lista){
       const r = res.find(x => x.i === lista.indexOf(p));
       const conf = r ? (r.confianza || 0) : 0;
       const prodElegido = r ? r.producto : null;
       const cand = prodElegido ? pool.find(x => x.linea.producto === prodElegido && x.linea.cubierta < x.linea.pedida) : null;
-
       if(cand && conf >= IA_UMBRAL && IA_MODO === 'auto'){
-        // modo (a): aplica directo, deja anotado
         aplicarConcepto(cand.oc, cand.linea, p.concepto, p.cfdi, marcador);
+        registrarBitacora('nombre', { descripcion: p.concepto.descripcion, producto: prodElegido, metodo: 'ia', confianza: conf });
         medicion.ia++;
       }else if(cand && conf >= IA_UMBRAL){
-        // modo (b): propone con la sugerencia precargada para confirmar con un clic
-        ASIGNACIONES_PENDIENTES.push({
-          tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto,
-          sugerenciaIA: { ocId: cand.oc.id, lineaId: cand.linea.id, producto: prodElegido, confianza: conf }
-        });
+        ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto, sugerenciaIA:{ ocId:cand.oc.id, lineaId:cand.linea.id, producto:prodElegido, confianza:conf } });
         medicion.pendientes++;
-      }else{
-        // IA sin confianza suficiente → cola manual normal
-        ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto });
-        medicion.pendientes++;
-      }
+      }else{ ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto }); medicion.pendientes++; }
     }
   }catch(e){
-    // si la IA falla, no rompemos el corte: todo lo pendiente va a cola manual
-    for(const p of lista){
-      ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto });
-      medicion.pendientes++;
-    }
+    for(const p of lista){ ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto }); medicion.pendientes++; }
     avisar('La IA no estuvo disponible; esos conceptos quedaron para asignación manual. ' + esc(e.message), 'error');
-  }finally{
-    cargando(null);
-    estadoSucio = true;
-    pintarConciliacion();
-    pintarMedicion();
-  }
+  }finally{ cargando(null); estadoSucio = true; pintarRevision(); }
 }
 
-/* ============ REPORTE DE MEDICIÓN (subproducto de la fase b) ============ */
-function pintarMedicion(){
-  const cont = document.getElementById('reporteMedicion');
-  if(!cont) return;
-  const m = MEDICION_CORTE;
-  if(!m || !m.total){ cont.innerHTML=''; return; }
-  const pct = n => m.total ? Math.round(n/m.total*100) : 0;
-  const fila = (etq, n, extra='') => n ? `<tr><td>${etq}</td><td class="num">${n}</td><td class="num">${pct(n)}%</td><td>${extra}</td></tr>` : '';
-  cont.innerHTML = `
-    <div class="tarjeta" style="margin-top:12px">
-      <div class="titulo">Resumen del corte — ${m.total} concepto${m.total!==1?'s':''} procesado${m.total!==1?'s':''}</div>
-      <table class="tabla-medicion" style="width:100%;margin-top:8px">
-        <thead><tr><th>Quién lo resolvió</th><th class="num">Cantidad</th><th class="num">%</th><th></th></tr></thead>
-        <tbody>
-          ${fila('Catálogo aprendido (ya lo había visto)', m.catalogo)}
-          ${fila('Similitud de texto', m.similitud)}
-          ${fila('Regla de servicio (entrega)', m.servicio)}
-          ${fila('IA (Haiku)', m.ia)}
-          ${fila('Resuelto a mano', m.manual)}
-          ${fila('Pendiente de revisión', m.pendientes, '<span class="dif-mas">requiere tu atención</span>')}
-        </tbody>
-      </table>
-      <div class="resumen-simple" style="margin-top:6px">Semana a semana, el catálogo aprendido debería crecer y la IA/manual encogerse. Si la IA acierta consistentemente, es la señal para pasarla a modo automático.</div>
-    </div>`;
-}
-
-/* ============ PINTAR CONCILIACIÓN (cruce 1) ============ */
-const TOLERANCIA_VERDE = 0.01;   // ≤1%
-const TOLERANCIA_CRITICA = 0.05; // >5% = rojo
-
-/* Peor variación de PRECIO UNITARIO entre las líneas cubiertas (dimensión C).
-   Devuelve la fracción de desvío (0.08 = 8%). Una línea que subió y otra que
-   bajó pueden cancelarse en el monto total pero ambas son desvíos reales, así
-   que el precio se evalúa línea por línea, no solo por el total. */
+/* ================= SEMÁFORO DE PRECIO ================= */
+const TOLERANCIA_VERDE = 0.01, TOLERANCIA_CRITICA = 0.05;
 function peorDesvioPrecio(oc){
   let peor = 0;
   for(const l of oc.lineas){
     if(!l.cubierta || !l.precioOC) continue;
-    const precioReal = l.importeReal / l.cubierta;
-    const d = Math.abs(precioReal - l.precioOC) / l.precioOC;
+    const d = Math.abs((l.importeReal / l.cubierta) - l.precioOC) / l.precioOC;
     if(d > peor) peor = d;
   }
   return peor;
 }
-
 function estadoOC(oc){
   const incompleta = oc.lineas.some(l => l.cubierta < l.pedida);
   const conCobertura = oc.lineas.some(l => l.cubierta > 0);
-  if(incompleta) return conCobertura || oc.cfdis.length ? 'parcial' : 'sin-cfdi';
-  // dimensión monto total (como antes)
+  if(incompleta) return (conCobertura || oc.cfdis.length) ? 'parcial' : 'sin-cfdi';
   const esperado = oc.lineas.reduce((s,l) => s + l.pedida * l.precioOC, 0);
   const real = oc.lineas.reduce((s,l) => s + l.importeReal, 0);
   const difMonto = esperado ? Math.abs(real - esperado) / esperado : 0;
-  // dimensión precio unitario por línea (nuevo)
-  const difPrecio = peorDesvioPrecio(oc);
-  // el color lo manda la PEOR de las dos dimensiones
-  const dif = Math.max(difMonto, difPrecio);
+  const dif = Math.max(difMonto, peorDesvioPrecio(oc));
   if(dif <= TOLERANCIA_VERDE) return 'verde';
   if(dif <= TOLERANCIA_CRITICA) return 'amarillo';
   return 'rojo';
 }
 
-function pintarConciliacion(){
-  const ocs = Object.values(ESTADO.ocsAbiertas);
-  if(!ocs.length){ document.getElementById('pasoConciliar').style.display='none'; return; }
-  document.getElementById('pasoConciliar').style.display = 'block';
-
-  let html = '';
-
-  // Conceptos de CFDI sin asignar — primero, porque bloquean el cierre de sus OCs
-  ASIGNACIONES_PENDIENTES.forEach((p, i) => {
-    // Caso sin salida: el concepto no encontró match y NO hay ninguna línea con
-    // saldo en toda la semana (pool vacío). Con el modelo de pool ya no depende
-    // del RFC; es una compra que ninguna OC de la semana pedía.
-    if(p.tipo === 'concepto' && !lineasConSaldo().length){
-      html += `<div class="tarjeta rojo">
-        <div class="tarjeta-encabezado">
-          <div><div class="titulo">Producto facturado que ninguna OC pedía</div>
-          <div class="sub">${esc(p.cfdi.emisor || p.cfdi.rfc)} · "${esc(p.concepto.descripcion)}" · ${p.concepto.cantidad} × ${dinero(p.concepto.valorUnitario)}</div></div>
-          <div class="chips"><span class="chip chip-rojo">REVISAR</span></div>
-        </div>
-        <div class="resumen-simple">Este concepto no corresponde a ningún producto pedido esta semana (ya no queda demanda pendiente). Puede ser una compra fuera de catálogo, un servicio sin OC aún no configurado, o un producto mal identificado. Requiere decisión manual en Odoo.</div>
-      </div>`;
-    }else{
-      // POOL: las opciones de asignación son TODAS las líneas con saldo de la semana,
-      // no solo las del RFC del CFDI (ese candado se quitó).
-      const opciones = lineasConSaldo().map(({oc, linea:l}) =>
-        `<option value="${oc.id}|${l.id}">${esc(oc.nombre)} — ${esc(l.producto)} (faltan ${+(l.pedida-l.cubierta).toFixed(2)})</option>`
-      ).join('');
-      // Si la IA sugirió algo (modo proponer), preseleccionar y ofrecer confirmación de 1 clic.
-      const sug = p.sugerenciaIA;
-      const preSel = sug ? `${sug.ocId}|${sug.lineaId}` : '';
-      const bannerIA = sug
-        ? `<div class="resumen-simple" style="background:#eef6ff;border-radius:8px;padding:8px 10px">
-             <strong>La IA sugiere:</strong> ${esc(sug.producto)} · confianza ${(sug.confianza*100).toFixed(0)}%.
-             Revisa y confirma, o cambia la selección abajo.</div>`
-        : '';
-      html += `<div class="tarjeta parcial">
-        <div class="tarjeta-encabezado">
-          <div><div class="titulo">Producto del CFDI sin reconocer${sug?' · sugerencia de IA':''}</div>
-          <div class="sub">${esc(p.cfdi.emisor || p.cfdi.rfc)} · "${esc(p.concepto.descripcion)}" · ${p.concepto.cantidad} × ${dinero(p.concepto.valorUnitario)}</div></div>
-          <div class="chips"><span class="chip chip-parcial">${sug?'CONFIRMAR':'ASIGNAR'}</span></div>
-        </div>
-        ${bannerIA}
-        <div class="resumen-simple">Elige a qué producto de las compras de la semana corresponde (se recordará para la próxima vez):</div>
-        <div class="acciones-tarjeta">
-          <select id="asignar-${i}" style="flex:1;min-width:200px">${opciones || '<option value="">(no hay líneas con saldo esta semana)</option>'}</select>
-          <button class="boton boton-principal boton-chico" onclick="const v=document.getElementById('asignar-${i}').value.split('|'); if(v[0]) asignarManual(${i}, v[0], v[1])">${sug?'Confirmar':'Asignar'}</button>
-        </div>
-      </div>`;
-      // preseleccionar la sugerencia de IA tras render
-      if(preSel) setTimeout(() => { const s=document.getElementById('asignar-'+i); if(s) s.value=preSel; }, 0);
+/* ================= CARGAR / VOLVER A CORRER (pool por cobertura) ================= */
+async function cargarPool(reCorrer){
+  try{
+    cargando(reCorrer ? 'Volviendo a leer Odoo…' : 'Cargando el pool de Odoo…');
+    const d = await llamar('/api/compras'); // sin fechas: pool por cobertura (§ Frente 1a)
+    const poolIds = new Set(d.compras.map(c => c.id));
+    // 1) agregar OCs nuevas del pool que no estén en el estado
+    for(const c of d.compras){
+      if(ESTADO.ocsAbiertas[c.id]) continue;
+      ESTADO.ocsAbiertas[c.id] = {
+        id: c.id, nombre: c.nombre, proveedor: c.proveedor, rfc: (c.rfc||'').toUpperCase(), fecha: c.fecha,
+        subtotalOC: c.subtotal,
+        lineas: c.lineas.map(l => ({ id: l.id, producto: l.producto, descripcion: l.descripcion, pedida: l.cantidadPedida, precioOC: l.precioUnitario, cubierta: 0, importeReal: 0 })),
+        cfdis: [], preparadaEnOdoo: false
+      };
     }
-  });
-
-  // Tarjetas por OC
-  const orden = { rojo:0, amarillo:1, parcial:2, 'sin-cfdi':3, verde:4 };
-  ocs.sort((a,b) => (orden[estadoOC(a)] ?? 9) - (orden[estadoOC(b)] ?? 9));
-
-  for(const oc of ocs){
-    const est = oc.preparadaEnOdoo ? 'preparada' : estadoOC(oc);
-    const esperado = oc.lineas.reduce((s,l) => s + l.pedida * l.precioOC, 0);
-    const real = oc.lineas.reduce((s,l) => s + l.importeReal, 0);
-    const difPct = esperado ? ((real - esperado) / esperado * 100) : 0;
-    const chips = {
-      preparada: '<span class="chip chip-verde">EN ODOO · PENDIENTE DE CONFIRMAR</span>',
-      verde: '<span class="chip chip-verde">CUADRA</span>',
-      amarillo: `<span class="chip chip-amarillo">PRECIO ${difPct>0?'+':''}${difPct.toFixed(1)}% · NOTIFICAR</span>`,
-      rojo: `<span class="chip chip-rojo">PRECIO ${difPct>0?'+':''}${difPct.toFixed(1)}% · ESCALAR</span>`,
-      parcial: '<span class="chip chip-parcial">COMPRA INCOMPLETA</span>',
-      'sin-cfdi': '<span class="chip chip-gris">SIN CFDI TODAVÍA</span>'
-    }[est];
-    const claseTarjeta = est === 'preparada' ? 'verde cerrada' : est === 'sin-cfdi' ? '' : est;
-
-    const filas = oc.lineas.map(l => {
-      const falta = l.pedida - l.cubierta;
-      const precioReal = l.cubierta ? l.importeReal / l.cubierta : 0;
-      const difPrecio = l.cubierta && l.precioOC ? (precioReal - l.precioOC) / l.precioOC * 100 : 0;
-      return `<tr class="${l.cubierta ? '' : 'linea-falta'}">
-        <td>${esc(l.producto)}</td>
-        <td class="num">${l.pedida}</td>
-        <td class="num">${l.cubierta}${falta > 0.001 ? ` <span class="dif-mas">(faltan ${+falta.toFixed(2)})</span>` : ''}</td>
-        <td class="num">${dinero(l.precioOC)}</td>
-        <td class="num">${l.cubierta ? dinero(precioReal) + (Math.abs(difPrecio) > 1 ? ` <span class="${difPrecio>0?'dif-mas':'dif-menos'}">${difPrecio>0?'+':''}${difPrecio.toFixed(1)}%</span>` : '') : '—'}</td>
-      </tr>`;
-    }).join('');
-
-    const resumen = est === 'preparada'
-      ? `Ya se escribieron los datos reales en la factura de Odoo. Falta la confirmación humana final dentro de Odoo.`
-      : est === 'sin-cfdi'
-      ? `Todavía no llega ningún CFDI de esta compra. Se arrastrará al siguiente corte automáticamente.`
-      : est === 'parcial'
-      ? `La compra no está completa: hay productos que aún no aparecen en ningún CFDI. Se arrastrará al siguiente corte.`
-      : (() => {
-          const dif = real - esperado;
-          const difAbs = Math.abs(dif);
-          const difPctAbs = esperado ? difAbs / esperado * 100 : 0;
-          const base = `Se pidió ${dinero(esperado)} y los CFDIs suman ${dinero(real)} (${oc.cfdis.length} CFDI${oc.cfdis.length!==1?'s':''}).`;
-          if(difAbs < 0.01) return base + ' Sin diferencia.';
-          const signo = dif > 0 ? '+' : '-';
-          const origen = dif > 0 ? 'el proveedor cobró más de lo pactado' : 'el proveedor cobró menos de lo pactado';
-          return base + ` Diferencia: ${signo}${dinero(difAbs)} (${signo}${difPctAbs.toFixed(2)}%) — ${origen}. Verifica el origen antes de escribir a Odoo.`;
-        })();
-
-    html += `<div class="tarjeta ${claseTarjeta}">
-      <div class="tarjeta-encabezado">
-        <div><div class="titulo">${esc(oc.proveedor)}</div>
-        <div class="sub">${esc(oc.nombre)} · confirmada el ${esc((oc.fecha||'').slice(0,10))}</div></div>
-        <div class="chips">${chips}</div>
-      </div>
-      <div class="resumen-simple">${resumen}</div>
-      ${(() => {
-        // Alerta de cambio de precio unitario (umbral: >$0.20 O >1%)
-        const cambios = oc.lineas.filter(l => {
-          if(!l.cubierta || !l.precioOC) return false;
-          const precioReal = l.importeReal / l.cubierta;
-          const difPesos = Math.abs(precioReal - l.precioOC);
-          const difPct = l.precioOC ? difPesos / l.precioOC : 0;
-          return difPesos > 0.20 || difPct > 0.01;
-        }).map(l => {
-          const precioReal = +(l.importeReal / l.cubierta).toFixed(6);
-          const dif = precioReal - l.precioOC;
-          const difPct = l.precioOC ? dif / l.precioOC * 100 : 0;
-          const signo = dif > 0 ? '+' : '';
-          return `<strong>${esc(l.producto)}</strong>: antes ${dinero(l.precioOC)} → ahora ${dinero(precioReal)} (${signo}${difPct.toFixed(2)}%)`;
-        });
-        if(!cambios.length) return '';
-        return `<div class="aviso" style="margin-top:10px;color:var(--revision)">
-          <strong>Precio unitario cambió en ${cambios.length} producto${cambios.length!==1?'s':''}. Actualiza costo y precio de venta en el catálogo de Odoo:</strong><br>
-          ${cambios.join('<br>')}
-        </div>`;
-      })()}
-      <div class="acciones-tarjeta">
-        <button class="enlace-detalle" onclick="this.closest('.tarjeta').querySelector('.detalle-lineas').classList.toggle('visible')">Ver detalle por producto</button>
-        ${!oc.preparadaEnOdoo && ['verde','amarillo','rojo'].includes(est)
-          ? `<button class="boton boton-principal boton-chico" onclick="prepararEnOdoo(${oc.id})">Escribir datos reales en la factura de Odoo</button>` : ''}
-        ${oc.preparadaEnOdoo
-          ? `<button class="boton boton-secundario boton-chico" onclick="archivarOC(${oc.id})">Ya la confirmé en Odoo — quitar de la lista</button>` : ''}
-      </div>
-      <div class="detalle-lineas">
-        <table>
-          <tr><th>Producto</th><th class="num">Pedido</th><th class="num">En CFDI</th><th class="num">Precio OC</th><th class="num">Precio real</th></tr>
-          ${filas}
-        </table>
-        ${oc.cfdis.length ? `<div class="nota-pie" style="text-align:left;margin-top:8px">Folios fiscales aplicados: ${oc.cfdis.map(esc).join(', ')}</div>` : ''}
-      </div>
-    </div>`;
-  }
-
-  document.getElementById('listaConciliacion').innerHTML = html;
-  pintarBarra();
+    // 2) quitar OCs que Odoo ya no reporta pendientes (se facturaron/confirmaron allá) y no están preparadas por Luca
+    for(const id of Object.keys(ESTADO.ocsAbiertas)){
+      const oc = ESTADO.ocsAbiertas[id];
+      if(!poolIds.has(parseInt(id,10)) && !oc.preparadaEnOdoo) delete ESTADO.ocsAbiertas[id];
+    }
+    PAUSADOS.clear(); // al re-correr, lo pausado se re-evalúa
+    estadoSucio = true;
+    aplicarCfdis(); // recalcula con los CFDIs de la sesión
+    if(reCorrer) avisar('Listo. Se re-leyó Odoo y se recalculó todo.', 'exito');
+  }catch(e){ avisar('No se pudo leer el pool de Odoo: ' + esc(e.message), 'error'); pintarRevision(); }
+  finally{ cargando(null); }
 }
 
+/* ================= ESCRIBIR EN ODOO ================= */
 async function prepararEnOdoo(ocId){
   const oc = ESTADO.ocsAbiertas[ocId];
   if(!oc) return;
   const est = estadoOC(oc);
-  let confirmacion = `Vas a escribir en Odoo las cantidades y precios reales de los CFDIs en la factura de "${oc.proveedor}" (${oc.nombre}). La factura quedará en borrador para tu confirmación final dentro de Odoo.`;
-  if(est === 'amarillo') confirmacion += '\n\nOJO: hay una diferencia de precio para notificar verbalmente.';
-  if(est === 'rojo') confirmacion += '\n\nATENCIÓN: la diferencia de precio es crítica. Escálala antes o después de escribir, pero no la dejes pasar.';
-  if(!confirm(confirmacion)) return;
+  let msg = `Voy a escribir en Odoo las cantidades y precios reales en la factura (borrador) de "${oc.proveedor}" (${oc.nombre}). Tú le das la confirmación final dentro de Odoo.`;
+  if(est==='amarillo') msg += '\n\nOJO: hay una diferencia de precio para notificar.';
+  if(est==='rojo') msg += '\n\nATENCIÓN: la diferencia de precio es crítica (rojo). Escálala.';
+  if(!confirm(msg)) return;
   try{
     cargando('Escribiendo la factura en Odoo…');
-    const lineas = oc.lineas.filter(l => l.cubierta > 0).map(l => ({
-      purchaseLineId: l.id,
-      cantidad: l.cubierta,
-      precioUnitario: +(l.importeReal / l.cubierta).toFixed(6)
-    }));
-    // Servicios sin OC (AMIDA DE COCO) de CFDIs de ESTE proveedor: se añaden a su factura.
-    const serviciosExtra = SERVICIOS_DETECTADOS
-      .filter(s => (s.cfdi.rfc||'').toUpperCase() === (oc.rfc||'').toUpperCase())
-      .map(s => ({
-        productoServicioId: s.regla.productoServicioId,
-        etiqueta: s.regla.etiqueta,
-        descripcion: s.concepto.descripcion,
-        cantidad: s.concepto.cantidad,
-        precioUnitario: s.concepto.valorUnitario
-      }));
-    const d = await llamar('/api/preparar-factura', {
-      method: 'POST',
-      body: JSON.stringify({
-        ocId, lineas, cfdis: oc.cfdis, serviciosExtra,
-        resumen: `Corte del ${document.getElementById('fechaDesde').value} al ${document.getElementById('fechaHasta').value}.`
-      })
-    });
-    oc.preparadaEnOdoo = true;
-    oc.facturaOdoo = d.facturaNombre;
-    // marcar los CFDIs como usados para que no se apliquen dos veces
+    const lineas = oc.lineas.filter(l => l.cubierta > 0).map(l => ({ purchaseLineId: l.id, cantidad: l.cubierta, precioUnitario: +(l.importeReal / l.cubierta).toFixed(6) }));
+    const serviciosExtra = SERVICIOS_DETECTADOS.filter(s => (s.cfdi.rfc||'').toUpperCase() === (oc.rfc||'').toUpperCase())
+      .map(s => ({ productoServicioId: s.regla.productoServicioId, etiqueta: s.regla.etiqueta, descripcion: s.concepto.descripcion, cantidad: s.concepto.cantidad, precioUnitario: s.concepto.valorUnitario }));
+    const d = await llamar('/api/preparar-factura', { method:'POST', body: JSON.stringify({ ocId, lineas, cfdis: oc.cfdis, serviciosExtra, resumen: 'Conciliación Luca.' }) });
+    oc.preparadaEnOdoo = true; oc.facturaOdoo = d.facturaNombre;
     for(const u of oc.cfdis) if(!ESTADO.cfdisUsados.includes(u)) ESTADO.cfdisUsados.push(u);
-    estadoSucio = true;
-    await guardarEstado(true);
-    avisar(`Listo: la factura <strong>${esc(d.facturaNombre)}</strong> quedó en borrador con los datos reales. Entra a Odoo para darle la confirmación final.` +
-      (d.lineasSinCorrespondencia.length ? ' Aviso: algunas líneas no se encontraron en la factura; revísalas en Odoo.' : ''), 'exito');
-    pintarConciliacion();
-  }catch(e){
-    avisar('No se pudo escribir en Odoo: ' + esc(e.message), 'error');
-  }finally{ cargando(null); }
+    registrarBitacora('resolucion', { tipo: est, oc: oc.nombre, proveedor: oc.proveedor, factura: d.facturaNombre, lineas: lineas.length });
+    estadoSucio = true; await guardarEstado(true);
+    avisar(`Listo: la factura <strong>${esc(d.facturaNombre)}</strong> quedó en borrador con los datos reales. Confírmala en Odoo.`, 'exito');
+    pintarRevision();
+  }catch(e){ avisar('No se pudo escribir en Odoo: ' + esc(e.message), 'error'); }
+  finally{ cargando(null); }
 }
-
 function archivarOC(ocId){
   const oc = ESTADO.ocsAbiertas[ocId];
-  if(!oc) return;
-  if(!confirm(`¿Confirmas que la factura ${oc.facturaOdoo || ''} de "${oc.proveedor}" ya quedó confirmada en Odoo? Se quitará de la lista de pendientes.`)) return;
-  delete ESTADO.ocsAbiertas[ocId];
-  estadoSucio = true;
-  guardarEstado(true);
-  pintarInicio();
-  pintarConciliacion();
+  if(!oc || !confirm(`¿Confirmas que la factura ${oc.facturaOdoo || ''} de "${oc.proveedor}" ya quedó confirmada en Odoo? Se quita de la lista.`)) return;
+  delete ESTADO.ocsAbiertas[ocId]; estadoSucio = true; guardarEstado(true); pintarRevision();
 }
 
-/* ================= PASO 3 + 5: EXTRACTO DE CLARA (cruce 2) ================= */
-let CARGOS_CLARA = null;   // null = aún no cargado; [] = omitido/sin cargos
-let PAGOS_ODOO = null;
+/* ================= SALIDA DE ESCAPE: DEJAR PENDIENTE ================= */
+let PAUSADOS = new Set();
+function dejarPendiente(clave){ PAUSADOS.add(clave); pintarRevision(); }
+function reactivar(clave){ PAUSADOS.delete(clave); pintarRevision(); }
 
-async function archivoClara(files){
-  const f = files[0];
-  if(!f) return;
-  try{
-    const texto = await f.text();
-    CARGOS_CLARA = parsearClara(texto);
-    if(!CARGOS_CLARA.length) throw new Error('no se encontraron cargos en el archivo');
-    document.getElementById('resultadoClara').innerHTML =
-      `<div class="archivo-cargado"><span>Se leyeron ${CARGOS_CLARA.length} cargos del extracto · total ${dinero(CARGOS_CLARA.reduce((s,c)=>s+c.monto,0))}</span>
-      <button class="quitar" onclick="quitarClara()">Quitar</button></div>`;
-    document.getElementById('accionClara').style.display = 'none';
-    await prepararCruceTarjeta();
-  }catch(e){
-    avisar('No se pudo leer el extracto de Clara: ' + esc(e.message) + '. Verifica que sea el CSV descargado del portal.', 'error');
+/* ================= TABLERO: "REVISIÓN DEL LUNES" ================= */
+function pintarRevision(){
+  const ocs = Object.values(ESTADO.ocsAbiertas);
+  const desvios = [], listas = [], esperando = [], enOdoo = [];
+  for(const oc of ocs){
+    if(oc.preparadaEnOdoo){ enOdoo.push(oc); continue; }
+    const est = estadoOC(oc);
+    if(est==='verde') listas.push(oc);
+    else if(est==='amarillo'||est==='rojo') desvios.push({ clave:'oc'+oc.id, tipo:'precio', oc, est });
+    else if(est==='parcial') desvios.push({ clave:'oc'+oc.id, tipo:'parcial', oc, est });
+    else esperando.push(oc);
   }
-}
+  ASIGNACIONES_PENDIENTES.forEach((p,i)=> desvios.push({ clave:'cfdi'+i, tipo:'cfdi', pend:p, idx:i }));
 
-function quitarClara(){
-  CARGOS_CLARA = null;
-  document.getElementById('resultadoClara').innerHTML = '';
-  document.getElementById('accionClara').style.display = 'flex';
-  document.getElementById('pasoTarjeta').style.display = 'none';
-  pintarBarra();
-}
+  const activos = desvios.filter(d => !PAUSADOS.has(d.clave));
+  const pausados = desvios.filter(d => PAUSADOS.has(d.clave));
+  const cuadraron = (MEDICION_CORTE ? MEDICION_CORTE.catalogo + MEDICION_CORTE.similitud + MEDICION_CORTE.servicio + MEDICION_CORTE.ia : 0);
 
-function omitirClara(){
-  CARGOS_CLARA = [];
-  document.getElementById('resultadoClara').innerHTML =
-    '<div class="archivo-cargado" style="background:var(--fondo);border-color:var(--borde);color:var(--tinta-suave)"><span>Sin extracto esta semana.</span><button class="quitar" onclick="quitarClara()">Cambiar</button></div>';
-  document.getElementById('accionClara').style.display = 'none';
-  prepararCruceTarjeta();
-}
-
-function parsearClara(texto){
-  // Lector de CSV tolerante: detecta separador, encabezados y columnas por nombre
-  const lineas = texto.split(/\r?\n/).filter(l => l.trim());
-  if(lineas.length < 2) return [];
-  const sep = (lineas[0].match(/;/g)||[]).length > (lineas[0].match(/,/g)||[]).length ? ';' : ',';
-  const partir = l => {
-    const out = []; let cur = '', dentro = false;
-    for(const ch of l){
-      if(ch === '"'){ dentro = !dentro; }
-      else if(ch === sep && !dentro){ out.push(cur); cur = ''; }
-      else cur += ch;
-    }
-    out.push(cur);
-    return out.map(x => x.trim());
-  };
-  const enc = partir(lineas[0]).map(norm);
-  const busca = claves => enc.findIndex(h => claves.some(k => h.includes(k)));
-  const iFecha = busca(['fecha','date']);
-  const iDesc = busca(['descrip','concepto','comercio','merchant','establec','detalle']);
-  const iMonto = busca(['monto','importe','amount','cargo','total']);
-  if(iFecha < 0 || iDesc < 0 || iMonto < 0){
-    throw new Error('no reconocí las columnas de fecha, descripción y monto en el encabezado del CSV');
-  }
-  const cargos = [];
-  for(let i = 1; i < lineas.length; i++){
-    const c = partir(lineas[i]);
-    if(c.length <= Math.max(iFecha, iDesc, iMonto)) continue;
-    const monto = parseFloat(String(c[iMonto]).replace(/[$,\s]/g,'').replace(/^\((.*)\)$/,'-$1'));
-    if(!monto || isNaN(monto)) continue;
-    if(monto < 0) continue; // abonos/pagos a la tarjeta: no son gastos
-    cargos.push({ fecha: aFechaISO(c[iFecha]), comercio: c[iDesc], monto: +monto.toFixed(2) });
-  }
-  return cargos;
-}
-
-function aFechaISO(s){
-  s = String(s).trim();
-  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(m) return `${m[1]}-${m[2]}-${m[3]}`;
-  m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-  if(m){
-    const a = m[3].length === 2 ? '20' + m[3] : m[3];
-    return `${a}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`; // asume DD/MM/AAAA
-  }
-  return s;
-}
-
-async function prepararCruceTarjeta(){
-  if(CARGOS_CLARA === null) return; // aún no hay extracto ni se omitió
-  if(!ESTADO.diarioClaraId){
-    try{
-      const d = await llamar('/api/diarios');
-      document.getElementById('selectDiario').innerHTML =
-        d.diarios.map(j => `<option value="${j.id}">${esc(j.name)} (${j.type === 'bank' ? 'banco' : j.type})</option>`).join('');
-      document.getElementById('veloDiario').classList.add('visible');
-    }catch(e){ avisar('No se pudieron traer los diarios de Odoo: ' + esc(e.message), 'error'); }
-    return;
-  }
-  try{
-    cargando('Trayendo los pagos con tarjeta registrados en Odoo…');
-    const desde = document.getElementById('fechaDesde').value;
-    const hasta = document.getElementById('fechaHasta').value;
-    const d = await llamar(`/api/pagos?diario=${ESTADO.diarioClaraId}&desde=${desde}&hasta=${hasta}`);
-    PAGOS_ODOO = d.pagos;
-    pintarCruceTarjeta();
-  }catch(e){
-    avisar('No se pudieron traer los pagos de Odoo: ' + esc(e.message), 'error');
-  }finally{ cargando(null); }
-}
-
-function guardarDiario(){
-  ESTADO.diarioClaraId = parseInt(document.getElementById('selectDiario').value, 10);
-  estadoSucio = true;
-  document.getElementById('veloDiario').classList.remove('visible');
-  guardarEstado(true);
-  prepararCruceTarjeta();
-}
-
-function diasEntre(a, b){
-  return Math.abs((new Date(a) - new Date(b)) / 86400000);
-}
-
-let CIERRE_ACTUAL = null;
-
-function pintarCruceTarjeta(){
-  if(CARGOS_CLARA === null || PAGOS_ODOO === null) return;
-  document.getElementById('pasoTarjeta').style.display = 'block';
-
-  // Emparejar por monto exacto (±50 centavos) y fecha cercana (±3 días)
-  const pagosLibres = PAGOS_ODOO.map(p => ({ ...p, usado: false }));
-  const sinRegistro = [];
-  let emparejados = 0;
-
-  for(const cargo of CARGOS_CLARA){
-    const candidato = pagosLibres.find(p => !p.usado &&
-      Math.abs(p.monto - cargo.monto) <= 0.5 &&
-      diasEntre(p.fecha, cargo.fecha) <= 3);
-    if(candidato){ candidato.usado = true; emparejados++; }
-    else sinRegistro.push(cargo);
-  }
-  const sinCargo = pagosLibres.filter(p => !p.usado);
+  // Resumen
+  document.getElementById('resumen').innerHTML = `
+    <div class="tile ok"><div class="cifra num">${listas.length}</div><div class="rot">cuadran · listas para escribir</div></div>
+    <div class="tile atn"><div class="cifra num">${activos.length}</div><div class="rot">te necesitan · decisión</div></div>
+    <div class="tile esp"><div class="cifra num">${esperando.length}</div><div class="rot">esperando su CFDI</div></div>`;
 
   let html = '';
-  if(emparejados){
-    html += `<div class="tarjeta verde"><div class="tarjeta-encabezado">
-      <div class="titulo">${emparejados} cargo${emparejados!==1?'s':''} de la tarjeta cuadra${emparejados!==1?'n':''} con Odoo</div>
-      <div class="chips"><span class="chip chip-verde">CUADRA</span></div></div></div>`;
+
+  // 1) Te necesitan (desvíos)
+  html += `<div class="titulo-sec">Te necesitan</div>`;
+  if(!activos.length){
+    html += `<div class="vacio">Nada te necesita ahora mismo.${CFDIS.length? '' : ' Sube los CFDIs de la semana para empezar.'}</div>`;
+  } else {
+    for(const d of activos) html += tarjetaDesvio(d);
   }
 
-  sinRegistro.forEach((c, i) => {
-    const cerradaAntes = ESTADO.discrepanciasCerradas.some(d =>
-      d.tipo === 'cargo-sin-registro' && d.comercio === c.comercio && Math.abs(d.monto - c.monto) <= 0.5);
-    html += `<div class="tarjeta rojo" id="cargo-${i}">
-      <div class="tarjeta-encabezado">
-        <div><div class="titulo">Cargo en la tarjeta sin registro en Odoo</div>
-        <div class="sub">${esc(c.fecha)} · ${esc(c.comercio)} · <strong>${dinero(c.monto)}</strong></div></div>
-        <div class="chips"><span class="chip chip-rojo">INVESTIGAR</span></div>
-      </div>
-      <div class="resumen-simple">Este gasto se hizo con la tarjeta empresarial pero no existe ningún pago con ese monto en Odoo. Averigua qué fue antes de cerrarlo.</div>
-      ${cerradaAntes ? '<div class="aviso">Un cargo igual (mismo comercio y monto) ya se había cerrado en un corte anterior. Vuelve a aparecer: revísalo de nuevo.</div>' : ''}
-      <div class="acciones-tarjeta">
-        <button class="boton boton-secundario boton-chico" onclick="abrirCierre('cargo-sin-registro', ${i})">Ya lo investigué — cerrar con motivo</button>
-      </div>
-    </div>`;
-  });
-
-  sinCargo.forEach(p => {
-    html += `<div class="tarjeta amarillo">
-      <div class="tarjeta-encabezado">
-        <div><div class="titulo">Pago en Odoo sin cargo en la tarjeta</div>
-        <div class="sub">${esc(p.fecha)} · ${esc(p.proveedor)} · <strong>${dinero(p.monto)}</strong> · ${esc(p.nombre)}</div></div>
-        <div class="chips"><span class="chip chip-amarillo">REVISAR CAPTURA</span></div>
-      </div>
-      <div class="resumen-simple">Odoo dice que este pago se hizo con la tarjeta Clara, pero no aparece en el extracto del período. Puede ser un error de método de pago en la captura, o un cargo que caerá en el siguiente extracto.</div>
-    </div>`;
-  });
-
-  if(!sinRegistro.length && !sinCargo.length && !emparejados){
-    html += '<div class="tarjeta"><div class="resumen-simple">No hay cargos ni pagos con tarjeta en este período.</div></div>';
+  // 2) Cuadran, listas para escribir
+  if(listas.length){
+    html += `<div class="titulo-sec">Cuadran — listas para escribir en Odoo</div>`;
+    for(const oc of listas) html += tarjetaLista(oc);
   }
 
-  document.getElementById('listaTarjeta').innerHTML = html;
-  pintarBarra();
+  // 3) En Odoo, pendiente de confirmar
+  if(enOdoo.length){
+    html += `<div class="titulo-sec">En Odoo — pendientes de tu confirmación final</div>`;
+    for(const oc of enOdoo) html += `<div class="tarjeta t-odoo"><div class="cuerpo">
+      <div class="fila-tit"><div><div class="titp">${esc(oc.proveedor)}</div><div class="quien">${esc(oc.nombre)} · factura ${esc(oc.facturaOdoo||'')}</div></div><span class="etq">En Odoo</span></div>
+      <div class="acciones"><button class="btn secundaria" onclick="archivarOC(${oc.id})">Ya la confirmé en Odoo — quitar de la lista</button></div>
+    </div></div>`;
+  }
 
-  window._sinRegistro = sinRegistro;
+  // 4) Esperando CFDI (muted)
+  if(esperando.length){
+    html += `<div class="titulo-sec">Esperando su CFDI (${esperando.length})</div>`;
+    for(const oc of esperando) html += `<div class="tarjeta t-esp"><div class="cuerpo">
+      <div class="fila-tit"><div><div class="titp">${esc(oc.proveedor)}</div><div class="quien">${esc(oc.nombre)} · aún no llega su factura</div></div><span class="etq">Esperando</span></div>
+    </div></div>`;
+  }
+
+  // 5) En pausa
+  if(pausados.length){
+    html += `<div class="titulo-sec">En pausa — arréglalas en Odoo y dale “Volver a correr”</div>`;
+    for(const d of pausados) html += `<div class="tarjeta t-esp"><div class="enpausa"><div class="txt">⏸ ${esc(tituloDesvio(d))}</div><button class="enlace" onclick="reactivar('${d.clave}')">Reactivar</button></div></div>`;
+  }
+
+  document.getElementById('tablero').innerHTML = html;
 }
 
-function abrirCierre(tipo, indice){
-  CIERRE_ACTUAL = { tipo, indice };
-  const c = window._sinRegistro[indice];
-  document.getElementById('motivoDescripcion').textContent =
-    `Cargo del ${c.fecha} en "${c.comercio}" por ${dinero(c.monto)}.`;
-  document.getElementById('motivoTexto').value = '';
-  document.getElementById('veloMotivo').classList.add('visible');
+function tituloDesvio(d){
+  if(d.tipo==='cfdi') return 'Factura sin reconocer: ' + (d.pend.concepto.descripcion||'');
+  return d.oc.proveedor + ' · ' + d.oc.nombre;
 }
 
-function confirmarCierre(){
-  if(!CIERRE_ACTUAL) return;
-  const c = window._sinRegistro[CIERRE_ACTUAL.indice];
-  ESTADO.discrepanciasCerradas.push({
-    tipo: CIERRE_ACTUAL.tipo,
-    fechaCargo: c.fecha, comercio: c.comercio, monto: c.monto,
-    motivo: document.getElementById('selectMotivo').value,
-    detalle: document.getElementById('motivoTexto').value.trim(),
-    fecha: new Date().toISOString()
-  });
-  // quitar el cargo de la lista de esta sesión
-  CARGOS_CLARA = CARGOS_CLARA.filter(x => x !== c);
-  estadoSucio = true;
-  document.getElementById('veloMotivo').classList.remove('visible');
-  CIERRE_ACTUAL = null;
-  guardarEstado(true);
-  pintarCruceTarjeta();
+function tarjetaDesvio(d){
+  const pausar = `<button class="btn secundaria" onclick="dejarPendiente('${d.clave}')"><span>Dejar pendiente <span class="money">· voy a Odoo y vuelvo a correr</span></span></button>`;
+
+  if(d.tipo==='precio'){
+    const oc = d.oc; const esperado = oc.lineas.reduce((s,l)=>s+l.pedida*l.precioOC,0); const real = oc.lineas.reduce((s,l)=>s+l.importeReal,0);
+    const difPct = esperado ? (real-esperado)/esperado*100 : 0;
+    return `<div class="tarjeta t-precio"><div class="cuerpo">
+      <div class="fila-tit"><div><div class="titp">El precio no coincide con Odoo</div><div class="quien">${esc(oc.proveedor)} · ${esc(oc.nombre)}</div></div><span class="etq">Precio ${difPct>0?'+':''}${difPct.toFixed(1)}%</span></div>
+      <div class="porque">Los CFDIs suman ${dinero(real)} contra ${dinero(esperado)} pactados. Registra la compra real; queda visible la diferencia.</div>
+      ${detallePrecio(oc)}
+      <div class="acciones">
+        <button class="btn primaria" onclick="prepararEnOdoo(${oc.id})"><span>Registrar la compra real <span class="money">· escribe en Odoo, con tu OK</span></span><span class="rec">Recomendado</span></button>
+        ${pausar}
+      </div></div></div>`;
+  }
+  if(d.tipo==='parcial'){
+    const oc = d.oc;
+    const faltan = oc.lineas.filter(l=>l.cubierta<l.pedida).map(l=>`${esc(l.producto)} (faltan ${+(l.pedida-l.cubierta).toFixed(2)})`);
+    const algoCubierto = oc.lineas.some(l=>l.cubierta>0);
+    return `<div class="tarjeta t-parcial"><div class="cuerpo">
+      <div class="fila-tit"><div><div class="titp">Llegó incompleto</div><div class="quien">${esc(oc.proveedor)} · ${esc(oc.nombre)}</div></div><span class="etq">Incompleto</span></div>
+      <div class="porque">Falta CFDI de: ${faltan.join(' · ')}.</div>
+      ${detallePrecio(oc)}
+      <div class="acciones">
+        ${algoCubierto? `<button class="btn primaria" onclick="prepararEnOdoo(${oc.id})"><span>Cerrar con lo real que llegó <span class="money">· escribe lo cubierto en Odoo</span></span><span class="rec">Recomendado</span></button>`:''}
+        ${pausar}
+      </div></div></div>`;
+  }
+  // tipo cfdi (concepto sin reconocer / factura sin compra)
+  const p = d.pend; const i = d.idx; const pool = lineasConSaldo();
+  if(!pool.length){
+    return `<div class="tarjeta t-cfdi"><div class="cuerpo">
+      <div class="fila-tit"><div><div class="titp">Factura sin compra que la respalde</div><div class="quien">${esc(p.cfdi.emisor||p.cfdi.rfc)} · "${esc(p.concepto.descripcion)}" · ${p.concepto.cantidad} × ${dinero(p.concepto.valorUnitario)}</div></div><span class="etq">Sin OC</span></div>
+      <div class="porque">Ningún producto pedido esta semana corresponde. Puede ser un gasto sin OC, un servicio no configurado, o algo a crear en Odoo.</div>
+      <div class="acciones">${pausar}</div></div></div>`;
+  }
+  const opciones = pool.map(({oc,linea:l})=>`<option value="${oc.id}|${l.id}">${esc(oc.nombre)} — ${esc(l.producto)} (faltan ${+(l.pedida-l.cubierta).toFixed(2)})</option>`).join('');
+  const sug = p.sugerenciaIA;
+  const banner = sug? `<div class="porque"><strong>La IA sugiere:</strong> ${esc(sug.producto)} · confianza ${(sug.confianza*100).toFixed(0)}%. Revisa y confirma abajo.</div>`:'';
+  const preSel = sug? `${sug.ocId}|${sug.lineaId}`:'';
+  setTimeout(()=>{ const s=document.getElementById('asignar-'+i); if(s && preSel) s.value=preSel; },0);
+  return `<div class="tarjeta t-cfdi"><div class="cuerpo">
+    <div class="fila-tit"><div><div class="titp">Producto del CFDI sin reconocer${sug?' · sugerencia de IA':''}</div><div class="quien">${esc(p.cfdi.emisor||p.cfdi.rfc)} · "${esc(p.concepto.descripcion)}" · ${p.concepto.cantidad} × ${dinero(p.concepto.valorUnitario)}</div></div><span class="etq">${sug?'Confirmar':'Asignar'}</span></div>
+    ${banner}
+    <div class="porque">¿A qué producto de las compras corresponde? (se recuerda para la próxima)</div>
+    <div class="acciones">
+      <select id="asignar-${i}">${opciones}</select>
+      <button class="btn primaria" onclick="const v=document.getElementById('asignar-${i}').value.split('|'); if(v[0]) asignarManual(${i}, v[0], v[1])"><span>${sug?'Confirmar la sugerencia':'Asignar'}</span><span class="rec">Recomendado</span></button>
+      ${pausar}
+    </div></div></div>`;
 }
 
-/* ================= BARRA DE RESUMEN ================= */
-function pintarBarra(){
-  const ocs = Object.values(ESTADO.ocsAbiertas);
-  if(!ocs.length && CARGOS_CLARA === null){ document.getElementById('barraFinal').classList.remove('visible'); return; }
-  const preparadas = ocs.filter(o => o.preparadaEnOdoo).length;
-  const pendientes = ocs.length - preparadas;
-  const rojasTarjeta = (window._sinRegistro || []).length;
-  document.getElementById('resumenFinal').innerHTML =
-    `<strong>${preparadas}</strong> factura${preparadas!==1?'s':''} escrita${preparadas!==1?'s':''} en Odoo · ` +
-    `<strong>${pendientes}</strong> compra${pendientes!==1?'s':''} pendiente${pendientes!==1?'s':''}` +
-    (rojasTarjeta ? ` · <strong style="color:var(--alerta)">${rojasTarjeta}</strong> cargo${rojasTarjeta!==1?'s':''} de tarjeta por investigar` : '');
-  document.getElementById('barraFinal').classList.add('visible');
+function tarjetaLista(oc){
+  return `<div class="tarjeta t-ok"><div class="cuerpo">
+    <div class="fila-tit"><div><div class="titp">${esc(oc.proveedor)}</div><div class="quien">${esc(oc.nombre)} · cuadra</div></div><span class="etq">Cuadra</span></div>
+    ${detallePrecio(oc)}
+    <div class="acciones"><button class="btn primaria" onclick="prepararEnOdoo(${oc.id})"><span>Escribir en Odoo <span class="money">· datos reales, con tu OK</span></span></button></div>
+  </div></div>`;
 }
 
-async function guardarYTerminar(){
-  await guardarEstado(false);
+function detallePrecio(oc){
+  const filas = oc.lineas.map(l=>{
+    const falta = l.pedida - l.cubierta;
+    const pr = l.cubierta ? l.importeReal / l.cubierta : 0;
+    const dp = l.cubierta && l.precioOC ? (pr - l.precioOC)/l.precioOC*100 : 0;
+    return `<tr><td>${esc(l.producto)}</td><td class="num">${l.cubierta}/${l.pedida}${falta>0.001?` <span class="up">(faltan ${+falta.toFixed(2)})</span>`:''}</td><td class="num">${dinero(l.precioOC)}</td><td class="num">${l.cubierta? dinero(pr)+(Math.abs(dp)>1?` <span class="${dp>0?'up':'dn'}">${dp>0?'+':''}${dp.toFixed(1)}%</span>`:''):'—'}</td></tr>`;
+  }).join('');
+  return `<div class="detalle"><table><tr><th>Producto</th><th class="num">CFDI/Pedido</th><th class="num">Precio OC</th><th class="num">Precio real</th></tr>${filas}</table></div>`;
 }
 
 /* ================= ARRANQUE ================= */
-if(BACKEND && CLAVE) cargarEstado();
+async function arrancar(){
+  try{ cargando('Conectando…'); await cargarEstado(); await cargarPool(false); }
+  catch(e){ avisar('No se pudo conectar: ' + esc(e.message) + '. Revisa la configuración.', 'error'); }
+  finally{ cargando(null); }
+}
+if(BACKEND && CLAVE) arrancar();
 </script>
 </body>
 </html>
