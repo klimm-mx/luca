@@ -39,7 +39,6 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 .zona-archivo{flex:1;min-width:220px;border:1.5px dashed var(--borde);border-radius:9px;padding:14px;text-align:center;color:var(--tinta-suave);cursor:pointer;font-size:13.5px;background:var(--fondo)}
 .zona-archivo:hover,.zona-archivo.arrastre{border-color:var(--agua);background:var(--agua-claro)}
 .zona-archivo strong{color:var(--agua-oscuro)}
-.cfdi-info{font-size:12.5px;color:var(--ok);font-weight:600;margin-top:8px}
 
 /* Resumen (contadores) */
 .resumen{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
@@ -67,11 +66,6 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 .t-cfdi .etq{background:var(--alerta-bg);color:var(--alerta)} .t-ok .etq{background:var(--ok-bg);color:var(--ok)}
 .t-esp .etq{background:#EEF3F5;color:var(--tinta-suave)} .t-odoo .etq{background:var(--agua-claro);color:var(--agua-oscuro)}
 .porque{font-size:13.5px;color:var(--tinta);margin-top:7px}
-.evid{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
-.ev{background:var(--fondo);border:1px solid var(--borde);border-radius:8px;padding:7px 10px;min-width:92px}
-.ev .k{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--tinta-suave);font-weight:600}
-.ev .v{font-size:14px;font-weight:700;margin-top:1px}
-.ev .v .up{color:var(--media)} .ev .v .dn{color:var(--ok)}
 
 .acciones{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .acciones select{margin-bottom:2px}
@@ -122,10 +116,9 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
   <div class="control">
     <div class="zona-archivo" id="zonaCfdi" onclick="document.getElementById('entradaCfdi').click()">
       <strong>Subir CFDIs</strong> — arrastra los .xml del SAT o haz clic
-      <div class="cfdi-info" id="cfdiInfo"></div>
     </div>
     <input type="file" id="entradaCfdi" accept=".xml" multiple style="display:none">
-    <button class="boton boton-secundario" onclick="cargarPool(true)" title="Re-lee Odoo y recalcula: lo que arreglaste allá cuadra y se va.">↻ Volver a correr</button>
+    <button class="boton boton-secundario" onclick="volverACorrer()" title="Re-lee Odoo y recalcula: lo que arreglaste allá cuadra y se va.">↻ Volver a correr</button>
   </div>
 
   <div id="zonaCargando" style="display:none"><div class="cargando"><div class="girador"></div><span id="textoCargando">Procesando…</span></div></div>
@@ -150,18 +143,12 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
   </div>
 </div>
 
-<!-- Modal: proveedor nuevo -->
-<div class="velo" id="veloProveedor">
-  <div class="modal">
-    <h3>Proveedor nuevo detectado</h3>
-    <p>Este RFC apareció en un CFDI y todavía no está en el catálogo. Regístralo para continuar.</p>
-    <div class="campo"><label>RFC</label><input type="text" id="provRfc" readonly style="background:var(--fondo)"></div>
-    <div class="campo"><label>Razón social (viene del CFDI)</label><input type="text" id="provRazon"></div>
-    <button class="boton boton-principal" style="width:100%" onclick="registrarProveedor()">Registrar y continuar</button>
-  </div>
-</div>
-
 <script>
+/* Conciliador de Compras — panel.
+   Esta página solo sube los XML, pinta el tablero que arma el backend y
+   manda las decisiones del operador. Toda regla, umbral y cálculo vive en
+   el backend privado (detrás de la clave). */
+
 /* ================= CONFIGURACIÓN ================= */
 let BACKEND = localStorage.getItem('luca_backend') || '';
 let CLAVE = localStorage.getItem('luca_clave') || '';
@@ -177,10 +164,11 @@ function guardarConfig(){
   arrancar();
 }
 
-async function llamar(ruta, opciones = {}){
+async function llamar(ruta, cuerpo){
+  const opciones = cuerpo === undefined ? {} : { method:'POST', body: JSON.stringify(cuerpo) };
   const resp = await fetch(BACKEND + '/luca' + ruta, {
     ...opciones,
-    headers: { 'Content-Type':'application/json', 'x-backend-key': CLAVE, ...(opciones.headers||{}) }
+    headers: { 'Content-Type':'application/json', 'x-backend-key': CLAVE }
   });
   const data = await resp.json().catch(() => ({}));
   if(!resp.ok) throw new Error(data.error || ('Error ' + resp.status));
@@ -195,490 +183,188 @@ function cargando(txt){
   const z = document.getElementById('zonaCargando');
   if(txt){ document.getElementById('textoCargando').textContent = txt; z.style.display='block'; } else z.style.display='none';
 }
-function esc(s){ return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function dinero(n){ return '$' + Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+function esc(s){ return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
-/* Bitácora (Frente 1f): registra el evento en el backend. Best-effort: no rompe la UI. */
-function registrarBitacora(tipo, registro){
-  try{ llamar('/api/bitacora', { method:'POST', body: JSON.stringify({ tipo, registro }) }).catch(()=>{}); }catch(e){}
+/* ================= ESTADO DE LA PANTALLA ================= */
+let TABLERO = null;          // lo último que mandó el backend
+let PAUSADOS = new Set();    // "Dejar pendiente": vive hasta volver a correr o recargar
+let ACCIONES = [];           // acciones pintadas, por índice
+
+async function conCarga(texto, fn){
+  cargando(texto);
+  try { return await fn(); }
+  catch(e){ avisar(esc(e.message), 'error'); }
+  finally { cargando(null); }
 }
 
-/* ================= ESTADO PERSISTENTE (vive en Postgres vía backend) ================= */
-let ESTADO = {
-  version: 1, diarioClaraId: null, proveedores: {}, catalogoProductos: {},
-  ocsAbiertas: {}, cfdisUsados: [], discrepanciasCerradas: [], ultimoGuardado: null
-};
-let estadoSucio = false;
-
-async function cargarEstado(){
-  const d = await llamar('/api/estado');
-  if(d.estado && d.estado.version) ESTADO = d.estado;
+/* ================= ARRANQUE / VOLVER A CORRER ================= */
+async function arrancar(){
+  await conCarga('Conectando…', async () => {
+    TABLERO = await llamar('/api/revision');
+    pintar();
+  });
 }
-async function guardarEstado(silencioso){
-  try{
-    ESTADO.ultimoGuardado = new Date().toISOString();
-    await llamar('/api/estado', { method:'POST', body: JSON.stringify({ estado: ESTADO }) });
-    estadoSucio = false;
-    if(!silencioso) avisar('Avance guardado.', 'exito');
-  }catch(e){ avisar('No se pudo guardar el avance: ' + esc(e.message), 'error'); }
+async function volverACorrer(){
+  PAUSADOS.clear();
+  await conCarga('Volviendo a leer Odoo…', async () => {
+    TABLERO = await llamar('/api/revision');
+    pintar();
+    avisar('Listo. Se re-leyó Odoo y se recalculó todo.', 'exito');
+  });
 }
-window.addEventListener('beforeunload', e => { if(estadoSucio){ e.preventDefault(); e.returnValue=''; } });
 
-/* ================= CFDIs (parseo en el navegador) ================= */
-let CFDIS = [];
-let COLA_PROVEEDORES = [];
-
-document.getElementById('entradaCfdi').addEventListener('change', e => archivosCfdi(e.target.files));
+/* ================= SUBIR CFDIs ================= */
+document.getElementById('entradaCfdi').addEventListener('change', e => { subirCfdis(e.target.files); e.target.value = ''; });
 (function(){
   const zona = document.getElementById('zonaCfdi');
   zona.addEventListener('dragover', e => { e.preventDefault(); zona.classList.add('arrastre'); });
   zona.addEventListener('dragleave', () => zona.classList.remove('arrastre'));
-  zona.addEventListener('drop', e => { e.preventDefault(); zona.classList.remove('arrastre'); archivosCfdi(e.dataTransfer.files); });
+  zona.addEventListener('drop', e => { e.preventDefault(); zona.classList.remove('arrastre'); subirCfdis(e.dataTransfer.files); });
 })();
 
-async function archivosCfdi(files){
-  const errores = [], repetidos = [];
-  for(const f of files){
-    if(!/\.xml$/i.test(f.name)) { errores.push(f.name + ' (no es XML)'); continue; }
-    try{
-      const cfdi = parsearCfdi(await f.text(), f.name);
-      if(ESTADO.cfdisUsados.includes(cfdi.uuid) || CFDIS.some(c => c.uuid === cfdi.uuid)){ repetidos.push(f.name); continue; }
-      CFDIS.push(cfdi);
-      const rfc = cfdi.rfc;
-      if(!ESTADO.proveedores[rfc] && !COLA_PROVEEDORES.some(p => p.rfc === rfc)) COLA_PROVEEDORES.push({ rfc, razon: cfdi.emisor });
-    }catch(e){ errores.push(f.name + ' (' + e.message + ')'); }
+const TOPE_ENVIO = 8 * 1024 * 1024; // bytes por envío (el servidor acepta hasta 15 MB)
+async function subirCfdis(files){
+  const lista = Array.from(files || []); // copia: el input se limpia enseguida
+  const noXml = [], archivos = [];
+  for(const f of lista){
+    if(!/\.xml$/i.test(f.name)){ noXml.push(f.name); continue; }
+    archivos.push({ nombre: f.name, xml: await f.text() });
   }
-  document.getElementById('cfdiInfo').textContent = CFDIS.length ? `${CFDIS.length} CFDI${CFDIS.length>1?'s':''} cargado${CFDIS.length>1?'s':''} en esta sesión` : '';
-  let msg = '';
-  if(repetidos.length) msg += 'Ya aplicados antes (omitidos): ' + repetidos.map(esc).join(', ') + '. ';
-  if(errores.length) msg += 'No se pudieron leer: ' + errores.map(esc).join(', ') + '.';
-  if(msg) avisar(msg, errores.length ? 'error' : 'exito'); else avisar('','');
-  procesarColaProveedores();
-  aplicarCfdis();
-}
+  if(!archivos.length){ if(noXml.length) avisar('No son XML: ' + noXml.map(esc).join(', '), 'error'); return; }
 
-function parsearCfdi(xmlTexto, nombreArchivo){
-  const doc = new DOMParser().parseFromString(xmlTexto, 'text/xml');
-  if(doc.getElementsByTagName('parsererror').length) throw new Error('XML mal formado');
-  const comp = doc.getElementsByTagNameNS('*','Comprobante')[0];
-  if(!comp) throw new Error('no parece un CFDI del SAT');
-  const emisor = doc.getElementsByTagNameNS('*','Emisor')[0];
-  const timbre = doc.getElementsByTagNameNS('*','TimbreFiscalDigital')[0];
-  const conceptos = [...doc.getElementsByTagNameNS('*','Concepto')].map(c => ({
-    descripcion: c.getAttribute('Descripcion') || '', cantidad: parseFloat(c.getAttribute('Cantidad') || '0'),
-    valorUnitario: parseFloat(c.getAttribute('ValorUnitario') || '0'), importe: parseFloat(c.getAttribute('Importe') || '0'),
-    claveSat: c.getAttribute('ClaveProdServ') || '', noIdentificacion: c.getAttribute('NoIdentificacion') || ''
-  }));
-  return {
-    archivo: nombreArchivo, uuid: timbre ? timbre.getAttribute('UUID') : ('SIN-UUID-' + nombreArchivo),
-    fecha: (comp.getAttribute('Fecha') || '').slice(0,10), subtotal: parseFloat(comp.getAttribute('SubTotal') || '0'),
-    total: parseFloat(comp.getAttribute('Total') || '0'), rfc: (emisor ? emisor.getAttribute('Rfc') : '').toUpperCase(),
-    emisor: emisor ? (emisor.getAttribute('Nombre') || '') : '', conceptos
-  };
-}
+  // En tandas, para no pasar el tope de tamaño por envío.
+  const tandas = []; let actual = [], peso = 0;
+  for(const a of archivos){
+    if(actual.length && (peso + a.xml.length > TOPE_ENVIO || actual.length >= 200)){ tandas.push(actual); actual = []; peso = 0; }
+    actual.push(a); peso += a.xml.length;
+  }
+  tandas.push(actual);
 
-function procesarColaProveedores(){
-  if(!COLA_PROVEEDORES.length) return;
-  const p = COLA_PROVEEDORES[0];
-  document.getElementById('provRfc').value = p.rfc;
-  document.getElementById('provRazon').value = p.razon;
-  document.getElementById('veloProveedor').classList.add('visible');
-}
-function registrarProveedor(){
-  const rfc = document.getElementById('provRfc').value;
-  const razon = document.getElementById('provRazon').value.trim();
-  if(!razon){ alert('La razón social no puede quedar vacía'); return; }
-  ESTADO.proveedores[rfc] = { razon, nombreClara: '' };
-  estadoSucio = true; COLA_PROVEEDORES.shift();
-  document.getElementById('veloProveedor').classList.remove('visible');
-  if(COLA_PROVEEDORES.length) procesarColaProveedores(); else { guardarEstado(true); aplicarCfdis(); }
-}
-
-/* ================= MOTOR: CANASTAS (pool producto↔producto) ================= */
-const UMBRAL_SIMILITUD = 0.55;
-function similitud(a, b){
-  const ta = new Set(norm(a).split(' ').filter(x => x.length > 2));
-  const tb = new Set(norm(b).split(' ').filter(x => x.length > 2));
-  if(!ta.size || !tb.size) return 0;
-  let comunes = 0; for(const t of ta) if(tb.has(t)) comunes++;
-  return comunes / Math.min(ta.size, tb.size);
-}
-let ASIGNACIONES_PENDIENTES = [];
-let MEDICION_CORTE = null;
-let SERVICIOS_DETECTADOS = [];
-
-function catalogoGlobal(){
-  if(!ESTADO.catalogoGlobal){
-    ESTADO.catalogoGlobal = {};
-    const viejo = ESTADO.catalogoProductos || {};
-    for(const rfc of Object.keys(viejo)) for(const desc of Object.keys(viejo[rfc] || {}))
-      if(!ESTADO.catalogoGlobal[desc]) ESTADO.catalogoGlobal[desc] = viejo[rfc][desc];
-  }
-  return ESTADO.catalogoGlobal;
-}
-function lineasConSaldo(){
-  const fuera = [];
-  for(const oc of Object.values(ESTADO.ocsAbiertas)){
-    if(oc.preparadaEnOdoo) continue;
-    for(const l of oc.lineas) if(l.cubierta < l.pedida) fuera.push({ oc, linea: l });
-  }
-  return fuera;
-}
-function ubicarConcepto(con, poolLineas, catalogo){
-  const clave = norm(con.descripcion);
-  if(catalogo[clave]){
-    const cand = poolLineas.find(x => x.linea.producto === catalogo[clave].producto && x.linea.cubierta < x.linea.pedida);
-    if(cand) return { destino: cand, origen: 'catalogo' };
-  }
-  let mejor = { puntos: 0 };
-  for(const x of poolLineas){
-    if(x.linea.cubierta >= x.linea.pedida) continue;
-    const p = Math.max(similitud(con.descripcion, x.linea.producto), similitud(con.descripcion, x.linea.descripcion));
-    if(p > mejor.puntos) mejor = { puntos: p, destino: x };
-  }
-  if(mejor.puntos >= UMBRAL_SIMILITUD) return { destino: mejor.destino, origen: 'similitud' };
-  return { destino: null };
-}
-
-/* aplicarCfdis: IDEMPOTENTE. Resetea la cobertura de las OCs no preparadas y
-   re-aplica TODOS los CFDIs de la sesión sobre el pool actual. Así, subir CFDIs
-   en varias tandas o "volver a correr" no duplica cantidades (§7 re-lectura). */
-function aplicarCfdis(){
-  if(COLA_PROVEEDORES.length) return;
-  ASIGNACIONES_PENDIENTES = []; SERVICIOS_DETECTADOS = [];
-  for(const oc of Object.values(ESTADO.ocsAbiertas)){
-    if(oc.preparadaEnOdoo) continue;
-    for(const l of oc.lineas){ l.cubierta = 0; l.importeReal = 0; }
-    oc.cfdis = [];
-  }
-  const catalogo = catalogoGlobal();
-  const medicion = { catalogo:0, similitud:0, servicio:0, ia:0, manual:0, pendientes:0, total:0 };
-  const marcador = {}; const paraIA = [];
-  for(const cfdi of CFDIS){
-    for(const con of cfdi.conceptos){
-      medicion.total++;
-      const servicio = reglaServicio(cfdi, con);
-      if(servicio){ registrarServicio(cfdi, con, servicio, marcador); medicion.servicio++; continue; }
-      const r = ubicarConcepto(con, lineasConSaldo(), catalogo);
-      if(r.destino){ aplicarConcepto(r.destino.oc, r.destino.linea, con, cfdi, marcador); medicion[r.origen]++; }
-      else paraIA.push({ cfdi, concepto: con });
+  let cargados = 0; const repetidos = [], rechazados = [];
+  await conCarga(`Leyendo ${archivos.length} CFDI${archivos.length!==1?'s':''}…`, async () => {
+    for(const t of tandas){
+      const d = await llamar('/api/cfdis', { archivos: t });
+      cargados += d.cargados; repetidos.push(...d.repetidos); rechazados.push(...d.rechazados);
+      TABLERO = d.tablero;
     }
+    pintar();
+    let msg = '';
+    if(repetidos.length) msg += 'Ya estaban cargados (omitidos): ' + repetidos.map(esc).join(', ') + '. ';
+    if(noXml.length) msg += 'No son XML: ' + noXml.map(esc).join(', ') + '. ';
+    if(rechazados.length) msg += 'No se cargaron: ' + rechazados.map(r => `${esc(r.nombre)} (${esc(r.motivo)})`).join('; ') + '.';
+    if(cargados) msg = `${cargados} CFDI${cargados!==1?'s':''} nuevo${cargados!==1?'s':''} guardado${cargados!==1?'s':''}. ` + msg;
+    avisar(msg || 'No había CFDIs nuevos.', rechazados.length || noXml.length ? 'error' : 'exito');
+  });
+}
+
+/* ================= ACCIONES ================= */
+let CLAVES = [];              // claves de tarjeta pintadas, por índice
+function dejarPendiente(i){ if(CLAVES[i] !== undefined){ PAUSADOS.add(CLAVES[i]); pintar(); } }
+function reactivar(i){ if(CLAVES[i] !== undefined){ PAUSADOS.delete(CLAVES[i]); pintar(); } }
+function indiceClave(clave){ return CLAVES.push(clave) - 1; }
+
+async function ejecutar(i){
+  const a = ACCIONES[i];
+  if(!a) return;
+  if(a.tipo === 'asignar'){
+    const sel = document.getElementById('sel-' + i);
+    const [ocId, lineaId] = (sel && sel.value ? sel.value : '').split('|').map(Number);
+    if(!ocId || !lineaId){ avisar('Primero elige a qué producto corresponde.', 'error'); return; }
+    await conCarga('Guardando la asignación…', async () => {
+      TABLERO = (await llamar('/api/asignar', { clave: a.clave, ocId, lineaId })).tablero;
+      pintar(); avisar('', '');
+    });
+    return;
   }
-  MEDICION_CORTE = medicion; estadoSucio = true;
-  pintarRevision();
-  if(paraIA.length && IA_ACTIVA){ resolverConIA(paraIA, marcador, medicion); }
-  else {
-    for(const p of paraIA){ ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto }); medicion.pendientes++; }
-    pintarRevision();
+  if(a.confirmar && !confirm(a.confirmar)) return;
+  if(a.tipo === 'preparar'){
+    await conCarga('Escribiendo la factura en Odoo…', async () => {
+      const d = await llamar('/api/preparar-factura', { ocId: a.ocId });
+      TABLERO = d.tablero; pintar();
+      let msg = `Listo: la factura <strong>${esc(d.factura)}</strong> quedó en borrador con los datos reales. Confírmala en Odoo.`;
+      if(d.advertencias && d.advertencias.length) msg += '<br><br>' + d.advertencias.map(esc).join('<br>');
+      avisar(msg, d.advertencias && d.advertencias.length ? 'error' : 'exito');
+    });
+  } else if(a.tipo === 'descartar'){
+    await conCarga('Descartando…', async () => {
+      TABLERO = (await llamar('/api/descartar', { clave: a.clave })).tablero; pintar(); avisar('', '');
+    });
+  } else if(a.tipo === 'archivar'){
+    await conCarga('Quitando de la lista…', async () => {
+      const d = await llamar('/api/archivar', { ocId: a.ocId });
+      TABLERO = d.tablero; pintar(); avisar(d.mensaje ? esc(d.mensaje) : '', 'exito');
+    });
   }
 }
-function aplicarConcepto(oc, linea, con, cfdi, marcador){
-  linea.cubierta = +(linea.cubierta + con.cantidad).toFixed(4);
-  linea.importeReal = +(linea.importeReal + con.importe).toFixed(2);
-  if(!oc.cfdis.includes(cfdi.uuid)) oc.cfdis.push(cfdi.uuid);
-  if(marcador) marcador[oc.id] = true;
-  catalogoGlobal()[norm(con.descripcion)] = { producto: linea.producto };
-}
-function asignarManual(indicePendiente, ocId, lineaId){
-  const pend = ASIGNACIONES_PENDIENTES[indicePendiente];
-  if(!pend || pend.tipo !== 'concepto') return;
-  const oc = ESTADO.ocsAbiertas[ocId];
-  const linea = oc && oc.lineas.find(l => l.id === parseInt(lineaId,10));
-  if(!oc || !linea) return;
-  aplicarConcepto(oc, linea, pend.concepto, pend.cfdi, null);
-  registrarBitacora('nombre', { descripcion: pend.concepto.descripcion, producto: linea.producto, metodo: 'manual' });
-  ASIGNACIONES_PENDIENTES.splice(indicePendiente, 1);
-  if(MEDICION_CORTE){ MEDICION_CORTE.manual++; MEDICION_CORTE.pendientes = Math.max(0, MEDICION_CORTE.pendientes-1); }
-  estadoSucio = true; guardarEstado(true); pintarRevision();
-}
 
-/* Reglas de servicio (semilla privada; el HTML público ya no la trae) */
-function reglasServicioDefault(){ return []; }
-function reglasServicio(){ if(!ESTADO.reglasServicio) ESTADO.reglasServicio = reglasServicioDefault(); return ESTADO.reglasServicio; }
-function reglaServicio(cfdi, con){
-  const desc = norm(con.descripcion);
-  for(const r of reglasServicio()){
-    if(!r.textoContiene) continue;
-    const rfcOk = !r.rfc || r.rfc.toUpperCase() === (cfdi.rfc||'').toUpperCase();
-    if(rfcOk && desc.includes(norm(r.textoContiene))) return r;
-  }
-  return null;
-}
-function registrarServicio(cfdi, con, regla, marcador){
-  SERVICIOS_DETECTADOS.push({ cfdi, concepto: con, regla });
-  if(marcador) marcador['servicio:'+cfdi.rfc] = true;
-}
+/* ================= PINTAR EL TABLERO ================= */
+const CLASE = { precio:'t-precio', excedente:'t-precio', emisor:'t-precio', borrador:'t-parcial', parcial:'t-parcial', concepto:'t-cfdi', 'sin-oc':'t-cfdi', lista:'t-ok', odoo:'t-odoo', esperando:'t-esp' };
 
-/* ================= CAPA DE IA (paso 0: nombre → producto) ================= */
-let IA_ACTIVA = (localStorage.getItem('luca_ia_activa') !== '0');
-let IA_MODO = localStorage.getItem('luca_ia_modo') || 'proponer';
-let IA_UMBRAL = parseFloat(localStorage.getItem('luca_ia_umbral') || '0.85');
+function pintar(){
+  if(!TABLERO) return;
+  ACCIONES = []; CLAVES = [];
+  const t = TABLERO;
+  const activos = t.teNecesitan.filter(c => !PAUSADOS.has(c.clave));
+  const pausados = t.teNecesitan.filter(c => PAUSADOS.has(c.clave));
 
-async function resolverConIA(lista, marcador, medicion){
-  try{
-    cargando(`Consultando la IA para ${lista.length} concepto${lista.length!==1?'s':''} sin reconocer…`);
-    const pool = lineasConSaldo();
-    const candidatos = [...new Set(pool.map(x => x.linea.producto))];
-    const d = await llamar('/api/resolver-nombres', { method:'POST', body: JSON.stringify({
-      conceptos: lista.map((p,i) => ({ i, descripcion: p.concepto.descripcion })), candidatos
-    })});
-    const res = d.resultados || [];
-    for(const p of lista){
-      const r = res.find(x => x.i === lista.indexOf(p));
-      const conf = r ? (r.confianza || 0) : 0;
-      const prodElegido = r ? r.producto : null;
-      const cand = prodElegido ? pool.find(x => x.linea.producto === prodElegido && x.linea.cubierta < x.linea.pedida) : null;
-      if(cand && conf >= IA_UMBRAL && IA_MODO === 'auto'){
-        aplicarConcepto(cand.oc, cand.linea, p.concepto, p.cfdi, marcador);
-        registrarBitacora('nombre', { descripcion: p.concepto.descripcion, producto: prodElegido, metodo: 'ia', confianza: conf });
-        medicion.ia++;
-      }else if(cand && conf >= IA_UMBRAL){
-        ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto, sugerenciaIA:{ ocId:cand.oc.id, lineaId:cand.linea.id, producto:prodElegido, confianza:conf } });
-        medicion.pendientes++;
-      }else{ ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto }); medicion.pendientes++; }
-    }
-  }catch(e){
-    for(const p of lista){ ASIGNACIONES_PENDIENTES.push({ tipo:'concepto', cfdi:p.cfdi, concepto:p.concepto }); medicion.pendientes++; }
-    avisar('La IA no estuvo disponible; esos conceptos quedaron para asignación manual. ' + esc(e.message), 'error');
-  }finally{ cargando(null); estadoSucio = true; pintarRevision(); }
-}
-
-/* ================= SEMÁFORO DE PRECIO ================= */
-const TOLERANCIA_VERDE = 0.01, TOLERANCIA_CRITICA = 0.05;
-function peorDesvioPrecio(oc){
-  let peor = 0;
-  for(const l of oc.lineas){
-    if(!l.cubierta || !l.precioOC) continue;
-    const d = Math.abs((l.importeReal / l.cubierta) - l.precioOC) / l.precioOC;
-    if(d > peor) peor = d;
-  }
-  return peor;
-}
-function estadoOC(oc){
-  const incompleta = oc.lineas.some(l => l.cubierta < l.pedida);
-  const conCobertura = oc.lineas.some(l => l.cubierta > 0);
-  if(incompleta) return (conCobertura || oc.cfdis.length) ? 'parcial' : 'sin-cfdi';
-  const esperado = oc.lineas.reduce((s,l) => s + l.pedida * l.precioOC, 0);
-  const real = oc.lineas.reduce((s,l) => s + l.importeReal, 0);
-  const difMonto = esperado ? Math.abs(real - esperado) / esperado : 0;
-  const dif = Math.max(difMonto, peorDesvioPrecio(oc));
-  if(dif <= TOLERANCIA_VERDE) return 'verde';
-  if(dif <= TOLERANCIA_CRITICA) return 'amarillo';
-  return 'rojo';
-}
-
-/* ================= CARGAR / VOLVER A CORRER (pool por cobertura) ================= */
-async function cargarPool(reCorrer){
-  try{
-    cargando(reCorrer ? 'Volviendo a leer Odoo…' : 'Cargando el pool de Odoo…');
-    const d = await llamar('/api/compras'); // sin fechas: pool por cobertura (§ Frente 1a)
-    const poolIds = new Set(d.compras.map(c => c.id));
-    // 1) agregar OCs nuevas del pool que no estén en el estado
-    for(const c of d.compras){
-      if(ESTADO.ocsAbiertas[c.id]) continue;
-      ESTADO.ocsAbiertas[c.id] = {
-        id: c.id, nombre: c.nombre, proveedor: c.proveedor, rfc: (c.rfc||'').toUpperCase(), fecha: c.fecha,
-        subtotalOC: c.subtotal,
-        lineas: c.lineas.map(l => ({ id: l.id, producto: l.producto, descripcion: l.descripcion, pedida: l.cantidadPedida, precioOC: l.precioUnitario, cubierta: 0, importeReal: 0 })),
-        cfdis: [], preparadaEnOdoo: false
-      };
-    }
-    // 2) quitar OCs que Odoo ya no reporta pendientes (se facturaron/confirmaron allá) y no están preparadas por Luca
-    for(const id of Object.keys(ESTADO.ocsAbiertas)){
-      const oc = ESTADO.ocsAbiertas[id];
-      if(!poolIds.has(parseInt(id,10)) && !oc.preparadaEnOdoo) delete ESTADO.ocsAbiertas[id];
-    }
-    PAUSADOS.clear(); // al re-correr, lo pausado se re-evalúa
-    estadoSucio = true;
-    aplicarCfdis(); // recalcula con los CFDIs de la sesión
-    if(reCorrer) avisar('Listo. Se re-leyó Odoo y se recalculó todo.', 'exito');
-  }catch(e){ avisar('No se pudo leer el pool de Odoo: ' + esc(e.message), 'error'); pintarRevision(); }
-  finally{ cargando(null); }
-}
-
-/* ================= ESCRIBIR EN ODOO ================= */
-async function prepararEnOdoo(ocId){
-  const oc = ESTADO.ocsAbiertas[ocId];
-  if(!oc) return;
-  const est = estadoOC(oc);
-  let msg = `Voy a escribir en Odoo las cantidades y precios reales en la factura (borrador) de "${oc.proveedor}" (${oc.nombre}). Tú le das la confirmación final dentro de Odoo.`;
-  if(est==='amarillo') msg += '\n\nOJO: hay una diferencia de precio para notificar.';
-  if(est==='rojo') msg += '\n\nATENCIÓN: la diferencia de precio es crítica (rojo). Escálala.';
-  if(!confirm(msg)) return;
-  try{
-    cargando('Escribiendo la factura en Odoo…');
-    const lineas = oc.lineas.filter(l => l.cubierta > 0).map(l => ({ purchaseLineId: l.id, cantidad: l.cubierta, precioUnitario: +(l.importeReal / l.cubierta).toFixed(6) }));
-    const serviciosExtra = SERVICIOS_DETECTADOS.filter(s => (s.cfdi.rfc||'').toUpperCase() === (oc.rfc||'').toUpperCase())
-      .map(s => ({ productoServicioId: s.regla.productoServicioId, etiqueta: s.regla.etiqueta, descripcion: s.concepto.descripcion, cantidad: s.concepto.cantidad, precioUnitario: s.concepto.valorUnitario }));
-    const d = await llamar('/api/preparar-factura', { method:'POST', body: JSON.stringify({ ocId, lineas, cfdis: oc.cfdis, serviciosExtra, resumen: 'Conciliación Luca.' }) });
-    oc.preparadaEnOdoo = true; oc.facturaOdoo = d.facturaNombre;
-    for(const u of oc.cfdis) if(!ESTADO.cfdisUsados.includes(u)) ESTADO.cfdisUsados.push(u);
-    registrarBitacora('resolucion', { tipo: est, oc: oc.nombre, proveedor: oc.proveedor, factura: d.facturaNombre, lineas: lineas.length });
-    estadoSucio = true; await guardarEstado(true);
-    avisar(`Listo: la factura <strong>${esc(d.facturaNombre)}</strong> quedó en borrador con los datos reales. Confírmala en Odoo.`, 'exito');
-    pintarRevision();
-  }catch(e){ avisar('No se pudo escribir en Odoo: ' + esc(e.message), 'error'); }
-  finally{ cargando(null); }
-}
-function archivarOC(ocId){
-  const oc = ESTADO.ocsAbiertas[ocId];
-  if(!oc || !confirm(`¿Confirmas que la factura ${oc.facturaOdoo || ''} de "${oc.proveedor}" ya quedó confirmada en Odoo? Se quita de la lista.`)) return;
-  delete ESTADO.ocsAbiertas[ocId]; estadoSucio = true; guardarEstado(true); pintarRevision();
-}
-
-/* ================= SALIDA DE ESCAPE: DEJAR PENDIENTE ================= */
-let PAUSADOS = new Set();
-function dejarPendiente(clave){ PAUSADOS.add(clave); pintarRevision(); }
-function reactivar(clave){ PAUSADOS.delete(clave); pintarRevision(); }
-
-/* ================= TABLERO: "REVISIÓN DEL LUNES" ================= */
-function pintarRevision(){
-  const ocs = Object.values(ESTADO.ocsAbiertas);
-  const desvios = [], listas = [], esperando = [], enOdoo = [];
-  for(const oc of ocs){
-    if(oc.preparadaEnOdoo){ enOdoo.push(oc); continue; }
-    const est = estadoOC(oc);
-    if(est==='verde') listas.push(oc);
-    else if(est==='amarillo'||est==='rojo') desvios.push({ clave:'oc'+oc.id, tipo:'precio', oc, est });
-    else if(est==='parcial') desvios.push({ clave:'oc'+oc.id, tipo:'parcial', oc, est });
-    else esperando.push(oc);
-  }
-  ASIGNACIONES_PENDIENTES.forEach((p,i)=> desvios.push({ clave:'cfdi'+i, tipo:'cfdi', pend:p, idx:i }));
-
-  const activos = desvios.filter(d => !PAUSADOS.has(d.clave));
-  const pausados = desvios.filter(d => PAUSADOS.has(d.clave));
-  const cuadraron = (MEDICION_CORTE ? MEDICION_CORTE.catalogo + MEDICION_CORTE.similitud + MEDICION_CORTE.servicio + MEDICION_CORTE.ia : 0);
-
-  // Resumen
   document.getElementById('resumen').innerHTML = `
-    <div class="tile ok"><div class="cifra num">${listas.length}</div><div class="rot">cuadran · listas para escribir</div></div>
+    <div class="tile ok"><div class="cifra num">${t.cuadran.length}</div><div class="rot">cuadran · listas para escribir</div></div>
     <div class="tile atn"><div class="cifra num">${activos.length}</div><div class="rot">te necesitan · decisión</div></div>
-    <div class="tile esp"><div class="cifra num">${esperando.length}</div><div class="rot">esperando su CFDI</div></div>`;
+    <div class="tile esp"><div class="cifra num">${t.esperando.length}</div><div class="rot">esperando su CFDI</div></div>`;
 
   let html = '';
+  if(t.aviso) html += `<div class="mensaje mensaje-error">${esc(t.aviso)}</div>`;
 
-  // 1) Te necesitan (desvíos)
   html += `<div class="titulo-sec">Te necesitan</div>`;
-  if(!activos.length){
-    html += `<div class="vacio">Nada te necesita ahora mismo.${CFDIS.length? '' : ' Sube los CFDIs de la semana para empezar.'}</div>`;
-  } else {
-    for(const d of activos) html += tarjetaDesvio(d);
-  }
+  html += activos.length ? activos.map(tarjeta).join('')
+    : `<div class="vacio">Nada te necesita ahora mismo.${t.hayCfdisPendientes ? '' : ' Sube los CFDIs de la semana para empezar.'}</div>`;
 
-  // 2) Cuadran, listas para escribir
-  if(listas.length){
-    html += `<div class="titulo-sec">Cuadran — listas para escribir en Odoo</div>`;
-    for(const oc of listas) html += tarjetaLista(oc);
-  }
-
-  // 3) En Odoo, pendiente de confirmar
-  if(enOdoo.length){
-    html += `<div class="titulo-sec">En Odoo — pendientes de tu confirmación final</div>`;
-    for(const oc of enOdoo) html += `<div class="tarjeta t-odoo"><div class="cuerpo">
-      <div class="fila-tit"><div><div class="titp">${esc(oc.proveedor)}</div><div class="quien">${esc(oc.nombre)} · factura ${esc(oc.facturaOdoo||'')}</div></div><span class="etq">En Odoo</span></div>
-      <div class="acciones"><button class="btn secundaria" onclick="archivarOC(${oc.id})">Ya la confirmé en Odoo — quitar de la lista</button></div>
-    </div></div>`;
-  }
-
-  // 4) Esperando CFDI (muted)
-  if(esperando.length){
-    html += `<div class="titulo-sec">Esperando su CFDI (${esperando.length})</div>`;
-    for(const oc of esperando) html += `<div class="tarjeta t-esp"><div class="cuerpo">
-      <div class="fila-tit"><div><div class="titp">${esc(oc.proveedor)}</div><div class="quien">${esc(oc.nombre)} · aún no llega su factura</div></div><span class="etq">Esperando</span></div>
-    </div></div>`;
-  }
-
-  // 5) En pausa
+  if(t.cuadran.length){ html += `<div class="titulo-sec">Cuadran — listas para escribir en Odoo</div>` + t.cuadran.map(tarjeta).join(''); }
+  if(t.enOdoo.length){ html += `<div class="titulo-sec">En Odoo — pendientes de tu confirmación final</div>` + t.enOdoo.map(tarjeta).join(''); }
+  if(t.esperando.length){ html += `<div class="titulo-sec">Esperando su CFDI (${t.esperando.length})</div>` + t.esperando.map(tarjeta).join(''); }
   if(pausados.length){
     html += `<div class="titulo-sec">En pausa — arréglalas en Odoo y dale “Volver a correr”</div>`;
-    for(const d of pausados) html += `<div class="tarjeta t-esp"><div class="enpausa"><div class="txt">⏸ ${esc(tituloDesvio(d))}</div><button class="enlace" onclick="reactivar('${d.clave}')">Reactivar</button></div></div>`;
+    html += pausados.map(c => `<div class="tarjeta t-esp"><div class="enpausa"><div class="txt">⏸ ${esc(c.quien)}</div><button class="enlace" onclick="reactivar(${indiceClave(c.clave)})">Reactivar</button></div></div>`).join('');
   }
-
   document.getElementById('tablero').innerHTML = html;
 }
 
-function tituloDesvio(d){
-  if(d.tipo==='cfdi') return 'Factura sin reconocer: ' + (d.pend.concepto.descripcion||'');
-  return d.oc.proveedor + ' · ' + d.oc.nombre;
-}
-
-function tarjetaDesvio(d){
-  const pausar = `<button class="btn secundaria" onclick="dejarPendiente('${d.clave}')"><span>Dejar pendiente <span class="money">· voy a Odoo y vuelvo a correr</span></span></button>`;
-
-  if(d.tipo==='precio'){
-    const oc = d.oc; const esperado = oc.lineas.reduce((s,l)=>s+l.pedida*l.precioOC,0); const real = oc.lineas.reduce((s,l)=>s+l.importeReal,0);
-    const difPct = esperado ? (real-esperado)/esperado*100 : 0;
-    return `<div class="tarjeta t-precio"><div class="cuerpo">
-      <div class="fila-tit"><div><div class="titp">El precio no coincide con Odoo</div><div class="quien">${esc(oc.proveedor)} · ${esc(oc.nombre)}</div></div><span class="etq">Precio ${difPct>0?'+':''}${difPct.toFixed(1)}%</span></div>
-      <div class="porque">Los CFDIs suman ${dinero(real)} contra ${dinero(esperado)} pactados. Registra la compra real; queda visible la diferencia.</div>
-      ${detallePrecio(oc)}
-      <div class="acciones">
-        <button class="btn primaria" onclick="prepararEnOdoo(${oc.id})"><span>Registrar la compra real <span class="money">· escribe en Odoo, con tu OK</span></span><span class="rec">Recomendado</span></button>
-        ${pausar}
-      </div></div></div>`;
-  }
-  if(d.tipo==='parcial'){
-    const oc = d.oc;
-    const faltan = oc.lineas.filter(l=>l.cubierta<l.pedida).map(l=>`${esc(l.producto)} (faltan ${+(l.pedida-l.cubierta).toFixed(2)})`);
-    const algoCubierto = oc.lineas.some(l=>l.cubierta>0);
-    return `<div class="tarjeta t-parcial"><div class="cuerpo">
-      <div class="fila-tit"><div><div class="titp">Llegó incompleto</div><div class="quien">${esc(oc.proveedor)} · ${esc(oc.nombre)}</div></div><span class="etq">Incompleto</span></div>
-      <div class="porque">Falta CFDI de: ${faltan.join(' · ')}.</div>
-      ${detallePrecio(oc)}
-      <div class="acciones">
-        ${algoCubierto? `<button class="btn primaria" onclick="prepararEnOdoo(${oc.id})"><span>Cerrar con lo real que llegó <span class="money">· escribe lo cubierto en Odoo</span></span><span class="rec">Recomendado</span></button>`:''}
-        ${pausar}
-      </div></div></div>`;
-  }
-  // tipo cfdi (concepto sin reconocer / factura sin compra)
-  const p = d.pend; const i = d.idx; const pool = lineasConSaldo();
-  if(!pool.length){
-    return `<div class="tarjeta t-cfdi"><div class="cuerpo">
-      <div class="fila-tit"><div><div class="titp">Factura sin compra que la respalde</div><div class="quien">${esc(p.cfdi.emisor||p.cfdi.rfc)} · "${esc(p.concepto.descripcion)}" · ${p.concepto.cantidad} × ${dinero(p.concepto.valorUnitario)}</div></div><span class="etq">Sin OC</span></div>
-      <div class="porque">Ningún producto pedido esta semana corresponde. Puede ser un gasto sin OC, un servicio no configurado, o algo a crear en Odoo.</div>
-      <div class="acciones">${pausar}</div></div></div>`;
-  }
-  const opciones = pool.map(({oc,linea:l})=>`<option value="${oc.id}|${l.id}">${esc(oc.nombre)} — ${esc(l.producto)} (faltan ${+(l.pedida-l.cubierta).toFixed(2)})</option>`).join('');
-  const sug = p.sugerenciaIA;
-  const banner = sug? `<div class="porque"><strong>La IA sugiere:</strong> ${esc(sug.producto)} · confianza ${(sug.confianza*100).toFixed(0)}%. Revisa y confirma abajo.</div>`:'';
-  const preSel = sug? `${sug.ocId}|${sug.lineaId}`:'';
-  setTimeout(()=>{ const s=document.getElementById('asignar-'+i); if(s && preSel) s.value=preSel; },0);
-  return `<div class="tarjeta t-cfdi"><div class="cuerpo">
-    <div class="fila-tit"><div><div class="titp">Producto del CFDI sin reconocer${sug?' · sugerencia de IA':''}</div><div class="quien">${esc(p.cfdi.emisor||p.cfdi.rfc)} · "${esc(p.concepto.descripcion)}" · ${p.concepto.cantidad} × ${dinero(p.concepto.valorUnitario)}</div></div><span class="etq">${sug?'Confirmar':'Asignar'}</span></div>
-    ${banner}
-    <div class="porque">¿A qué producto de las compras corresponde? (se recuerda para la próxima)</div>
-    <div class="acciones">
-      <select id="asignar-${i}">${opciones}</select>
-      <button class="btn primaria" onclick="const v=document.getElementById('asignar-${i}').value.split('|'); if(v[0]) asignarManual(${i}, v[0], v[1])"><span>${sug?'Confirmar la sugerencia':'Asignar'}</span><span class="rec">Recomendado</span></button>
-      ${pausar}
-    </div></div></div>`;
-}
-
-function tarjetaLista(oc){
-  return `<div class="tarjeta t-ok"><div class="cuerpo">
-    <div class="fila-tit"><div><div class="titp">${esc(oc.proveedor)}</div><div class="quien">${esc(oc.nombre)} · cuadra</div></div><span class="etq">Cuadra</span></div>
-    ${detallePrecio(oc)}
-    <div class="acciones"><button class="btn primaria" onclick="prepararEnOdoo(${oc.id})"><span>Escribir en Odoo <span class="money">· datos reales, con tu OK</span></span></button></div>
+function tarjeta(c){
+  const porque = (c.porque || []).map(p => `<div class="porque">${esc(p)}</div>`).join('');
+  const acciones = (c.acciones || []).map(boton).join('')
+    + (c.pausable ? `<button class="btn secundaria" onclick="dejarPendiente(${indiceClave(c.clave)})"><span>Dejar pendiente <span class="money">· voy a Odoo y vuelvo a correr</span></span></button>` : '');
+  return `<div class="tarjeta ${CLASE[c.tipo] || 't-esp'}"><div class="cuerpo">
+    <div class="fila-tit"><div><div class="titp">${esc(c.titulo)}</div><div class="quien">${esc(c.quien)}</div></div><span class="etq">${esc(c.etiqueta)}</span></div>
+    ${porque}${c.detalle ? detalle(c.detalle) : ''}
+    ${acciones ? `<div class="acciones">${acciones}</div>` : ''}
   </div></div>`;
 }
 
-function detallePrecio(oc){
-  const filas = oc.lineas.map(l=>{
-    const falta = l.pedida - l.cubierta;
-    const pr = l.cubierta ? l.importeReal / l.cubierta : 0;
-    const dp = l.cubierta && l.precioOC ? (pr - l.precioOC)/l.precioOC*100 : 0;
-    return `<tr><td>${esc(l.producto)}</td><td class="num">${l.cubierta}/${l.pedida}${falta>0.001?` <span class="up">(faltan ${+falta.toFixed(2)})</span>`:''}</td><td class="num">${dinero(l.precioOC)}</td><td class="num">${l.cubierta? dinero(pr)+(Math.abs(dp)>1?` <span class="${dp>0?'up':'dn'}">${dp>0?'+':''}${dp.toFixed(1)}%</span>`:''):'—'}</td></tr>`;
-  }).join('');
-  return `<div class="detalle"><table><tr><th>Producto</th><th class="num">CFDI/Pedido</th><th class="num">Precio OC</th><th class="num">Precio real</th></tr>${filas}</table></div>`;
+function boton(a){
+  const i = ACCIONES.push(a) - 1;
+  const nota = a.nota ? ` <span class="money">· ${esc(a.nota)}</span>` : '';
+  const rec = a.recomendado ? `<span class="rec">Recomendado</span>` : '';
+  if(a.tipo === 'asignar'){
+    const opciones = a.opciones.map(o => {
+      const v = `${o.ocId}|${o.lineaId}`;
+      return `<option value="${esc(v)}"${v === a.preseleccion ? ' selected' : ''}>${esc(o.texto)}</option>`;
+    }).join('');
+    const vacia = a.preseleccion ? '' : `<option value="" selected>— Elige el producto —</option>`;
+    return `<select id="sel-${i}">${vacia}${opciones}</select>
+      <button class="btn primaria" onclick="ejecutar(${i})"><span>${esc(a.texto)}</span>${rec}</button>`;
+  }
+  const clase = a.tipo === 'descartar' ? 'peligro' : (a.recomendado || a.tipo === 'preparar' ? 'primaria' : 'secundaria');
+  return `<button class="btn ${clase}" onclick="ejecutar(${i})"><span>${esc(a.texto)}${nota}</span>${rec}</button>`;
 }
 
-/* ================= ARRANQUE ================= */
-async function arrancar(){
-  try{ cargando('Conectando…'); await cargarEstado(); await cargarPool(false); }
-  catch(e){ avisar('No se pudo conectar: ' + esc(e.message) + '. Revisa la configuración.', 'error'); }
-  finally{ cargando(null); }
+function detalle(filas){
+  const tr = filas.map(f => `<tr><td>${esc(f.producto)}</td>
+    <td class="num">${esc(f.cantidad)}${f.faltan ? ` <span class="up">(faltan ${esc(f.faltan)})</span>` : ''}</td>
+    <td class="num">${esc(f.precioOC)}</td>
+    <td class="num">${esc(f.precioReal)}${f.dif ? ` <span class="${f.difSube ? 'up' : 'dn'}">${esc(f.dif)}</span>` : ''}</td></tr>`).join('');
+  return `<div class="detalle"><table><tr><th>Producto</th><th class="num">CFDI/Por facturar</th><th class="num">Precio OC</th><th class="num">Precio real</th></tr>${tr}</table></div>`;
 }
+
 if(BACKEND && CLAVE) arrancar();
 </script>
 </body>
