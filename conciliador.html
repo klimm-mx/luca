@@ -41,8 +41,8 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 .zona-archivo strong{color:var(--agua-oscuro)}
 
 /* Resumen (contadores) */
-.resumen{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-@media(max-width:560px){.resumen{grid-template-columns:1fr}}
+.resumen{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:700px){.resumen{grid-template-columns:repeat(2,1fr)}}
 .tile{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:14px 16px;position:relative;overflow:hidden}
 .tile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
 .tile.ok::before{background:var(--ok)} .tile.atn::before{background:var(--media)} .tile.esp::before{background:var(--tinta-suave)}
@@ -94,6 +94,28 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 @keyframes girar{to{transform:rotate(360deg)}}
 .pie{font-size:12px;color:var(--tinta-suave);text-align:center;margin-top:22px}
 
+/* Banco: cobertura, movimientos, formularios, listas */
+.cobertura{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:10px 16px;margin-bottom:16px;font-size:13px}
+.cobertura .cta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:4px 0}
+.cobertura .cta + .cta{border-top:1px solid var(--borde)}
+.cobertura .hueco{color:var(--alerta);font-weight:600}
+.form{display:flex;flex-direction:column;gap:8px}
+.form .fila{display:flex;gap:8px;flex-wrap:wrap}
+.form .fila > *{flex:1;min-width:160px}
+.form input[type=text]{width:100%}
+.opciones{border:1px solid var(--borde);border-radius:8px;max-height:220px;overflow:auto;padding:4px 8px;background:var(--superficie)}
+.opciones label{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:13px;color:var(--tinta);margin:0;padding:5px 0;border-bottom:1px solid var(--fondo);cursor:pointer}
+.opciones input{margin-top:3px}
+.lista{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:4px 14px;margin-bottom:12px}
+.lista .item{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--fondo);font-size:13px}
+.lista .item:last-child{border-bottom:none}
+.lista .item .txt b{font-weight:600}
+.lista .item .sub{color:var(--tinta-suave);font-size:12px}
+details.plegable > summary{cursor:pointer;list-style:none}
+details.plegable > summary::-webkit-details-marker{display:none}
+details.plegable > summary .titulo-sec::after{content:" ▸"}
+details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
+
 .velo{position:fixed;inset:0;background:rgba(22,50,59,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
 .velo.visible{display:flex}
 .modal{background:var(--superficie);border-radius:var(--radio);padding:24px;max-width:440px;width:100%}
@@ -115,13 +137,16 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
   <!-- Control: subir CFDIs + volver a correr -->
   <div class="control">
     <div class="zona-archivo" id="zonaCfdi" onclick="document.getElementById('entradaCfdi').click()">
-      <strong>Subir CFDIs</strong> — arrastra los .xml del SAT o haz clic
+      <strong>Subir archivos</strong> — CFDIs (.xml) o estados de cuenta (.pdf de BBVA o Clara). Arrástralos o haz clic
     </div>
-    <input type="file" id="entradaCfdi" accept=".xml" multiple style="display:none">
-    <button class="boton boton-secundario" onclick="volverACorrer()" title="Re-lee Odoo y recalcula: lo que arreglaste allá cuadra y se va.">↻ Volver a correr</button>
+    <input type="file" id="entradaCfdi" accept=".xml,.pdf" multiple style="display:none">
+    <button class="boton boton-secundario" onclick="volverACorrer()" title="Re-lee Odoo y el banco y vuelve a correr: lo que arreglaste allá cuadra y se va.">↻ Volver a correr</button>
   </div>
 
   <div id="zonaCargando" style="display:none"><div class="cargando"><div class="girador"></div><span id="textoCargando">Procesando…</span></div></div>
+
+  <!-- Cobertura del banco -->
+  <div id="cobertura"></div>
 
   <!-- Resumen -->
   <div class="resumen" id="resumen"></div>
@@ -129,7 +154,7 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
   <!-- Tablero -->
   <div id="tablero"></div>
 
-  <div class="pie">Odoo es la fuente de verdad. Si un caso es raro, déjalo pendiente, arréglalo en Odoo y dale “Volver a correr”: cuadrará solo.</div>
+  <div class="pie">Odoo es la fuente de verdad. Si un caso es raro, déjalo pendiente, arréglalo en Odoo y dale “Volver a correr”: cuadrará solo.<br>Lo del banco todavía no se escribe en Odoo: aquí se identifica y se cruza.</div>
 </div>
 
 <!-- Modal: configuración -->
@@ -198,18 +223,31 @@ async function conCarga(texto, fn){
 }
 
 /* ================= ARRANQUE / VOLVER A CORRER ================= */
+// Abrir el panel y "Volver a correr" ejecutan la corrida: Luca confirma sola lo
+// que no tiene nada que decidir, cruza el banco y arma el tablero.
+function avisoCorrida(c){
+  if(!c) return '';
+  let m = '';
+  if(c.confirmadas && c.confirmadas.length) m += `Luca confirmó sola ${c.confirmadas.length} factura${c.confirmadas.length!==1?'s':''}: ` + c.confirmadas.map(x => `${esc(x.factura)} (${esc(x.proveedor)} · ${esc(x.oc)})`).join(', ') + '. ';
+  if(c.sinConfirmar && c.sinConfirmar.length) m += 'No confirmó sola: ' + c.sinConfirmar.map(x => `${esc(x.factura || x.oc)} — ${esc(x.motivo)}`).join('; ') + '. ';
+  if(c.inciertas && c.inciertas.length) m += 'No se sabe si quedaron confirmadas (Odoo no respondió): ' + c.inciertas.map(x => esc(x.factura)).join(', ') + '. Revísalas en Odoo y quítalas de la lista: Luca lo aclara.';
+  return m;
+}
 async function arrancar(){
-  await conCarga('Conectando…', async () => {
-    TABLERO = await llamar('/api/revision');
+  await conCarga('Conectando y corriendo…', async () => {
+    TABLERO = await llamar('/api/corrida', {});
     pintar();
+    const m = avisoCorrida(TABLERO.corrida);
+    if(m) avisar(m, (TABLERO.corrida.sinConfirmar.length || TABLERO.corrida.inciertas.length) ? 'error' : 'exito');
   });
 }
 async function volverACorrer(){
   PAUSADOS.clear();
-  await conCarga('Volviendo a leer Odoo…', async () => {
-    TABLERO = await llamar('/api/revision');
+  await conCarga('Volviendo a leer Odoo y el banco…', async () => {
+    TABLERO = await llamar('/api/corrida', {});
     pintar();
-    avisar('Listo. Se re-leyó Odoo y se recalculó todo.', 'exito');
+    const m = avisoCorrida(TABLERO.corrida);
+    avisar(m || 'Listo. Se re-leyó todo y se recalculó.', TABLERO.corrida && (TABLERO.corrida.sinConfirmar.length || TABLERO.corrida.inciertas.length) ? 'error' : 'exito');
   });
 }
 
@@ -223,14 +261,18 @@ document.getElementById('entradaCfdi').addEventListener('change', e => { subirCf
 })();
 
 const TOPE_ENVIO = 8 * 1024 * 1024; // bytes por envío (el servidor acepta hasta 15 MB)
+const TOPE_PDF = 8 * 1024 * 1024;   // un estado de cuenta nunca pesa tanto
 async function subirCfdis(files){
   const lista = Array.from(files || []); // copia: el input se limpia enseguida
+  const pdfs = lista.filter(f => /\.pdf$/i.test(f.name));
+  if(pdfs.length) await subirEstados(pdfs);
   const noXml = [], archivos = [];
   for(const f of lista){
+    if(/\.pdf$/i.test(f.name)) continue;
     if(!/\.xml$/i.test(f.name)){ noXml.push(f.name); continue; }
     archivos.push({ nombre: f.name, xml: await f.text() });
   }
-  if(!archivos.length){ if(noXml.length) avisar('No son XML: ' + noXml.map(esc).join(', '), 'error'); return; }
+  if(!archivos.length){ if(noXml.length) avisar('No son XML ni PDF: ' + noXml.map(esc).join(', '), 'error'); return; }
 
   // En tandas, para no pasar el tope de tamaño por envío.
   const tandas = []; let actual = [], peso = 0;
@@ -250,10 +292,33 @@ async function subirCfdis(files){
     pintar();
     let msg = '';
     if(repetidos.length) msg += 'Ya estaban cargados (omitidos): ' + repetidos.map(esc).join(', ') + '. ';
-    if(noXml.length) msg += 'No son XML: ' + noXml.map(esc).join(', ') + '. ';
+    if(noXml.length) msg += 'No son XML ni PDF: ' + noXml.map(esc).join(', ') + '. ';
     if(rechazados.length) msg += 'No se cargaron: ' + rechazados.map(r => `${esc(r.nombre)} (${esc(r.motivo)})`).join('; ') + '.';
     if(cargados) msg = `${cargados} CFDI${cargados!==1?'s':''} nuevo${cargados!==1?'s':''} guardado${cargados!==1?'s':''}. ` + msg;
     avisar(msg || 'No había CFDIs nuevos.', rechazados.length || noXml.length ? 'error' : 'exito');
+  });
+}
+
+/* ================= SUBIR ESTADOS DE CUENTA (PDF) ================= */
+function aBase64(buffer){
+  const bytes = new Uint8Array(buffer); let bin = '';
+  for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+async function subirEstados(pdfs){
+  const cargados = [], repetidos = [], rechazados = [];
+  await conCarga(`Leyendo ${pdfs.length} estado${pdfs.length!==1?'s':''} de cuenta…`, async () => {
+    for(const f of pdfs){   // uno por envío: cada PDF se valida completo en el backend
+      if(f.size > TOPE_PDF){ rechazados.push({ nombre: f.name, motivo: 'pesa más de 8 MB' }); continue; }
+      const d = await llamar('/api/estados-cuenta', { archivos: [{ nombre: f.name, pdf: aBase64(await f.arrayBuffer()) }] });
+      cargados.push(...d.cargados); repetidos.push(...d.repetidos); rechazados.push(...d.rechazados);
+      TABLERO = d.tablero;
+    }
+    pintar();
+    let msg = cargados.map(c => `${esc(c.nombre)}: ${c.movimientos} movimiento${c.movimientos!==1?'s':''} cargado${c.movimientos!==1?'s':''} (${esc(c.periodo.inicio)} a ${esc(c.periodo.fin)})${c.anterioresAlDia0 ? `, ${c.anterioresAlDia0} anteriores al día 0 no se guardaron` : ''}.`).join(' ');
+    if(repetidos.length) msg += ' Ya estaban cargados: ' + repetidos.map(esc).join(', ') + '.';
+    if(rechazados.length) msg += ' No se cargaron: ' + rechazados.map(r => `${esc(r.nombre)} (${esc(r.motivo)})`).join('; ') + '.';
+    avisar(msg.trim() || 'No había estados de cuenta nuevos.', rechazados.length ? 'error' : 'exito');
   });
 }
 
@@ -276,7 +341,30 @@ async function ejecutar(i){
     });
     return;
   }
+  if(a.tipo === 'identidad') return ejecutarIdentidad(i, a);
+  if(a.tipo === 'ligar') return ejecutarLigar(i, a);
+  if(a.tipo === 'gasto' && a.elegir) return ejecutarGasto(i, a, '/api/banco/gasto', { movimientoId: a.movimientoId });
+  if(a.tipo === 'gasto-cfdi') return ejecutarGasto(i, a, '/api/gasto-cfdi', { clave: a.clave });
+  if(a.tipo === 'deshacer'){
+    if(!confirm('¿Deshacer este cruce? Lo que Luca registró en Odoo se quita, sus movimientos vuelven a quedar pendientes y Luca ya no los volverá a juntar sola (podrás ligarlos tú a mano).')) return;
+    return conCarga('Deshaciendo…', async () => { TABLERO = (await llamar('/api/banco/deshacer', { cruceId: a.cruceId })).tablero; pintar(); avisar('', ''); });
+  }
   if(a.confirmar && !confirm(a.confirmar)) return;
+  if(a.tipo === 'previo'){
+    return conCarga('Guardando…', async () => {
+      TABLERO = (await llamar('/api/banco/previo', a.facturas ? { facturas: a.facturas } : { movimientos: a.movimientos })).tablero; pintar(); avisar('', '');
+    });
+  }
+  if(a.tipo === 'reintentar'){
+    return conCarga('Registrando en Odoo…', async () => { TABLERO = (await llamar('/api/banco/reintentar', { cruceId: a.cruceId })).tablero; pintar(); avisar('', ''); });
+  }
+  if(a.tipo === 'gasto'){
+    await conCarga('Guardando…', async () => {
+      TABLERO = (await llamar('/api/banco/gasto', { movimientoId: a.movimientoId, partnerId: a.partnerId, productoId: a.productoId, nota: 'revisado: monto fuera de lo habitual' })).tablero;
+      pintar(); avisar('', '');
+    });
+    return;
+  }
   if(a.tipo === 'preparar'){
     await conCarga('Escribiendo la factura en Odoo…', async () => {
       const d = await llamar('/api/preparar-factura', { ocId: a.ocId });
@@ -297,8 +385,55 @@ async function ejecutar(i){
   }
 }
 
+const valor = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+const marcados = (i) => Array.from(document.querySelectorAll(`input[name="op-${i}"]:checked`)).map(x => Number(x.value));
+
+async function ejecutarIdentidad(i, a){
+  const que = valor('que-' + i);
+  let cuerpo = { llave: a.llave };
+  if(que === 'existente'){
+    const id = Number(valor('ident-' + i));
+    if(!id){ avisar('Elige a quién corresponde.', 'error'); return; }
+    cuerpo.identidadId = id;
+  } else if(que === 'proveedor' || que === 'gasto' || que === 'persona'){
+    cuerpo.tipo = que; cuerpo.nombre = valor('nom-' + i);
+    if(!cuerpo.nombre){ avisar('Escribe un nombre para reconocerlo.', 'error'); return; }
+    if(que === 'proveedor'){ cuerpo.rfc = valor('rfc-' + i).toUpperCase(); if(!cuerpo.rfc){ avisar('Falta el RFC del proveedor (el de su CFDI).', 'error'); return; } }
+    if(que === 'gasto'){
+      cuerpo.partnerId = Number(valor('prov-' + i)); cuerpo.productoId = Number(valor('prod-' + i));
+      if(!cuerpo.partnerId || !cuerpo.productoId){ avisar('Elige el proveedor equivalente y el producto de gasto.', 'error'); return; }
+      const iva = valor('iva-' + i);
+      if(!iva){ avisar('Di si el cargo incluye IVA.', 'error'); return; }
+      cuerpo.conIva = iva === 'si';
+    }
+  } else { avisar('Primero elige qué es.', 'error'); return; }
+  await conCarga('Guardando…', async () => { TABLERO = (await llamar('/api/identidad', cuerpo)).tablero; pintar(); avisar('', ''); });
+}
+
+async function ejecutarLigar(i, a){
+  const elegidos = a.varias ? marcados(i) : [Number(valor('sel-' + i))].filter(Boolean);
+  if(!elegidos.length){ avisar('Elige al menos una opción.', 'error'); return; }
+  const cuerpo = { tipoCruce: a.tipoCruce };
+  if(a.opcionesMovimientos){ cuerpo.movimientos = elegidos; cuerpo.facturas = a.facturas; }
+  else { cuerpo.movimientos = a.movimientos; cuerpo[a.tipoCruce === 'cobro' ? 'pagos' : a.tipoCruce === 'stripe' ? 'stripe' : 'facturas'] = elegidos; }
+  await conCarga('Ligando…', async () => { TABLERO = (await llamar('/api/banco/ligar', cuerpo)).tablero; pintar(); avisar('', ''); });
+}
+
+async function ejecutarGasto(i, a, ruta, base){
+  const partnerId = Number(valor('prov-' + i)), productoId = Number(valor('prod-' + i));
+  if(!partnerId || !productoId){ avisar('Elige el proveedor equivalente y el producto de gasto.', 'error'); return; }
+  const iva = valor('iva-' + i);
+  if(!iva){ avisar('Di si el cargo incluye IVA.', 'error'); return; }
+  const cuerpo = { ...base, partnerId, productoId, conIva: iva === 'si' };
+  if(document.getElementById('nota-' + i)) cuerpo.nota = valor('nota-' + i);
+  if(document.getElementById('nom-' + i)) cuerpo.nombre = valor('nom-' + i);
+  await conCarga('Guardando…', async () => { TABLERO = (await llamar(ruta, cuerpo)).tablero; pintar(); avisar('', ''); });
+}
+
 /* ================= PINTAR EL TABLERO ================= */
-const CLASE = { precio:'t-precio', excedente:'t-precio', borrador:'t-parcial', parcial:'t-parcial', concepto:'t-cfdi', 'sin-oc':'t-cfdi', lista:'t-ok', odoo:'t-odoo', esperando:'t-esp' };
+const CLASE = { precio:'t-precio', excedente:'t-precio', borrador:'t-parcial', parcial:'t-parcial', concepto:'t-cfdi', 'sin-oc':'t-cfdi', lista:'t-ok', odoo:'t-odoo', esperando:'t-esp',
+  identidad:'t-odoo', ambiguo:'t-precio', reembolso:'t-precio', 'gasto-fuera':'t-precio', 'pago-sin-factura':'t-cfdi', 'factura-sin-pago':'t-cfdi',
+  transferencia:'t-parcial', 'cobro-olvidado':'t-parcial', cobranza:'t-cfdi', stripe:'t-precio', 'por-definir':'t-esp', 'pago-manual':'t-precio' };
 
 function pintar(){
   if(!TABLERO) return;
@@ -307,10 +442,13 @@ function pintar(){
   const activos = t.teNecesitan.filter(c => !PAUSADOS.has(c.clave));
   const pausados = t.teNecesitan.filter(c => PAUSADOS.has(c.clave));
 
+  const enEspera = t.enEspera || [];
   document.getElementById('resumen').innerHTML = `
     <div class="tile ok"><div class="cifra num">${t.cuadran.length}</div><div class="rot">cuadran · listas para escribir</div></div>
     <div class="tile atn"><div class="cifra num">${activos.length}</div><div class="rot">te necesitan · decisión</div></div>
-    <div class="tile esp"><div class="cifra num">${t.esperando.length}</div><div class="rot">esperando su CFDI</div></div>`;
+    <div class="tile esp"><div class="cifra num">${t.esperando.length}</div><div class="rot">esperando su CFDI</div></div>
+    <div class="tile esp"><div class="cifra num">${enEspera.length}</div><div class="rot">en espera · se revisan al tope</div></div>`;
+  pintarCobertura(t.banco && t.banco.cobertura);
 
   let html = '';
   if(t.aviso) html += `<div class="mensaje mensaje-error">${esc(t.aviso)}</div>`;
@@ -322,11 +460,34 @@ function pintar(){
   if(t.cuadran.length){ html += `<div class="titulo-sec">Cuadran — listas para escribir en Odoo</div>` + t.cuadran.map(tarjeta).join(''); }
   if(t.enOdoo.length){ html += `<div class="titulo-sec">En Odoo — pendientes de tu confirmación final</div>` + t.enOdoo.map(tarjeta).join(''); }
   if(t.esperando.length){ html += `<div class="titulo-sec">Esperando su CFDI (${t.esperando.length})</div>` + t.esperando.map(tarjeta).join(''); }
+  if(enEspera.length){
+    html += `<details class="plegable"><summary><div class="titulo-sec">En espera (${enEspera.length}) — todavía pueden cuadrar solas</div></summary><div class="lista">`
+      + enEspera.map(e => `<div class="item"><div class="txt"><b>${esc(e.titulo)}</b><div class="sub">${esc(e.quien)}</div></div><div class="sub">${e.hasta ? 'se revisa el ' + esc(e.hasta) : 'espera el estado de cuenta'}</div></div>`).join('')
+      + `</div></details>`;
+  }
+  const ident = (t.banco && t.banco.identificado) || [];
+  if(ident.length){
+    html += `<details class="plegable"><summary><div class="titulo-sec">Banco identificado (${ident.length})</div></summary><div class="lista">`
+      + ident.map(x => `<div class="item"><div class="txt"><b>${esc(x.titulo)}</b><div class="sub">${esc(x.texto)}</div></div>${x.cruceId ? `<button class="enlace" onclick="ejecutar(${ACCIONES.push({ tipo:'deshacer', cruceId: x.cruceId }) - 1})">Deshacer</button>` : ''}</div>`).join('')
+      + `</div></details>`;
+  }
   if(pausados.length){
     html += `<div class="titulo-sec">En pausa — arréglalas en Odoo y dale “Volver a correr”</div>`;
     html += pausados.map(c => `<div class="tarjeta t-esp"><div class="enpausa"><div class="txt">⏸ ${esc(c.quien)}</div><button class="enlace" onclick="reactivar(${indiceClave(c.clave)})">Reactivar</button></div></div>`).join('');
   }
   document.getElementById('tablero').innerHTML = html;
+}
+
+function pintarCobertura(cob){
+  const z = document.getElementById('cobertura');
+  if(!cob || !cob.length){ z.innerHTML = ''; return; }
+  z.innerHTML = `<div class="cobertura">` + cob.map(c => `<div class="cta"><span><b>${esc(c.cuenta)}</b> · desde el ${esc(c.arranque)}</span>
+    <span>${c.cubiertoHasta ? 'cubierto hasta el ' + esc(c.cubiertoHasta) : 'falta el estado de cuenta del día 0'}${(c.huecos || []).map(h => ` · <span class="hueco">falta del ${esc(h.desde)} al ${esc(h.hasta)}</span>`).join('')}</span></div>`).join('') + `</div>`;
+}
+
+function movimientos(filas){
+  const tr = filas.map(f => `<tr><td class="num">${esc(f.fecha)}</td><td class="num">${esc(f.importe)}</td><td>${esc(f.concepto)}</td></tr>`).join('');
+  return `<div class="detalle"><table><tr><th>Fecha</th><th class="num">Importe</th><th>Concepto</th></tr>${tr}</table></div>`;
 }
 
 function tarjeta(c){
@@ -335,7 +496,7 @@ function tarjeta(c){
     + (c.pausable ? `<button class="btn secundaria" onclick="dejarPendiente(${indiceClave(c.clave)})"><span>Dejar pendiente <span class="money">· voy a Odoo y vuelvo a correr</span></span></button>` : '');
   return `<div class="tarjeta ${CLASE[c.tipo] || 't-esp'}"><div class="cuerpo">
     <div class="fila-tit"><div><div class="titp">${esc(c.titulo)}</div><div class="quien">${esc(c.quien)}</div></div><span class="etq">${esc(c.etiqueta)}</span></div>
-    ${porque}${c.detalle ? detalle(c.detalle) : ''}
+    ${porque}${c.detalle ? detalle(c.detalle) : ''}${c.movimientos ? movimientos(c.movimientos) : ''}
     ${acciones ? `<div class="acciones">${acciones}</div>` : ''}
   </div></div>`;
 }
@@ -353,8 +514,64 @@ function boton(a){
     return `<select id="sel-${i}">${vacia}${opciones}</select>
       <button class="btn primaria" onclick="ejecutar(${i})"><span>${esc(a.texto)}</span>${rec}</button>`;
   }
+  if(a.tipo === 'identidad') return formIdentidad(i, a);
+  if(a.tipo === 'ligar') return formLigar(i, a);
+  if((a.tipo === 'gasto' && a.elegir) || a.tipo === 'gasto-cfdi') return formGasto(i, a);
   const clase = a.tipo === 'descartar' ? 'peligro' : (a.recomendado || a.tipo === 'preparar' ? 'primaria' : 'secundaria');
   return `<button class="btn ${clase}" onclick="ejecutar(${i})"><span>${esc(a.texto)}${nota}</span>${rec}</button>`;
+}
+
+/* Formularios (las listas llegan del backend una sola vez, en TABLERO.catalogos) */
+const cat = () => TABLERO.catalogos || { tipos:[], identidades:[], emisores:[], proveedoresOdoo:[], productosGasto:[] };
+const opcionesDe = (lista, texto, valorSel) => lista.map(x => `<option value="${esc(x.id)}"${String(x.id) === String(valorSel) ? ' selected' : ''}>${esc(texto(x))}</option>`).join('');
+function selectProveedorProducto(i){
+  const c = cat();
+  return `<div class="fila">
+    <select id="prov-${i}"><option value="">— Proveedor equivalente en Odoo —</option>${opcionesDe(c.proveedoresOdoo, p => p.nombre + (p.rfc ? ' · ' + p.rfc : ''))}</select>
+    <select id="prod-${i}"><option value="">— Producto de gasto —</option>${opcionesDe(c.productosGasto, p => p.nombre)}</select>
+    <select id="iva-${i}"><option value="">— ¿El cargo incluye IVA? —</option><option value="si">Sí, incluye IVA 16%</option><option value="no">No incluye IVA</option></select></div>`;
+}
+function mostrarCampos(i){
+  const que = valor('que-' + i);
+  for(const [id, ver] of [['c-exist-' + i, que === 'existente'], ['c-nom-' + i, ['proveedor','gasto','persona'].includes(que)], ['c-rfc-' + i, que === 'proveedor'], ['c-gasto-' + i, que === 'gasto']]){
+    const el = document.getElementById(id); if(el) el.style.display = ver ? '' : 'none';
+  }
+}
+function formIdentidad(i, a){
+  const c = cat(), p = a.propuesta || {};
+  const pre = p.identidadId ? 'existente' : (p.tipo || '');
+  const rfcs = [...c.emisores.map(e => ({ rfc: e.rfc, nombre: e.nombre })), ...c.proveedoresOdoo.filter(x => x.rfc).map(x => ({ rfc: x.rfc, nombre: x.nombre }))];
+  const unicos = [...new Map(rfcs.map(r => [r.rfc, r])).values()];
+  setTimeout(() => mostrarCampos(i), 0);
+  return `<div class="form">
+    <select id="que-${i}" onchange="mostrarCampos(${i})">
+      <option value=""${pre ? '' : ' selected'}>— ¿Qué es? —</option>
+      ${c.identidades.length ? `<option value="existente"${pre === 'existente' ? ' selected' : ''}>Alguien ya registrado (otra cuenta o nombre suyo)</option>` : ''}
+      ${c.tipos.map(t => `<option value="${esc(t.tipo)}"${pre === t.tipo ? ' selected' : ''}>${esc(t.texto)}</option>`).join('')}
+    </select>
+    <div id="c-exist-${i}"><select id="ident-${i}"><option value="">— ¿Quién? —</option>${opcionesDe(c.identidades, x => x.nombre, p.identidadId)}</select></div>
+    <div id="c-nom-${i}"><input type="text" id="nom-${i}" placeholder="Nombre para reconocerlo (ej. Ferretería Chrisa, Renta oficina)" value="${esc(p.nombre || '')}"></div>
+    <div id="c-rfc-${i}"><input type="text" id="rfc-${i}" list="rfcs-${i}" placeholder="RFC del proveedor (el de su CFDI)" value="${esc(p.rfc || '')}">
+      <datalist id="rfcs-${i}">${unicos.map(r => `<option value="${esc(r.rfc)}">${esc(r.nombre)}</option>`).join('')}</datalist></div>
+    <div id="c-gasto-${i}">${selectProveedorProducto(i)}</div>
+    <button class="btn primaria" onclick="ejecutar(${i})"><span>Guardar · se recuerda para la próxima</span></button></div>`;
+}
+function formLigar(i, a){
+  const ops = a.opcionesMovimientos || a.opciones || [];
+  if(!ops.length) return '';
+  const prop = new Set(a.propuesta || []);
+  const lista = a.varias
+    ? `<div class="opciones">${ops.map(o => `<label><input type="checkbox" name="op-${i}" value="${esc(o.id)}"${prop.has(o.id) ? ' checked' : ''}><span>${esc(o.texto)}</span></label>`).join('')}</div>`
+    : `<select id="sel-${i}"><option value="">— Elige —</option>${opcionesDe(ops, o => o.texto)}</select>`;
+  const texto = a.tipoCruce === 'cobro' ? 'Ligar al cobro' : a.tipoCruce === 'reembolso' ? 'Confirmar el reembolso' : a.tipoCruce === 'stripe' ? 'Confirmar el depósito' : 'Ligar a la factura';
+  const nota = a.tipoCruce === 'stripe' ? 'la diferencia se registra como comisión' : 'los montos deben cuadrar';
+  return `<div class="form">${lista}<button class="btn ${prop.size ? 'primaria' : 'secundaria'}" onclick="ejecutar(${i})"><span>${texto} <span class="money">· ${nota}</span></span></button></div>`;
+}
+function formGasto(i, a){
+  const nombre = a.tipo === 'gasto-cfdi' ? `<input type="text" id="nom-${i}" placeholder="Nombre para reconocerlo" value="${esc(a.nombre || '')}">` : '';
+  const nota = a.tipo === 'gasto' ? `<input type="text" id="nota-${i}" placeholder="Nota (opcional): qué fue">` : '';
+  return `<details><summary class="btn secundaria"><span>${esc(a.texto)}</span></summary><div class="form" style="margin-top:8px">${nombre}${selectProveedorProducto(i)}${nota}
+    <button class="btn primaria" onclick="ejecutar(${i})"><span>Guardar</span></button></div></details>`;
 }
 
 function detalle(filas){
