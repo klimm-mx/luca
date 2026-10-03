@@ -76,8 +76,6 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 .btn .rec{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;background:rgba(255,255,255,.22);padding:2px 8px;border-radius:20px}
 .btn .money{opacity:.85;font-size:12px;font-weight:500} .btn.secundaria .money{color:var(--tinta-suave)}
 
-.enpausa{background:#EEF3F5;padding:12px 17px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.enpausa .txt{font-size:13px;color:var(--tinta-suave);font-weight:600}
 .enlace{background:none;border:none;color:var(--tinta-suave);font-size:13px;font-family:inherit;cursor:pointer;text-decoration:underline}
 .detalle{margin-top:11px;font-size:12.5px}
 .detalle table{width:100%;border-collapse:collapse}
@@ -89,6 +87,14 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 .mensaje{padding:13px 16px;border-radius:var(--radio);margin-bottom:16px;font-size:14px}
 .mensaje-error{background:var(--alerta-bg);color:var(--alerta);border:1px solid var(--alerta)}
 .mensaje-exito{background:var(--ok-bg);border:1px solid var(--ok);color:var(--ok)}
+/* Lo que hizo Luca y lo que te toca (después de cada salida; se queda hasta "Entendido") */
+.resultado{background:var(--superficie);border:1px solid var(--ok);border-left:5px solid var(--ok);border-radius:var(--radio);box-shadow:var(--sombra);padding:14px 18px;margin-bottom:16px;font-size:14px}
+.resultado .res-tit{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--tinta-suave);margin-bottom:4px}
+.resultado .res-hecho{margin-bottom:12px}
+.resultado ol{margin:0 0 12px 20px} .resultado li{margin-bottom:4px}
+.resultado .res-nada{margin-bottom:12px;color:var(--tinta-suave)}
+.resultado .btn{width:auto;display:inline-flex}
+.resultado.atencion{border-color:var(--revision);background:var(--revision-bg)}
 .cargando{display:flex;align-items:center;gap:12px;padding:16px;justify-content:center;color:var(--tinta-suave)}
 .girador{width:20px;height:20px;border:3px solid var(--borde);border-top-color:var(--agua);border-radius:50%;animation:girar .8s linear infinite}
 @keyframes girar{to{transform:rotate(360deg)}}
@@ -100,6 +106,7 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 .cobertura .cta + .cta{border-top:1px solid var(--borde)}
 .cobertura .hueco{color:var(--alerta);font-weight:600}
 .form{display:flex;flex-direction:column;gap:8px}
+.form .ayuda{font-size:12.5px;color:var(--tinta-suave);margin-top:-2px}
 .form .fila{display:flex;gap:8px;flex-wrap:wrap}
 .form .fila > *{flex:1;min-width:160px}
 .form input[type=text]{width:100%}
@@ -116,6 +123,12 @@ details.plegable > summary::-webkit-details-marker{display:none}
 details.plegable > summary .titulo-sec::after{content:" ▸"}
 details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
 
+.seguimiento{margin-top:9px;font-size:12.5px;background:#EEF3F5;border-radius:8px;padding:7px 10px;color:var(--tinta-suave);display:flex;justify-content:space-between;gap:10px;align-items:center}
+.tarjeta.t-aviso{border-left-color:#9AB3BD;box-shadow:none} .t-aviso .etq{background:#EEF3F5;color:var(--tinta-suave)}
+.banner-avisos{background:var(--superficie);border:1px solid var(--borde);border-radius:var(--radio);padding:10px 16px;margin-bottom:16px;font-size:13.5px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.senal{font-size:10.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:var(--media-bg);color:var(--media);white-space:nowrap}
+.renglon-oc{display:flex;flex-direction:column;gap:4px;padding:6px 0;border-bottom:1px solid var(--fondo)}
+.renglon-oc label{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:13px;color:var(--tinta);margin:0}
 .velo{position:fixed;inset:0;background:rgba(22,50,59,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
 .velo.visible{display:flex}
 .modal{background:var(--superficie);border-radius:var(--radio);padding:24px;max-width:440px;width:100%}
@@ -133,6 +146,7 @@ details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
 
 <div class="contenedor">
   <div id="avisoGlobal"></div>
+  <div id="resultado"></div>
 
   <!-- Control: subir CFDIs + volver a correr -->
   <div class="control">
@@ -154,7 +168,13 @@ details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
   <!-- Tablero -->
   <div id="tablero"></div>
 
-  <div class="pie">Odoo es la fuente de verdad. Si un caso es raro, déjalo pendiente, arréglalo en Odoo y dale “Volver a correr”: cuadrará solo.</div>
+  <!-- Reporte de decisiones (lo que revisa el dueño): se carga al abrirlo -->
+  <details class="plegable" id="reporte" ontoggle="if(this.open) cargarReporte()">
+    <summary><div class="titulo-sec">Reporte de decisiones (últimos 30 días)</div></summary>
+    <div id="reporteCuerpo" class="lista"><div class="item"><div class="sub">Cargando…</div></div></div>
+  </details>
+
+  <div class="pie">Odoo es la fuente de verdad. Si un caso es raro, márcalo “Lo estoy investigando”, arréglalo en Odoo y dale “Volver a correr”: cuadrará solo.</div>
 </div>
 
 <!-- Modal: configuración -->
@@ -204,6 +224,19 @@ function avisar(html, tipo){
   document.getElementById('avisoGlobal').innerHTML = html ? `<div class="mensaje mensaje-${tipo}">${html}</div>` : '';
   if(html) window.scrollTo({top:0, behavior:'smooth'});
 }
+/* Después de cada salida: lo que hizo Luca y lo que le toca al operador (los textos vienen del backend). */
+function mostrarResultado(r){
+  const z = document.getElementById('resultado');
+  if(!r || !r.hecho){ z.innerHTML = ''; return; }
+  const pasos = r.teToca || [];
+  const nada = pasos.length === 1 && pasos[0] === 'Nada más.';
+  z.innerHTML = `<div class="resultado${r.atencion ? ' atencion' : ''}" role="status"><div class="res-tit">Lo que hizo Luca</div><p class="res-hecho">${esc(r.hecho)}</p>`
+    + `<div class="res-tit">Lo que te toca</div>` + (nada ? `<p class="res-nada">Nada más.</p>` : `<ol>${pasos.map(x => `<li>${esc(x)}</li>`).join('')}</ol>`)
+    + `<button class="btn primaria" onclick="mostrarResultado(null)">Entendido</button></div>`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+/** Respuesta de una salida: pinta el tablero nuevo y lo que hizo Luca. */
+function aplicar(d){ TABLERO = d.tablero; pintar(); avisar('', ''); mostrarResultado(d.resultado); }
 function cargando(txt){
   const z = document.getElementById('zonaCargando');
   if(txt){ document.getElementById('textoCargando').textContent = txt; z.style.display='block'; } else z.style.display='none';
@@ -212,10 +245,11 @@ function esc(s){ return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;
 
 /* ================= ESTADO DE LA PANTALLA ================= */
 let TABLERO = null;          // lo último que mandó el backend
-let PAUSADOS = new Set();    // "Dejar pendiente": vive hasta volver a correr o recargar
+let PRODUCTOS = null;        // productos que se compran: se piden al abrir "crear la OC" (una vez)
 let ACCIONES = [];           // acciones pintadas, por índice
 
 async function conCarga(texto, fn){
+  mostrarResultado(null);
   cargando(texto);
   try { return await fn(); }
   catch(e){ avisar(esc(e.message), 'error'); }
@@ -242,7 +276,6 @@ async function arrancar(){
   });
 }
 async function volverACorrer(){
-  PAUSADOS.clear();
   await conCarga('Volviendo a leer Odoo y el banco…', async () => {
     TABLERO = await llamar('/api/corrida', {});
     pintar();
@@ -324,9 +357,26 @@ async function subirEstados(pdfs){
 
 /* ================= ACCIONES ================= */
 let CLAVES = [];              // claves de tarjeta pintadas, por índice
-function dejarPendiente(i){ if(CLAVES[i] !== undefined){ PAUSADOS.add(CLAVES[i]); pintar(); } }
-function reactivar(i){ if(CLAVES[i] !== undefined){ PAUSADOS.delete(CLAVES[i]); pintar(); } }
 function indiceClave(clave){ return CLAVES.push(clave) - 1; }
+/* "Lo estoy investigando": se guarda en Luca (no toca Odoo); la tarjeta se queda, con sus días. */
+async function investigar(i){
+  if(CLAVES[i] === undefined) return;
+  await conCarga('Guardando…', async () => { aplicar(await llamar('/api/seguimiento', { clave: CLAVES[i], motivo: 'investigando', nota: valor('notaseg-' + i) })); });
+}
+async function quitarSeguimiento(i){
+  if(CLAVES[i] === undefined) return;
+  await conCarga('Guardando…', async () => { aplicar(await llamar('/api/seguimiento', { clave: CLAVES[i], quitar: true })); });
+}
+/* Reporte de decisiones: solo lectura. */
+async function cargarReporte(){
+  const z = document.getElementById('reporteCuerpo');
+  try {
+    const r = await llamar('/api/reporte?dias=30');
+    const resumen = r.porSenal.length ? `<div class="item"><div class="txt">${r.porSenal.map(x => `<span class="senal">${esc(x.senal)} · ${x.n}</span>`).join(' ')}</div></div>` : '';
+    z.innerHTML = resumen + (r.filas.length ? r.filas.map(f => `<div class="item"><div class="txt"><b>${esc(f.fecha)}</b> · ${esc(f.texto)}${f.nota ? `<div class="sub">Nota: ${esc(f.nota)}</div>` : ''}</div>${f.senal ? `<span class="senal">${esc(f.senal)}</span>` : ''}</div>`).join('')
+      : '<div class="item"><div class="sub">Sin decisiones en estos días.</div></div>');
+  } catch(e){ z.innerHTML = `<div class="item"><div class="sub">${esc(e.message)}</div></div>`; }
+}
 
 async function ejecutar(i){
   const a = ACCIONES[i];
@@ -336,51 +386,64 @@ async function ejecutar(i){
     const [ocId, lineaId] = (sel && sel.value ? sel.value : '').split('|').map(Number);
     if(!ocId || !lineaId){ avisar('Primero elige a qué producto corresponde.', 'error'); return; }
     await conCarga('Guardando la asignación…', async () => {
-      TABLERO = (await llamar('/api/asignar', { clave: a.clave, ocId, lineaId })).tablero;
-      pintar(); avisar('', '');
+      aplicar(await llamar('/api/asignar', { clave: a.clave, ocId, lineaId }));
     });
     return;
   }
   if(a.tipo === 'identidad') return ejecutarIdentidad(i, a);
   if(a.tipo === 'ligar') return ejecutarLigar(i, a);
+  if(a.tipo === 'crear-oc') return ejecutarCrearOC(i, a);
+  if(a.tipo === 'cerrar-oc') return ejecutarCerrarOC(i, a);
+  if(a.tipo === 'reclasificar') return ejecutarReclasificar(i, a);
+  if(a.tipo === 'seguimiento'){
+    return conCarga('Guardando…', async () => { aplicar(await llamar('/api/seguimiento', { clave: a.clave, motivo: a.motivo })); });
+  }
   if(a.tipo === 'gasto' && a.elegir) return ejecutarGasto(i, a, '/api/banco/gasto', { movimientoId: a.movimientoId });
   if(a.tipo === 'gasto-cfdi') return ejecutarGasto(i, a, '/api/gasto-cfdi', { clave: a.clave });
   if(a.tipo === 'deshacer'){
     if(!confirm('¿Deshacer este cruce? Lo que Luca registró en Odoo se quita, sus movimientos vuelven a quedar pendientes y Luca ya no los volverá a juntar sola (podrás ligarlos tú a mano).')) return;
-    return conCarga('Deshaciendo…', async () => { TABLERO = (await llamar('/api/banco/deshacer', { cruceId: a.cruceId })).tablero; pintar(); avisar('', ''); });
+    return conCarga('Deshaciendo…', async () => { aplicar(await llamar('/api/banco/deshacer', { cruceId: a.cruceId })); });
   }
   if(a.confirmar && !confirm(a.confirmar)) return;
+  if(a.tipo === 'posponer'){
+    return conCarga('Guardando…', async () => { aplicar(await llamar('/api/oc/posponer', { ocId: a.ocId, respuesta: a.respuesta })); });
+  }
+  if(a.tipo === 'atendido'){
+    return conCarga('Guardando…', async () => {
+      aplicar(await llamar('/api/banco/atendido', a.cobroId ? { cobroId: a.cobroId } : { movimientoId: a.movimientoId }));
+    });
+  }
+  if(a.tipo === 'factura-sin-cfdi'){
+    return conCarga('Armando la factura en Odoo…', async () => {
+      aplicar(await llamar('/api/oc/factura-sin-cfdi', { ocId: a.ocId }));
+    });
+  }
   if(a.tipo === 'previo'){
     return conCarga('Guardando…', async () => {
-      TABLERO = (await llamar('/api/banco/previo', a.facturas ? { facturas: a.facturas } : { movimientos: a.movimientos })).tablero; pintar(); avisar('', '');
+      aplicar(await llamar('/api/banco/previo', a.facturas ? { facturas: a.facturas } : { movimientos: a.movimientos }));
     });
   }
   if(a.tipo === 'reintentar'){
-    return conCarga('Registrando en Odoo…', async () => { TABLERO = (await llamar('/api/banco/reintentar', { cruceId: a.cruceId })).tablero; pintar(); avisar('', ''); });
+    return conCarga('Registrando en Odoo…', async () => { aplicar(await llamar('/api/banco/reintentar', { cruceId: a.cruceId })); });
   }
   if(a.tipo === 'gasto'){
     await conCarga('Guardando…', async () => {
-      TABLERO = (await llamar('/api/banco/gasto', { movimientoId: a.movimientoId, partnerId: a.partnerId, productoId: a.productoId, nota: 'revisado: monto fuera de lo habitual' })).tablero;
-      pintar(); avisar('', '');
+      aplicar(await llamar('/api/banco/gasto', { movimientoId: a.movimientoId, partnerId: a.partnerId, productoId: a.productoId, nota: 'revisado: monto fuera de lo habitual' }));
     });
     return;
   }
   if(a.tipo === 'preparar'){
     await conCarga('Escribiendo la factura en Odoo…', async () => {
-      const d = await llamar('/api/preparar-factura', { ocId: a.ocId });
-      TABLERO = d.tablero; pintar();
-      let msg = `Listo: la factura <strong>${esc(d.factura)}</strong> quedó en borrador con los datos reales. Confírmala en Odoo.`;
-      if(d.advertencias && d.advertencias.length) msg += '<br><br>' + d.advertencias.map(esc).join('<br>');
-      avisar(msg, d.advertencias && d.advertencias.length ? 'error' : 'exito');
+      aplicar(await llamar('/api/preparar-factura', a.causa ? { ocId: a.ocId, causa: a.causa } : { ocId: a.ocId }));
     });
   } else if(a.tipo === 'descartar'){
     await conCarga('Descartando…', async () => {
-      TABLERO = (await llamar('/api/descartar', { clave: a.clave })).tablero; pintar(); avisar('', '');
+      aplicar(await llamar('/api/descartar', { clave: a.clave, motivo: a.motivo }));
     });
   } else if(a.tipo === 'archivar'){
     await conCarga('Quitando de la lista…', async () => {
       const d = await llamar('/api/archivar', { ocId: a.ocId });
-      TABLERO = d.tablero; pintar(); avisar(d.mensaje ? esc(d.mensaje) : '', 'exito');
+      aplicar(d);
     });
   }
 }
@@ -407,7 +470,7 @@ async function ejecutarIdentidad(i, a){
       cuerpo.conIva = iva === 'si';
     }
   } else { avisar('Primero elige qué es.', 'error'); return; }
-  await conCarga('Guardando…', async () => { TABLERO = (await llamar('/api/identidad', cuerpo)).tablero; pintar(); avisar('', ''); });
+  await conCarga('Guardando…', async () => { aplicar(await llamar('/api/identidad', cuerpo)); });
 }
 
 async function ejecutarLigar(i, a){
@@ -415,8 +478,55 @@ async function ejecutarLigar(i, a){
   if(!elegidos.length){ avisar('Elige al menos una opción.', 'error'); return; }
   const cuerpo = { tipoCruce: a.tipoCruce };
   if(a.opcionesMovimientos){ cuerpo.movimientos = elegidos; cuerpo.facturas = a.facturas; }
-  else { cuerpo.movimientos = a.movimientos; cuerpo[a.tipoCruce === 'cobro' ? 'pagos' : a.tipoCruce === 'stripe' ? 'stripe' : 'facturas'] = elegidos; }
-  await conCarga('Ligando…', async () => { TABLERO = (await llamar('/api/banco/ligar', cuerpo)).tablero; pintar(); avisar('', ''); });
+  else { cuerpo.movimientos = a.movimientos; cuerpo[a.tipoCruce === 'cobro' ? 'pagos' : a.tipoCruce === 'stripe' ? 'stripe' : a.tipoCruce === 'reversa' ? 'abonos' : 'facturas'] = elegidos; }
+  if(valor('dif-' + i)) cuerpo.diferencia = valor('dif-' + i);
+  await conCarga('Ligando…', async () => { aplicar(await llamar('/api/banco/ligar', cuerpo)); });
+}
+
+async function ejecutarCrearOC(i, a){
+  const partnerId = Number(valor('prov-' + i));
+  if(!partnerId){ avisar('Elige el proveedor de la OC.', 'error'); return; }
+  const causa = valor('causa-' + i);
+  if(!causa){ avisar('Di por qué se compró sin OC.', 'error'); return; }
+  // Cada opción de la lista termina en " · #<id>": el producto se identifica por su número, no por su nombre.
+  const ids = new Set((PRODUCTOS || []).map(p => p.id));
+  const conceptos = [];
+  for(let k = 0; k < a.conceptos.length; k++){
+    const caja = document.getElementById(`co-${i}-${k}`);
+    if(!caja || !caja.checked) continue;
+    const m = /· #(\d+)$/.exec(valor(`cp-${i}-${k}`)), productoId = m && ids.has(Number(m[1])) ? Number(m[1]) : null;
+    if(!productoId){ avisar(`Elige de la lista el producto de ${esc(a.conceptos[k].texto)}.`, 'error'); return; }
+    conceptos.push({ clave: a.conceptos[k].clave, productoId });
+  }
+  if(!conceptos.length){ avisar('Marca al menos un renglón.', 'error'); return; }
+  if(a.confirmar && !confirm(a.confirmar)) return;
+  await conCarga('Creando la OC en Odoo…', async () => {
+    const d = await llamar('/api/crear-oc', { uuid: a.uuid, partnerId, causa, conceptos });
+    aplicar(d);
+  });
+}
+
+async function ejecutarCerrarOC(i, a){
+  const lineas = a.todas ? a.lineas.map(l => l.id) : marcados(i);
+  if(!lineas.length){ avisar('Marca los renglones que no se van a comprar.', 'error'); return; }
+  const causa = a.causa || valor('causa-' + i);
+  if(!causa){ avisar('Di por qué no se va a comprar.', 'error'); return; }
+  if(a.confirmar && !confirm(a.confirmar)) return;
+  await conCarga('Cerrando en Odoo…', async () => {
+    const d = await llamar('/api/oc/cerrar', { ocId: a.ocId, lineas, causa });
+    aplicar(d);
+  });
+}
+
+async function ejecutarReclasificar(i, a){
+  const cuerpo = { movimientoId: a.movimientoId, destino: a.destino };
+  if(a.elegirProveedor){
+    cuerpo.partnerId = Number(valor('prov-' + i));
+    if(!cuerpo.partnerId){ avisar('Elige el proveedor.', 'error'); return; }
+  }
+  if(a.conNota) cuerpo.nota = valor('nota-' + i);
+  if(a.confirmar && !confirm(a.confirmar)) return;
+  await conCarga('Guardando…', async () => { aplicar(await llamar('/api/banco/reclasificar', cuerpo)); });
 }
 
 async function ejecutarGasto(i, a, ruta, base){
@@ -427,20 +537,21 @@ async function ejecutarGasto(i, a, ruta, base){
   const cuerpo = { ...base, partnerId, productoId, conIva: iva === 'si' };
   if(document.getElementById('nota-' + i)) cuerpo.nota = valor('nota-' + i);
   if(document.getElementById('nom-' + i)) cuerpo.nombre = valor('nom-' + i);
-  await conCarga('Guardando…', async () => { TABLERO = (await llamar(ruta, cuerpo)).tablero; pintar(); avisar('', ''); });
+  await conCarga('Guardando…', async () => { aplicar(await llamar(ruta, cuerpo)); });
 }
 
 /* ================= PINTAR EL TABLERO ================= */
 const CLASE = { precio:'t-precio', excedente:'t-precio', borrador:'t-parcial', parcial:'t-parcial', concepto:'t-cfdi', 'sin-oc':'t-cfdi', lista:'t-ok', odoo:'t-odoo', esperando:'t-esp',
   identidad:'t-odoo', ambiguo:'t-precio', reembolso:'t-precio', 'gasto-fuera':'t-precio', 'pago-sin-factura':'t-cfdi', 'factura-sin-pago':'t-cfdi',
-  transferencia:'t-parcial', 'cobro-olvidado':'t-parcial', cobranza:'t-cfdi', stripe:'t-precio', 'por-definir':'t-esp', 'pago-manual':'t-precio' };
+  transferencia:'t-parcial', 'cobro-olvidado':'t-aviso', cobranza:'t-aviso', stripe:'t-precio', 'por-definir':'t-esp', 'pago-manual':'t-precio', 'oc-sin-cfdi':'t-cfdi' };
 
 function pintar(){
   if(!TABLERO) return;
   ACCIONES = []; CLAVES = [];
   const t = TABLERO;
-  const activos = t.teNecesitan.filter(c => !PAUSADOS.has(c.clave));
-  const pausados = t.teNecesitan.filter(c => PAUSADOS.has(c.clave));
+  const activos = t.teNecesitan.filter(c => !c.seguimiento);
+  const enSeguimiento = t.teNecesitan.filter(c => c.seguimiento);
+  const avisos = t.avisos || [];
 
   const enEspera = t.enEspera || [];
   document.getElementById('resumen').innerHTML = `
@@ -452,10 +563,16 @@ function pintar(){
 
   let html = '';
   if(t.aviso) html += `<div class="mensaje mensaje-error">${esc(t.aviso)}</div>`;
+  if(avisos.length) html += `<div class="banner-avisos"><span>🔔 Hay ${avisos.length} aviso${avisos.length!==1?'s':''} de ventas para atender en Odoo.</span><a class="enlace" href="#avisos">Ver</a></div>`;
+  html += `<datalist id="dl-productos">${(PRODUCTOS || []).map(p => `<option value="${esc(p.nombre + ' · #' + p.id)}"></option>`).join('')}</datalist>`;
 
   html += `<div class="titulo-sec">Te necesitan</div>`;
   html += activos.length ? activos.map(tarjeta).join('')
     : `<div class="vacio">Nada te necesita ahora mismo.${t.hayCfdisPendientes ? '' : ' Sube los CFDIs de la semana para empezar.'}</div>`;
+  if(enSeguimiento.length){ html += `<div class="titulo-sec">En investigación (${enSeguimiento.length})</div>` + enSeguimiento.map(tarjeta).join(''); }
+  if(avisos.length){
+    html += `<details class="plegable" id="avisos" open><summary><div class="titulo-sec">Avisos de ventas (${avisos.length}) — atiéndelos en Odoo; se quitan solos al cuadrar</div></summary>` + avisos.map(tarjeta).join('') + `</details>`;
+  }
 
   if(t.cuadran.length){ html += `<div class="titulo-sec">Cuadran — listas para escribir en Odoo</div>` + t.cuadran.map(tarjeta).join(''); }
   if(t.enOdoo.length){ html += `<div class="titulo-sec">En Odoo — pendientes de tu confirmación final</div>` + t.enOdoo.map(tarjeta).join(''); }
@@ -470,10 +587,6 @@ function pintar(){
     html += `<details class="plegable"><summary><div class="titulo-sec">Banco identificado (${ident.length})</div></summary><div class="lista">`
       + ident.map(x => `<div class="item"><div class="txt"><b>${esc(x.titulo)}</b><div class="sub">${esc(x.texto)}</div></div>${x.cruceId ? `<button class="enlace" onclick="ejecutar(${ACCIONES.push({ tipo:'deshacer', cruceId: x.cruceId }) - 1})">Deshacer</button>` : ''}</div>`).join('')
       + `</div></details>`;
-  }
-  if(pausados.length){
-    html += `<div class="titulo-sec">En pausa — arréglalas en Odoo y dale “Volver a correr”</div>`;
-    html += pausados.map(c => `<div class="tarjeta t-esp"><div class="enpausa"><div class="txt">⏸ ${esc(c.quien)}</div><button class="enlace" onclick="reactivar(${indiceClave(c.clave)})">Reactivar</button></div></div>`).join('');
   }
   document.getElementById('tablero').innerHTML = html;
 }
@@ -492,11 +605,17 @@ function movimientos(filas){
 
 function tarjeta(c){
   const porque = (c.porque || []).map(p => `<div class="porque">${esc(p)}</div>`).join('');
-  const acciones = (c.acciones || []).map(boton).join('')
-    + (c.pausable ? `<button class="btn secundaria" onclick="dejarPendiente(${indiceClave(c.clave)})"><span>Dejar pendiente <span class="money">· voy a Odoo y vuelvo a correr</span></span></button>` : '');
+  const seg = c.seguimiento ? `<div class="seguimiento"><span>🔎 ${esc(c.seguimiento.texto)}${c.seguimiento.nota ? ' — ' + esc(c.seguimiento.nota) : ''}</span><button class="enlace" onclick="quitarSeguimiento(${indiceClave(c.clave)})">Quitar la marca</button></div>` : '';
+  let investigar = '';
+  if(c.pausable && !c.seguimiento){
+    const k = indiceClave(c.clave);
+    investigar = `<details><summary class="btn secundaria"><span>Lo estoy investigando <span class="money">· no toca Odoo</span></span></summary><div class="form" style="margin-top:8px">
+      <input type="text" id="notaseg-${k}" placeholder="Nota (opcional): qué estás revisando"><button class="btn primaria" onclick="investigar(${k})"><span>Marcar</span></button></div></details>`;
+  }
+  const acciones = (c.acciones || []).map(boton).join('') + investigar;
   return `<div class="tarjeta ${CLASE[c.tipo] || 't-esp'}"><div class="cuerpo">
     <div class="fila-tit"><div><div class="titp">${esc(c.titulo)}</div><div class="quien">${esc(c.quien)}</div></div><span class="etq">${esc(c.etiqueta)}</span></div>
-    ${porque}${c.detalle ? detalle(c.detalle) : ''}${c.movimientos ? movimientos(c.movimientos) : ''}
+    ${porque}${seg}${c.detalle ? detalle(c.detalle) : ''}${c.movimientos ? movimientos(c.movimientos) : ''}
     ${acciones ? `<div class="acciones">${acciones}</div>` : ''}
   </div></div>`;
 }
@@ -517,7 +636,10 @@ function boton(a){
   if(a.tipo === 'identidad') return formIdentidad(i, a);
   if(a.tipo === 'ligar') return formLigar(i, a);
   if((a.tipo === 'gasto' && a.elegir) || a.tipo === 'gasto-cfdi') return formGasto(i, a);
-  const clase = a.tipo === 'descartar' ? 'peligro' : (a.recomendado || a.tipo === 'preparar' ? 'primaria' : 'secundaria');
+  if(a.tipo === 'crear-oc') return formCrearOC(i, a);
+  if(a.tipo === 'cerrar-oc') return formCerrarOC(i, a);
+  if(a.tipo === 'reclasificar' && (a.elegirProveedor || a.conNota)) return formReclasificar(i, a);
+  const clase = a.peligro ? 'peligro' : (a.recomendado || (a.tipo === 'preparar' && !a.eleccion) ? 'primaria' : 'secundaria');
   return `<button class="btn ${clase}" onclick="ejecutar(${i})"><span>${esc(a.texto)}${nota}</span>${rec}</button>`;
 }
 
@@ -563,14 +685,59 @@ function formLigar(i, a){
   const lista = a.varias
     ? `<div class="opciones">${ops.map(o => `<label><input type="checkbox" name="op-${i}" value="${esc(o.id)}"${prop.has(o.id) ? ' checked' : ''}><span>${esc(o.texto)}</span></label>`).join('')}</div>`
     : `<select id="sel-${i}"><option value="">— Elige —</option>${opcionesDe(ops, o => o.texto)}</select>`;
-  const texto = a.tipoCruce === 'cobro' ? 'Ligar al cobro' : a.tipoCruce === 'reembolso' ? 'Confirmar el reembolso' : a.tipoCruce === 'stripe' ? 'Confirmar el depósito' : 'Ligar a la factura';
-  const nota = a.tipoCruce === 'stripe' ? 'la diferencia se registra como comisión' : 'los montos deben cuadrar';
-  return `<div class="form">${lista}<button class="btn ${prop.size ? 'primaria' : 'secundaria'}" onclick="ejecutar(${i})"><span>${texto} <span class="money">· ${nota}</span></span></button></div>`;
+  const texto = a.tipoCruce === 'cobro' ? 'Ligar al cobro' : a.tipoCruce === 'reembolso' ? 'Confirmar el reembolso' : a.tipoCruce === 'stripe' ? 'Confirmar el depósito'
+    : a.tipoCruce === 'reversa' ? 'Ya lo devolvieron: ligar con su abono' : 'Es el pago de esta(s) factura(s)';
+  const nota = a.tipoCruce === 'stripe' ? 'la diferencia se registra como comisión' : a.tipoCruce === 'reversa' ? 'se anulan entre sí en Odoo'
+    : (a.diferencias || []).length ? 'si no cuadra al centavo, di qué es la diferencia' : 'los montos deben cuadrar';
+  const dif = (a.diferencias || []).length ? `<select id="dif-${i}"><option value="">— Si no cuadra al centavo, ¿qué es la diferencia? —</option>${a.diferencias.map(d => `<option value="${esc(d.valor)}">${esc(d.texto)}</option>`).join('')}</select>` : '';
+  return `<div class="form">${lista}${dif}<button class="btn ${prop.size ? 'primaria' : 'secundaria'}" onclick="ejecutar(${i})"><span>${texto} <span class="money">· ${nota}</span></span></button></div>`;
 }
 function formGasto(i, a){
   const nombre = a.tipo === 'gasto-cfdi' ? `<input type="text" id="nom-${i}" placeholder="Nombre para reconocerlo" value="${esc(a.nombre || '')}">` : '';
   const nota = a.tipo === 'gasto' ? `<input type="text" id="nota-${i}" placeholder="Nota (opcional): qué fue">` : '';
   return `<details><summary class="btn secundaria"><span>${esc(a.texto)}</span></summary><div class="form" style="margin-top:8px">${nombre}${selectProveedorProducto(i)}${nota}
+    <button class="btn primaria" onclick="ejecutar(${i})"><span>Guardar</span></button></div></details>`;
+}
+
+function selectProveedor(i, rfc){
+  const c = cat();
+  const pre = rfc ? (c.proveedoresOdoo.find(p => p.rfc === rfc) || {}).id : null;
+  return `<select id="prov-${i}"><option value="">— Proveedor en Odoo —</option>${opcionesDe(c.proveedoresOdoo, p => p.nombre + (p.rfc ? ' · ' + p.rfc : ''), pre)}</select>`;
+}
+/* La lista de productos se pide al abrir el formulario (una vez); lo sugerido se completa con su número. */
+async function abrirCrearOC(det){
+  if(!det.open || PRODUCTOS) return completarSugeridos(det);
+  try {
+    PRODUCTOS = (await llamar('/api/productos-compra')).productos;
+    document.getElementById('dl-productos').innerHTML = PRODUCTOS.map(p => `<option value="${esc(p.nombre + ' · #' + p.id)}"></option>`).join('');
+    completarSugeridos(det);
+  } catch(e){ avisar(esc(e.message), 'error'); }
+}
+function completarSugeridos(det){
+  for(const inp of det.querySelectorAll('input[data-sugerido]')){
+    if(inp.value) continue;
+    const p = (PRODUCTOS || []).find(x => x.nombre === inp.dataset.sugerido);
+    if(p) inp.value = p.nombre + ' · #' + p.id;
+  }
+}
+function formCrearOC(i, a){
+  const renglones = a.conceptos.map((c, k) => `<div class="renglon-oc"><label><input type="checkbox" id="co-${i}-${k}" checked><span>${esc(c.texto)}</span></label>
+    <input type="text" id="cp-${i}-${k}" list="dl-productos" placeholder="Producto en Odoo (elige de la lista)" data-sugerido="${esc(c.sugerido || '')}"></div>`).join('');
+  return `<details ontoggle="abrirCrearOC(this)"><summary class="btn secundaria"><span>${esc(a.texto)} <span class="money">· ${esc(a.nota)}</span></span></summary><div class="form" style="margin-top:8px">
+    ${selectProveedor(i, a.rfc)}${a.ayudaProveedor ? `<p class="ayuda">${esc(a.ayudaProveedor)}</p>` : ''}<div class="opciones">${renglones}</div>
+    <select id="causa-${i}"><option value="">— ¿Por qué se compró sin OC? —</option>${a.causas.map(x => `<option value="${esc(x.valor)}">${esc(x.texto)}</option>`).join('')}</select>
+    <button class="btn primaria" onclick="ejecutar(${i})"><span>Crear y confirmar la OC</span></button></div></details>`;
+}
+function formCerrarOC(i, a){
+  if(a.todas) return `<button class="btn secundaria" onclick="ejecutar(${i})"><span>${esc(a.texto)}</span></button>`;
+  const lista = `<div class="opciones">${a.lineas.map(l => `<label><input type="checkbox" name="op-${i}" value="${esc(l.id)}" checked><span>${esc(l.texto)}</span></label>`).join('')}</div>`;
+  return `<details><summary class="btn secundaria"><span>${esc(a.texto)}</span></summary><div class="form" style="margin-top:8px">${lista}
+    <select id="causa-${i}"><option value="">— ¿Por qué? —</option>${a.causas.map(x => `<option value="${esc(x.valor)}">${esc(x.texto)}</option>`).join('')}</select>
+    <button class="btn primaria" onclick="ejecutar(${i})"><span>Cerrar lo marcado en Odoo</span></button></div></details>`;
+}
+function formReclasificar(i, a){
+  const campo = a.elegirProveedor ? selectProveedor(i, a.rfc) : `<input type="text" id="nota-${i}" placeholder="Nota (opcional): responsable o qué pasó">`;
+  return `<details><summary class="btn secundaria"><span>${esc(a.texto)} <span class="money">· ${esc(a.nota)}</span></span></summary><div class="form" style="margin-top:8px">${campo}
     <button class="btn primaria" onclick="ejecutar(${i})"><span>Guardar</span></button></div></details>`;
 }
 
