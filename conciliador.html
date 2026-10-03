@@ -107,6 +107,8 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 .cobertura .hueco{color:var(--alerta);font-weight:600}
 .form{display:flex;flex-direction:column;gap:8px}
 .form .ayuda{font-size:12.5px;color:var(--tinta-suave);margin-top:-2px}
+.renglon-oc .litros-pieza{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:12.5px;font-weight:400;color:var(--tinta-suave);margin:0 0 0 24px}
+.renglon-oc .litros-pieza input.litros{width:110px;flex:none}
 .form .fila{display:flex;gap:8px;flex-wrap:wrap}
 .form .fila > *{flex:1;min-width:160px}
 .form input[type=text]{width:100%}
@@ -395,6 +397,7 @@ async function ejecutar(i){
   if(a.tipo === 'crear-oc') return ejecutarCrearOC(i, a);
   if(a.tipo === 'cerrar-oc') return ejecutarCerrarOC(i, a);
   if(a.tipo === 'reclasificar') return ejecutarReclasificar(i, a);
+  if(a.tipo === 'complemento-productos') return ejecutarProductos(i, a);
   if(a.tipo === 'seguimiento'){
     return conCarga('Guardando…', async () => { aplicar(await llamar('/api/seguimiento', { clave: a.clave, motivo: a.motivo })); });
   }
@@ -405,6 +408,10 @@ async function ejecutar(i){
     return conCarga('Deshaciendo…', async () => { aplicar(await llamar('/api/banco/deshacer', { cruceId: a.cruceId })); });
   }
   if(a.confirmar && !confirm(a.confirmar)) return;
+  // Acción de un complemento de proveedor: la ruta y el cuerpo vienen del backend.
+  if(a.tipo === 'complemento'){
+    return conCarga('Guardando…', async () => { aplicar(await llamar('/api/complementos/' + a.ruta, a.cuerpo)); });
+  }
   if(a.tipo === 'posponer'){
     return conCarga('Guardando…', async () => { aplicar(await llamar('/api/oc/posponer', { ocId: a.ocId, respuesta: a.respuesta })); });
   }
@@ -541,7 +548,7 @@ async function ejecutarGasto(i, a, ruta, base){
 }
 
 /* ================= PINTAR EL TABLERO ================= */
-const CLASE = { precio:'t-precio', excedente:'t-precio', borrador:'t-parcial', parcial:'t-parcial', concepto:'t-cfdi', 'sin-oc':'t-cfdi', lista:'t-ok', odoo:'t-odoo', esperando:'t-esp',
+const CLASE = { complemento:'t-cfdi', precio:'t-precio', excedente:'t-precio', borrador:'t-parcial', parcial:'t-parcial', concepto:'t-cfdi', 'sin-oc':'t-cfdi', lista:'t-ok', odoo:'t-odoo', esperando:'t-esp',
   identidad:'t-odoo', ambiguo:'t-precio', reembolso:'t-precio', 'gasto-fuera':'t-precio', 'pago-sin-factura':'t-cfdi', 'factura-sin-pago':'t-cfdi',
   transferencia:'t-parcial', 'cobro-olvidado':'t-aviso', cobranza:'t-aviso', stripe:'t-precio', 'por-definir':'t-esp', 'pago-manual':'t-precio', 'oc-sin-cfdi':'t-cfdi' };
 
@@ -580,6 +587,13 @@ function pintar(){
   if(enEspera.length){
     html += `<details class="plegable"><summary><div class="titulo-sec">En espera (${enEspera.length}) — todavía pueden cuadrar solas</div></summary><div class="lista">`
       + enEspera.map(e => `<div class="item"><div class="txt"><b>${esc(e.titulo)}</b><div class="sub">${esc(e.quien)}</div></div><div class="sub">${e.hasta ? 'se revisa el ' + esc(e.hasta) : 'espera el estado de cuenta'}</div></div>`).join('')
+      + `</div></details>`;
+  }
+  for(const p of (t.complementos || [])){
+    if(!p.filas.length) continue;
+    html += `<details class="plegable"><summary><div class="titulo-sec">${esc(p.titulo)} (${p.filas.length})</div></summary><div class="lista">`
+      + (p.nota ? `<div class="item"><div class="sub">${esc(p.nota)}</div></div>` : '')
+      + p.filas.map(f => `<div class="item"><div class="txt"><b>${esc(f.nombre)}</b><div class="sub">${f.productos.map(esc).join(' · ')}</div></div>${f.accion ? `<button class="enlace" onclick="ejecutar(${ACCIONES.push(f.accion) - 1})">${esc(f.accion.texto)}</button>` : ''}</div>`).join('')
       + `</div></details>`;
   }
   const ident = (t.banco && t.banco.identificado) || [];
@@ -639,6 +653,7 @@ function boton(a){
   if(a.tipo === 'crear-oc') return formCrearOC(i, a);
   if(a.tipo === 'cerrar-oc') return formCerrarOC(i, a);
   if(a.tipo === 'reclasificar' && (a.elegirProveedor || a.conNota)) return formReclasificar(i, a);
+  if(a.tipo === 'complemento-productos') return formProductos(i, a);
   const clase = a.peligro ? 'peligro' : (a.recomendado || (a.tipo === 'preparar' && !a.eleccion) ? 'primaria' : 'secundaria');
   return `<button class="btn ${clase}" onclick="ejecutar(${i})"><span>${esc(a.texto)}${nota}</span>${rec}</button>`;
 }
@@ -727,6 +742,46 @@ function formCrearOC(i, a){
     ${selectProveedor(i, a.rfc)}${a.ayudaProveedor ? `<p class="ayuda">${esc(a.ayudaProveedor)}</p>` : ''}<div class="opciones">${renglones}</div>
     <select id="causa-${i}"><option value="">— ¿Por qué se compró sin OC? —</option>${a.causas.map(x => `<option value="${esc(x.valor)}">${esc(x.texto)}</option>`).join('')}</select>
     <button class="btn primaria" onclick="ejecutar(${i})"><span>Crear y confirmar la OC</span></button></div></details>`;
+}
+/* Complemento de proveedor: ¿qué productos de Odoo son? (con los litros por pieza de cada uno) */
+async function abrirProductos(det){
+  if(!det.open || PRODUCTOS) return;
+  try {
+    PRODUCTOS = (await llamar('/api/productos-compra')).productos;
+    document.getElementById('dl-productos').innerHTML = PRODUCTOS.map(p => `<option value="${esc(p.nombre + ' · #' + p.id)}"></option>`).join('');
+  } catch(e){ avisar(esc(e.message), 'error'); }
+}
+const renglonProducto = (id, texto, litros, marcado) => `<div class="renglon-oc"><label><input type="checkbox" data-id="${esc(id)}"${marcado ? ' checked' : ''}><span>${esc(texto)}</span></label>
+  <label class="litros-pieza">Litros por pieza <input type="text" inputmode="decimal" class="litros" value="${litros ? esc(litros) : ''}" placeholder="p. ej. 20"></label></div>`;
+function formProductos(i, a){
+  const filas = (a.opciones || []).map(o => renglonProducto(o.id, o.texto, o.litros, false)).join('');
+  return `<details ontoggle="abrirProductos(this)"><summary class="btn primaria"><span>¿Qué productos de Odoo son?</span></summary><div class="form" style="margin-top:8px">
+    <div class="opciones" id="pfilas-${i}">${filas || '<p class="ayuda">No hay productos en sus OCs abiertas: agrégalos abajo.</p>'}</div>
+    <div class="fila"><input type="text" id="padd-${i}" list="dl-productos" placeholder="Agregar otro producto (elige de la lista)"><button class="btn secundaria" onclick="agregarProducto(${i})"><span>Agregar</span></button></div>
+    <button class="btn primaria" onclick="ejecutar(${i})"><span>${esc(a.texto)}</span></button></div></details>`;
+}
+function agregarProducto(i){
+  const v = valor('padd-' + i), m = /· #(\d+)$/.exec(v);
+  const p = m ? (PRODUCTOS || []).find(x => x.id === Number(m[1])) : null;
+  if(!p){ avisar('Elige el producto de la lista.', 'error'); return; }
+  const cont = document.getElementById('pfilas-' + i);
+  const ya = cont.querySelector(`input[data-id="${p.id}"]`);
+  if(ya){ ya.checked = true; document.getElementById('padd-' + i).value = ''; return; }
+  const ayuda = cont.querySelector('.ayuda'); if(ayuda) ayuda.remove();
+  cont.insertAdjacentHTML('beforeend', renglonProducto(p.id, p.nombre, '', true));
+  document.getElementById('padd-' + i).value = '';
+}
+async function ejecutarProductos(i, a){
+  const productos = [];
+  for(const fila of document.getElementById('pfilas-' + i).querySelectorAll('.renglon-oc')){
+    const chk = fila.querySelector('input[type=checkbox]');
+    if(!chk.checked) continue;
+    const litros = Number(String(fila.querySelector('.litros').value).replace(',', '.'));
+    if(!(litros > 0)){ avisar('Pon cuántos litros trae cada pieza de ' + esc(fila.querySelector('span').textContent) + '.', 'error'); return; }
+    productos.push({ id: Number(chk.dataset.id), litros });
+  }
+  if(!productos.length){ avisar('Marca al menos un producto.', 'error'); return; }
+  await conCarga('Guardando…', async () => { aplicar(await llamar('/api/complementos/' + a.ruta, { ...a.cuerpo, productos })); });
 }
 function formCerrarOC(i, a){
   if(a.todas) return `<button class="btn secundaria" onclick="ejecutar(${i})"><span>${esc(a.texto)}</span></button>`;
