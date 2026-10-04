@@ -153,7 +153,7 @@ details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
   <!-- Control: subir CFDIs + volver a correr -->
   <div class="control">
     <div class="zona-archivo" id="zonaCfdi" onclick="document.getElementById('entradaCfdi').click()">
-      <strong>Subir archivos</strong> — CFDIs (.xml) o estados de cuenta (.pdf de BBVA o Clara). Arrástralos o haz clic
+      <strong>Subir archivos</strong> — CFDIs (.xml), estados de cuenta (.pdf de BBVA o Clara) o todos los PDF del SAT (acuses y declaración). Arrástralos o haz clic
     </div>
     <input type="file" id="entradaCfdi" accept=".xml,.pdf" multiple style="display:none">
     <button class="boton boton-secundario" onclick="volverACorrer()" title="Re-lee Odoo y el banco y vuelve a correr: lo que arreglaste allá cuadra y se va.">↻ Volver a correr</button>
@@ -296,7 +296,7 @@ document.getElementById('entradaCfdi').addEventListener('change', e => { subirCf
 })();
 
 const TOPE_ENVIO = 8 * 1024 * 1024; // bytes por envío (el servidor acepta hasta 15 MB)
-const TOPE_PDF = 8 * 1024 * 1024;   // un estado de cuenta nunca pesa tanto
+const TOPE_PDF = 8 * 1024 * 1024;   // un estado de cuenta o un acuse nunca pesa tanto
 async function subirCfdis(files){
   const lista = Array.from(files || []); // copia: el input se limpia enseguida
   const pdfs = lista.filter(f => /\.pdf$/i.test(f.name));
@@ -334,26 +334,28 @@ async function subirCfdis(files){
   });
 }
 
-/* ================= SUBIR ESTADOS DE CUENTA (PDF) ================= */
+/* ================= SUBIR PDF (estados de cuenta y acuses del SAT) ================= */
 function aBase64(buffer){
   const bytes = new Uint8Array(buffer); let bin = '';
   for(let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
   return btoa(bin);
 }
 async function subirEstados(pdfs){
-  const cargados = [], repetidos = [], rechazados = [];
-  await conCarga(`Leyendo ${pdfs.length} estado${pdfs.length!==1?'s':''} de cuenta…`, async () => {
+  const cargados = [], acuses = [], repetidos = [], rechazados = [], omitidos = [];
+  await conCarga(`Leyendo ${pdfs.length} PDF…`, async () => {
     for(const f of pdfs){   // uno por envío: cada PDF se valida completo en el backend
       if(f.size > TOPE_PDF){ rechazados.push({ nombre: f.name, motivo: 'pesa más de 8 MB' }); continue; }
       const d = await llamar('/api/estados-cuenta', { archivos: [{ nombre: f.name, pdf: aBase64(await f.arrayBuffer()) }] });
-      cargados.push(...d.cargados); repetidos.push(...d.repetidos); rechazados.push(...d.rechazados);
+      cargados.push(...d.cargados); acuses.push(...(d.acuses || [])); repetidos.push(...d.repetidos); rechazados.push(...d.rechazados); omitidos.push(...(d.omitidos || []));
       TABLERO = d.tablero;
     }
     pintar();
     let msg = cargados.map(c => `${esc(c.nombre)}: ${c.movimientos} movimiento${c.movimientos!==1?'s':''} cargado${c.movimientos!==1?'s':''} (${esc(c.periodo.inicio)} a ${esc(c.periodo.fin)})${c.anterioresAlDia0 ? `, ${c.anterioresAlDia0} anteriores al día 0 no se guardaron` : ''}.`).join(' ');
+    for(const a of acuses) msg += ` Acuse del SAT ${esc(a.periodo)}: ${a.porPagar ? 'por pagar ' + esc(a.porPagar) + ' (Luca lo cruza con su pago en el banco)' : 'sin pago'}.`;
     if(repetidos.length) msg += ' Ya estaban cargados: ' + repetidos.map(esc).join(', ') + '.';
+    if(omitidos.length) msg += ' No son acuse ni estado de cuenta (se omitieron): ' + omitidos.map(esc).join(', ') + '.';
     if(rechazados.length) msg += ' No se cargaron: ' + rechazados.map(r => `${esc(r.nombre)} (${esc(r.motivo)})`).join('; ') + '.';
-    avisar(msg.trim() || 'No había estados de cuenta nuevos.', rechazados.length ? 'error' : 'exito');
+    avisar(msg.trim() || 'No había archivos nuevos.', rechazados.length ? 'error' : 'exito');
   });
 }
 
@@ -417,7 +419,7 @@ async function ejecutar(i){
   }
   if(a.tipo === 'atendido'){
     return conCarga('Guardando…', async () => {
-      aplicar(await llamar('/api/banco/atendido', a.cobroId ? { cobroId: a.cobroId } : { movimientoId: a.movimientoId }));
+      aplicar(await llamar('/api/banco/atendido', a.cobroId ? { cobroId: a.cobroId } : { movimientoId: a.movimientoId, ...(a.acuseId ? { acuseId: a.acuseId } : {}) }));
     });
   }
   if(a.tipo === 'factura-sin-cfdi'){
@@ -485,7 +487,7 @@ async function ejecutarLigar(i, a){
   if(!elegidos.length){ avisar('Elige al menos una opción.', 'error'); return; }
   const cuerpo = { tipoCruce: a.tipoCruce };
   if(a.opcionesMovimientos){ cuerpo.movimientos = elegidos; cuerpo.facturas = a.facturas; }
-  else { cuerpo.movimientos = a.movimientos; cuerpo[a.tipoCruce === 'cobro' ? 'pagos' : a.tipoCruce === 'stripe' ? 'stripe' : a.tipoCruce === 'reversa' ? 'abonos' : 'facturas'] = elegidos; }
+  else { cuerpo.movimientos = a.movimientos; cuerpo[a.tipoCruce === 'cobro' ? 'pagos' : a.tipoCruce === 'stripe' ? 'stripe' : a.tipoCruce === 'reversa' ? 'abonos' : a.tipoCruce === 'sat' ? 'acuses' : 'facturas'] = elegidos; }
   if(valor('dif-' + i)) cuerpo.diferencia = valor('dif-' + i);
   await conCarga('Ligando…', async () => { aplicar(await llamar('/api/banco/ligar', cuerpo)); });
 }
@@ -550,7 +552,8 @@ async function ejecutarGasto(i, a, ruta, base){
 /* ================= PINTAR EL TABLERO ================= */
 const CLASE = { complemento:'t-cfdi', precio:'t-precio', excedente:'t-precio', borrador:'t-parcial', parcial:'t-parcial', concepto:'t-cfdi', 'sin-oc':'t-cfdi', lista:'t-ok', odoo:'t-odoo', esperando:'t-esp',
   identidad:'t-odoo', ambiguo:'t-precio', reembolso:'t-precio', 'gasto-fuera':'t-precio', 'pago-sin-factura':'t-cfdi', 'factura-sin-pago':'t-cfdi',
-  transferencia:'t-parcial', 'cobro-olvidado':'t-aviso', cobranza:'t-aviso', stripe:'t-precio', 'por-definir':'t-esp', 'pago-manual':'t-precio', 'oc-sin-cfdi':'t-cfdi' };
+  transferencia:'t-parcial', 'cobro-olvidado':'t-aviso', cobranza:'t-aviso', stripe:'t-precio', 'pago-manual':'t-precio', 'oc-sin-cfdi':'t-cfdi',
+  'sat-elegir':'t-precio', 'sat-persona':'t-precio', 'sat-sin-acuse':'t-esp', 'sat-sin-pago':'t-aviso' };
 
 function pintar(){
   if(!TABLERO) return;
@@ -701,8 +704,9 @@ function formLigar(i, a){
     ? `<div class="opciones">${ops.map(o => `<label><input type="checkbox" name="op-${i}" value="${esc(o.id)}"${prop.has(o.id) ? ' checked' : ''}><span>${esc(o.texto)}</span></label>`).join('')}</div>`
     : `<select id="sel-${i}"><option value="">— Elige —</option>${opcionesDe(ops, o => o.texto)}</select>`;
   const texto = a.tipoCruce === 'cobro' ? 'Ligar al cobro' : a.tipoCruce === 'reembolso' ? 'Confirmar el reembolso' : a.tipoCruce === 'stripe' ? 'Confirmar el depósito'
-    : a.tipoCruce === 'reversa' ? 'Ya lo devolvieron: ligar con su abono' : 'Es el pago de esta(s) factura(s)';
+    : a.tipoCruce === 'reversa' ? 'Ya lo devolvieron: ligar con su abono' : a.tipoCruce === 'sat' ? 'Es el pago de este acuse' : 'Es el pago de esta(s) factura(s)';
   const nota = a.tipoCruce === 'stripe' ? 'la diferencia se registra como comisión' : a.tipoCruce === 'reversa' ? 'se anulan entre sí en Odoo'
+    : a.tipoCruce === 'sat' ? 'Luca lo registra en Odoo'
     : (a.diferencias || []).length ? 'si no cuadra al centavo, di qué es la diferencia' : 'los montos deben cuadrar';
   const dif = (a.diferencias || []).length ? `<select id="dif-${i}"><option value="">— Si no cuadra al centavo, ¿qué es la diferencia? —</option>${a.diferencias.map(d => `<option value="${esc(d.valor)}">${esc(d.texto)}</option>`).join('')}</select>` : '';
   return `<div class="form">${lista}${dif}<button class="btn ${prop.size ? 'primaria' : 'secundaria'}" onclick="ejecutar(${i})"><span>${texto} <span class="money">· ${nota}</span></span></button></div>`;
