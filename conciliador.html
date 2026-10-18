@@ -533,6 +533,10 @@ async function ejecutarReclasificar(i, a){
     cuerpo.partnerId = Number(valor('prov-' + i));
     if(!cuerpo.partnerId){ avisar('Elige el proveedor.', 'error'); return; }
   }
+  if(a.elegirSocio){
+    cuerpo.partnerId = Number(valor('socio-' + i));
+    if(!cuerpo.partnerId){ avisar('Elige el socio.', 'error'); return; }
+  }
   if(a.conNota) cuerpo.nota = valor('nota-' + i);
   if(a.confirmar && !confirm(a.confirmar)) return;
   await conCarga('Guardando…', async () => { aplicar(await llamar('/api/banco/reclasificar', cuerpo)); });
@@ -655,7 +659,7 @@ function boton(a){
   if((a.tipo === 'gasto' && a.elegir) || a.tipo === 'gasto-cfdi') return formGasto(i, a);
   if(a.tipo === 'crear-oc') return formCrearOC(i, a);
   if(a.tipo === 'cerrar-oc') return formCerrarOC(i, a);
-  if(a.tipo === 'reclasificar' && (a.elegirProveedor || a.conNota)) return formReclasificar(i, a);
+  if(a.tipo === 'reclasificar' && (a.elegirProveedor || a.elegirSocio || a.conNota)) return formReclasificar(i, a);
   if(a.tipo === 'complemento-productos') return formProductos(i, a);
   const clase = a.peligro ? 'peligro' : (a.recomendado || (a.tipo === 'preparar' && !a.eleccion) ? 'primaria' : 'secundaria');
   return `<button class="btn ${clase}" onclick="ejecutar(${i})"><span>${esc(a.texto)}${nota}</span>${rec}</button>`;
@@ -795,7 +799,14 @@ function formCerrarOC(i, a){
     <button class="btn primaria" onclick="ejecutar(${i})"><span>Cerrar lo marcado en Odoo</span></button></div></details>`;
 }
 function formReclasificar(i, a){
-  const campo = a.elegirProveedor ? selectProveedor(i, a.rfc) : `<input type="text" id="nota-${i}" placeholder="Nota (opcional): responsable o qué pasó">`;
+  const socios = cat().socios || [];
+  const elegirSocio = a.elegirSocio ? (cat().socios === null
+    ? `<p class="ayuda">No se pudo leer la lista de socios de Odoo. Vuelve a correr.</p>`
+    : socios.length
+    ? `<select id="socio-${i}"><option value="">— ¿Qué socio? —</option>${opcionesDe(socios, p => p.nombre)}</select>`
+    : `<p class="ayuda">No hay socios: en Odoo, ponle la etiqueta "Socio" al contacto de cada socio y vuelve a correr.</p>`) : '';
+  const nota = a.conNota ? `<input type="text" id="nota-${i}" placeholder="Nota (opcional): ${a.elegirSocio ? 'retiro o reembolso, de qué' : 'responsable o qué pasó'}">` : '';
+  const campo = a.elegirProveedor ? selectProveedor(i, a.rfc) : elegirSocio + nota;
   return `<details><summary class="btn secundaria"><span>${esc(a.texto)} <span class="money">· ${esc(a.nota)}</span></span></summary><div class="form" style="margin-top:8px">${campo}
     <button class="btn primaria" onclick="ejecutar(${i})"><span>Guardar</span></button></div></details>`;
 }
