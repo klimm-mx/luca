@@ -153,7 +153,7 @@ details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
   <!-- Control: subir CFDIs + volver a correr -->
   <div class="control">
     <div class="zona-archivo" id="zonaCfdi" onclick="document.getElementById('entradaCfdi').click()">
-      <strong>Subir archivos</strong> — CFDIs (.xml), estados de cuenta (.pdf de BBVA o Clara) o todos los PDF del SAT (acuses y declaración). Arrástralos o haz clic
+      <strong>Subir archivos</strong> — CFDIs (.xml), estados de cuenta (.pdf de BBVA o Clara) o los acuses del SAT (.pdf). Arrástralos o haz clic
     </div>
     <input type="file" id="entradaCfdi" accept=".xml,.pdf" multiple style="display:none">
     <button class="boton boton-secundario" onclick="volverACorrer()" title="Re-lee Odoo y el banco y vuelve a correr: lo que arreglaste allá cuadra y se va.">↻ Volver a correr</button>
@@ -266,6 +266,7 @@ function avisoCorrida(c){
   let m = '';
   if(c.confirmadas && c.confirmadas.length) m += `Luca confirmó sola ${c.confirmadas.length} factura${c.confirmadas.length!==1?'s':''}: ` + c.confirmadas.map(x => `${esc(x.factura)} (${esc(x.proveedor)} · ${esc(x.oc)})`).join(', ') + '. ';
   if(c.sinConfirmar && c.sinConfirmar.length) m += 'No confirmó sola: ' + c.sinConfirmar.map(x => `${esc(x.factura || x.oc)} — ${esc(x.motivo)}`).join('; ') + '. ';
+  if(c.gastos && c.gastos.length) m += `Luca marcó como gasto regular ${c.gastos.length} CFDI${c.gastos.length!==1?'s':''} (${c.gastos.map(x => esc(x.emisor)).join(', ')}): se registran en Odoo cuando se identifique su cargo del banco. `;
   if(c.inciertas && c.inciertas.length) m += 'No se sabe si quedaron confirmadas (Odoo no respondió): ' + c.inciertas.map(x => esc(x.factura)).join(', ') + '. Revísalas en Odoo y quítalas de la lista: Luca lo aclara.';
   return m;
 }
