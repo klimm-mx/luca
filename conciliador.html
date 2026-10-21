@@ -135,6 +135,7 @@ details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
 .velo.visible{display:flex}
 .modal{background:var(--superficie);border-radius:var(--radio);padding:24px;max-width:440px;width:100%}
 .modal h3{margin-bottom:6px} .modal p{font-size:13px;color:var(--tinta-suave);margin-bottom:16px} .modal .campo{margin-bottom:14px}
+.modal p.conf-error{color:var(--alerta);background:var(--alerta-bg);border:1px solid var(--alerta);border-radius:8px;padding:8px 10px;font-weight:600}
 </style>
 </head>
 <body>
@@ -184,6 +185,7 @@ details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
   <div class="modal">
     <h3>Conectar con Luca</h3>
     <p>Configuración de una sola vez en este navegador. Pide estos datos al administrador.</p>
+    <p id="confError" class="conf-error" role="alert" hidden>La clave no es correcta. Escríbela otra vez (sin espacios) o pídela al administrador.</p>
     <div class="campo"><label for="confUrl">Dirección del backend</label><input type="text" id="confUrl" value="https://klimm-backend.onrender.com"></div>
     <div class="campo"><label for="confClave">Clave de acceso</label><input type="password" id="confClave" placeholder="Clave del backend"></div>
     <button class="boton boton-principal" style="width:100%" onclick="guardarConfig()">Guardar y empezar</button>
@@ -207,8 +209,18 @@ function guardarConfig(){
   if(!url || !clave){ alert('Completa los dos campos'); return; }
   localStorage.setItem('luca_backend', url); localStorage.setItem('luca_clave', clave);
   BACKEND = url; CLAVE = clave;
+  document.getElementById('confError').hidden = true;
   document.getElementById('veloConfig').classList.remove('visible');
   arrancar();
+}
+
+/* El backend rechazó la clave guardada: se olvida y se vuelve a pedir (la dirección se conserva). */
+function pedirClaveOtraVez(){
+  localStorage.removeItem('luca_clave'); CLAVE = '';
+  if(BACKEND) document.getElementById('confUrl').value = BACKEND;
+  document.getElementById('confClave').value = '';
+  document.getElementById('confError').hidden = false;
+  document.getElementById('veloConfig').classList.add('visible');
 }
 
 async function llamar(ruta, cuerpo){
@@ -218,6 +230,7 @@ async function llamar(ruta, cuerpo){
     headers: { 'Content-Type':'application/json', 'x-backend-key': CLAVE }
   });
   const data = await resp.json().catch(() => ({}));
+  if(resp.status === 401) pedirClaveOtraVez();
   if(!resp.ok) throw new Error(data.error || ('Error ' + resp.status));
   return data;
 }
