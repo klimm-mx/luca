@@ -24,7 +24,7 @@ header .contenedor{display:flex;align-items:baseline;justify-content:space-betwe
 .sistema{font-size:11px;color:var(--tinta-suave);letter-spacing:.8px;text-transform:uppercase;font-weight:600}
 
 label{display:block;font-size:13px;font-weight:600;color:var(--tinta-suave);margin-bottom:6px}
-input[type=text],input[type=password],input[type=search],select{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
+input[type=text],input[type=password],select{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
 input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;border-color:var(--agua)}
 
 .boton{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
@@ -69,6 +69,13 @@ input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;borde
 
 .acciones{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .acciones select{margin-bottom:2px}
+.combo{position:relative;margin-bottom:2px}
+.tarjeta:has(.combo-lista:not([hidden])){overflow:visible;position:relative;z-index:5}   /* que la lista abierta no se corte en el borde de la tarjeta */
+.combo-campo{padding-right:34px !important;background:var(--superficie) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A7480' stroke-width='1.6' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center}
+.combo-lista{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;max-height:320px;overflow-y:auto;background:var(--superficie);border:1px solid var(--borde);border-radius:8px;box-shadow:var(--sombra)}
+.combo-op{padding:8px 12px;font-size:14px;cursor:pointer;color:var(--tinta)}
+.combo-op.activa,.combo-op:hover{background:var(--agua-claro)}
+.combo-info{padding:8px 12px;font-size:12.5px;color:var(--tinta-suave);border-bottom:1px solid var(--borde)}
 .btn{font-family:inherit;font-size:14px;font-weight:600;padding:11px 14px;border-radius:9px;cursor:pointer;border:1px solid var(--borde);background:var(--superficie);color:var(--tinta);text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}
 .btn:hover{border-color:var(--agua)}
 .btn.primaria{background:var(--agua);border-color:var(--agua);color:#fff} .btn.primaria:hover{background:var(--agua-oscuro)}
@@ -463,6 +470,10 @@ async function ejecutar(i){
     await conCarga('Descartando…', async () => {
       aplicar(await llamar('/api/descartar', { clave: a.clave, motivo: a.motivo }));
     });
+  } else if(a.tipo === 'descartar-cfdi'){
+    await conCarga('Descartando todo el CFDI…', async () => {
+      aplicar(await llamar('/api/descartar-cfdi', { uuid: a.uuid, motivo: a.motivo }));
+    });
   } else if(a.tipo === 'archivar'){
     await conCarga('Quitando de la lista…', async () => {
       const d = await llamar('/api/archivar', { ocId: a.ocId });
@@ -660,15 +671,14 @@ function boton(a){
   const nota = a.nota ? ` <span class="money">· ${esc(a.nota)}</span>` : '';
   const rec = a.recomendado ? `<span class="rec">Recomendado</span>` : '';
   if(a.tipo === 'asignar'){
-    const opciones = a.opciones.map(o => {
-      const v = `${o.ocId}|${o.lineaId}`;
-      return `<option value="${esc(v)}"${v === a.preseleccion ? ' selected' : ''}>${esc(o.texto)}</option>`;
-    }).join('');
-    const vacia = a.preseleccion ? '' : `<option value="" selected>— Elige el producto —</option>`;
-    const buscador = a.opciones.length > 8
-      ? `<input type="search" id="bus-${i}" placeholder="Buscar en la lista (producto, OC, código)…" oninput="filtrarLista(${i})" autocomplete="off" style="margin-bottom:6px">
-         <div class="en-cfdi" id="bus-n-${i}" style="font-size:12.5px;color:var(--tinta-suave);margin:-2px 0 6px">${a.opciones.length} renglones abiertos de OC</div>` : '';
-    return `${buscador}<select id="sel-${i}">${vacia}${opciones}</select>
+    const pre = a.opciones.find(o => `${o.ocId}|${o.lineaId}` === a.preseleccion);
+    return `<div class="combo" id="combo-${i}">
+        <input type="text" class="combo-campo" id="bus-${i}" role="combobox" aria-expanded="false" aria-controls="lista-${i}" autocomplete="off"
+          placeholder="Elige el producto o escribe para buscar (${a.opciones.length} renglones abiertos)" value="${pre ? esc(pre.texto) : ''}"
+          onfocus="abrirCombo(${i})" onclick="abrirCombo(${i})" oninput="filtrarCombo(${i})" onkeydown="teclaCombo(event, ${i})" onblur="setTimeout(() => cerrarCombo(${i}), 150)">
+        <div class="combo-lista" id="lista-${i}" role="listbox" hidden></div>
+        <input type="hidden" id="sel-${i}" value="${pre ? esc(a.preseleccion) : ''}">
+      </div>
       <button class="btn primaria" onclick="ejecutar(${i})"><span>${esc(a.texto)}</span>${rec}</button>`;
   }
   if(a.tipo === 'identidad') return formIdentidad(i, a);
@@ -682,21 +692,56 @@ function boton(a){
   return `<button class="btn ${clase}" onclick="ejecutar(${i})"><span>${esc(a.texto)}${nota}</span>${rec}</button>`;
 }
 
-/* Buscador de la lista "Elige el producto": filtra mientras se escribe (sin acentos ni mayúsculas; todas las palabras,
-   en cualquier orden). Si queda una sola coincidencia, la deja elegida. */
+/* Lista "Elige el producto" con buscador DENTRO: un solo campo; al escribir, la lista desplegable se filtra
+   (sin acentos ni mayúsculas; todas las palabras, en cualquier orden). Flechas, Enter y Esc funcionan. */
 const sinAcentos = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-function filtrarLista(i){
-  const a = ACCIONES[i], sel = document.getElementById('sel-' + i), info = document.getElementById('bus-n-' + i);
-  const palabras = sinAcentos(document.getElementById('bus-' + i).value).split(/\s+/).filter(Boolean);
-  const antes = sel.value;
+const COMBO = {};   // por acción: { quedan, activa }
+const COMBO_ANTES = {};   // lo elegido al abrir la lista (Esc lo devuelve)
+function abrirCombo(i){
+  const campo = document.getElementById('bus-' + i), sel = document.getElementById('sel-' + i);
+  if (!COMBO[i] || document.getElementById('lista-' + i).hidden) COMBO_ANTES[i] = sel.value;   // para volver con Esc
+  if (sel.value) campo.select();   // ya había uno elegido: escribir lo reemplaza
+  filtrarCombo(i, true);
+}
+function cerrarCombo(i){
+  const lista = document.getElementById('lista-' + i), campo = document.getElementById('bus-' + i), sel = document.getElementById('sel-' + i);
+  if (!lista) return;
+  lista.hidden = true; campo.setAttribute('aria-expanded', 'false');
+  // Si se escribió algo y no se eligió nada, el campo vuelve a mostrar lo elegido (o queda vacío).
+  const a = ACCIONES[i], elegido = a.opciones.find(o => `${o.ocId}|${o.lineaId}` === sel.value);
+  campo.value = elegido ? elegido.texto : '';
+}
+function filtrarCombo(i, alAbrir){
+  const a = ACCIONES[i], campo = document.getElementById('bus-' + i), lista = document.getElementById('lista-' + i), sel = document.getElementById('sel-' + i);
+  const elegido = a.opciones.find(o => `${o.ocId}|${o.lineaId}` === sel.value);
+  const texto = alAbrir && elegido && campo.value === elegido.texto ? '' : campo.value;
+  if (!alAbrir) sel.value = '';                       // escribir = buscar de nuevo
+  const palabras = sinAcentos(texto).split(/\s+/).filter(Boolean);
   const quedan = a.opciones.filter(o => { const t = sinAcentos(o.texto); return palabras.every(p => t.includes(p)); });
-  const vacia = `<option value="">${quedan.length ? '— Elige el producto —' : '— Nada coincide —'}</option>`;
-  sel.innerHTML = vacia + quedan.map(o => { const v = `${o.ocId}|${o.lineaId}`; return `<option value="${esc(v)}">${esc(o.texto)}</option>`; }).join('');
-  if (quedan.length === 1) sel.value = `${quedan[0].ocId}|${quedan[0].lineaId}`;
-  else if (quedan.some(o => `${o.ocId}|${o.lineaId}` === antes)) sel.value = antes;
-  info.textContent = palabras.length
-    ? (quedan.length ? `${quedan.length} de ${a.opciones.length} renglones coinciden` : `Ninguno de los ${a.opciones.length} renglones abiertos coincide: puede no tener OC, o su OC ya está facturada o cubierta por otro CFDI.`)
-    : `${a.opciones.length} renglones abiertos de OC`;
+  COMBO[i] = { quedan, activa: quedan.length ? 0 : -1 };
+  const cabeza = palabras.length ? `<div class="combo-info">${quedan.length} de ${a.opciones.length} renglones coinciden</div>` : '';
+  lista.innerHTML = cabeza + (quedan.length
+    ? quedan.map((o, k) => `<div class="combo-op${k === 0 ? ' activa' : ''}" role="option" onmousedown="event.preventDefault(); elegirCombo(${i}, ${k})">${esc(o.texto)}</div>`).join('')
+    : `<div class="combo-info">Ninguno de los ${a.opciones.length} renglones abiertos coincide: puede no tener OC, o su OC ya está facturada o cubierta por otro CFDI.</div>`);
+  lista.hidden = false; campo.setAttribute('aria-expanded', 'true');
+}
+function elegirCombo(i, k){
+  const o = COMBO[i] && COMBO[i].quedan[k]; if (!o) return;
+  document.getElementById('sel-' + i).value = `${o.ocId}|${o.lineaId}`;
+  const campo = document.getElementById('bus-' + i);
+  campo.value = o.texto; document.getElementById('lista-' + i).hidden = true; campo.setAttribute('aria-expanded', 'false');
+}
+function teclaCombo(ev, i){
+  const c = COMBO[i], lista = document.getElementById('lista-' + i);
+  if (ev.key === 'Escape'){ document.getElementById('sel-' + i).value = COMBO_ANTES[i] || ''; cerrarCombo(i); return; }
+  if (!c || lista.hidden) { if (ev.key === 'ArrowDown') filtrarCombo(i, true); return; }
+  if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp'){
+    ev.preventDefault(); if (!c.quedan.length) return;
+    c.activa = (c.activa + (ev.key === 'ArrowDown' ? 1 : -1) + c.quedan.length) % c.quedan.length;
+    const ops = lista.querySelectorAll('.combo-op');
+    ops.forEach((el, k) => el.classList.toggle('activa', k === c.activa));
+    ops[c.activa].scrollIntoView({ block: 'nearest' });
+  } else if (ev.key === 'Enter'){ ev.preventDefault(); if (c.activa >= 0) elegirCombo(i, c.activa); }
 }
 
 /* Formularios (las listas llegan del backend una sola vez, en TABLERO.catalogos) */
