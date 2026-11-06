@@ -24,7 +24,7 @@ header .contenedor{display:flex;align-items:baseline;justify-content:space-betwe
 .sistema{font-size:11px;color:var(--tinta-suave);letter-spacing:.8px;text-transform:uppercase;font-weight:600}
 
 label{display:block;font-size:13px;font-weight:600;color:var(--tinta-suave);margin-bottom:6px}
-input[type=text],input[type=password],select{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
+input[type=text],input[type=password],input[type=search],select{width:100%;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:14px;font-family:inherit;background:var(--superficie);color:var(--tinta)}
 input:focus,select:focus{outline:2px solid var(--agua);outline-offset:-1px;border-color:var(--agua)}
 
 .boton{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
@@ -665,7 +665,10 @@ function boton(a){
       return `<option value="${esc(v)}"${v === a.preseleccion ? ' selected' : ''}>${esc(o.texto)}</option>`;
     }).join('');
     const vacia = a.preseleccion ? '' : `<option value="" selected>— Elige el producto —</option>`;
-    return `<select id="sel-${i}">${vacia}${opciones}</select>
+    const buscador = a.opciones.length > 8
+      ? `<input type="search" id="bus-${i}" placeholder="Buscar en la lista (producto, OC, código)…" oninput="filtrarLista(${i})" autocomplete="off" style="margin-bottom:6px">
+         <div class="en-cfdi" id="bus-n-${i}" style="font-size:12.5px;color:var(--tinta-suave);margin:-2px 0 6px">${a.opciones.length} renglones abiertos de OC</div>` : '';
+    return `${buscador}<select id="sel-${i}">${vacia}${opciones}</select>
       <button class="btn primaria" onclick="ejecutar(${i})"><span>${esc(a.texto)}</span>${rec}</button>`;
   }
   if(a.tipo === 'identidad') return formIdentidad(i, a);
@@ -677,6 +680,23 @@ function boton(a){
   if(a.tipo === 'complemento-productos') return formProductos(i, a);
   const clase = a.peligro ? 'peligro' : (a.recomendado || (a.tipo === 'preparar' && !a.eleccion) ? 'primaria' : 'secundaria');
   return `<button class="btn ${clase}" onclick="ejecutar(${i})"><span>${esc(a.texto)}${nota}</span>${rec}</button>`;
+}
+
+/* Buscador de la lista "Elige el producto": filtra mientras se escribe (sin acentos ni mayúsculas; todas las palabras,
+   en cualquier orden). Si queda una sola coincidencia, la deja elegida. */
+const sinAcentos = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function filtrarLista(i){
+  const a = ACCIONES[i], sel = document.getElementById('sel-' + i), info = document.getElementById('bus-n-' + i);
+  const palabras = sinAcentos(document.getElementById('bus-' + i).value).split(/\s+/).filter(Boolean);
+  const antes = sel.value;
+  const quedan = a.opciones.filter(o => { const t = sinAcentos(o.texto); return palabras.every(p => t.includes(p)); });
+  const vacia = `<option value="">${quedan.length ? '— Elige el producto —' : '— Nada coincide —'}</option>`;
+  sel.innerHTML = vacia + quedan.map(o => { const v = `${o.ocId}|${o.lineaId}`; return `<option value="${esc(v)}">${esc(o.texto)}</option>`; }).join('');
+  if (quedan.length === 1) sel.value = `${quedan[0].ocId}|${quedan[0].lineaId}`;
+  else if (quedan.some(o => `${o.ocId}|${o.lineaId}` === antes)) sel.value = antes;
+  info.textContent = palabras.length
+    ? (quedan.length ? `${quedan.length} de ${a.opciones.length} renglones coinciden` : `Ninguno de los ${a.opciones.length} renglones abiertos coincide: puede no tener OC, o su OC ya está facturada o cubierta por otro CFDI.`)
+    : `${a.opciones.length} renglones abiertos de OC`;
 }
 
 /* Formularios (las listas llegan del backend una sola vez, en TABLERO.catalogos) */
