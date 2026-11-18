@@ -142,6 +142,28 @@ details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
 .velo.visible{display:flex}
 .modal{background:var(--superficie);border-radius:var(--radio);padding:24px;max-width:440px;width:100%}
 .modal h3{margin-bottom:6px} .modal p{font-size:13px;color:var(--tinta-suave);margin-bottom:16px} .modal .campo{margin-bottom:14px}
+/* Bandeja flotante (18-nov): lo que hizo Luca, avisos y errores salen abajo a la derecha y no te mueven de lugar. */
+.bandeja{position:fixed;right:16px;bottom:16px;width:min(440px,calc(100vw - 32px));max-height:65vh;overflow:auto;z-index:40;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.bandeja > div > *{pointer-events:auto}
+.bandeja .resultado,.bandeja .mensaje{margin-bottom:0;box-shadow:0 10px 30px rgba(22,50,59,.20)}
+.mensaje .cerrar{float:right;margin-left:10px;background:none;border:none;font-size:20px;line-height:1;cursor:pointer;color:inherit}
+#zonaCargando{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:45;background:var(--superficie);border:1px solid var(--borde);border-radius:30px;box-shadow:0 10px 30px rgba(22,50,59,.20)}
+#zonaCargando .cargando{padding:10px 20px}
+.tarjeta.trabajando{opacity:.45;pointer-events:none;transition:opacity .2s}
+/* Barra para filtrar y compactar las tarjetas (fija arriba al desplazarse). Solo filtra lo que ya está pintado. */
+.barra{position:sticky;top:0;z-index:20;background:var(--fondo);padding:10px 0 8px;border-bottom:1px solid var(--borde);margin-bottom:4px}
+.barra .fila-filtro{display:flex;gap:10px;align-items:center}
+.barra .fila-filtro input[type=text]{flex:1}
+.barra .compactar{display:flex;gap:6px;align-items:center;margin:0;font-size:13px;white-space:nowrap}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{font-family:inherit;font-size:12.5px;padding:4px 10px;border-radius:20px;border:1px solid var(--borde);background:var(--superficie);color:var(--tinta);cursor:pointer}
+.chip.on{background:var(--agua);border-color:var(--agua);color:#fff}
+.barra .cuenta{font-size:12px;color:var(--tinta-suave);margin-top:6px}
+.tarjeta[data-clave] .fila-tit{cursor:pointer}
+.tarjeta[data-clave] .titp::before{content:"▾ ";color:var(--tinta-suave);font-size:12px}
+.tarjeta.plegada .titp::before{content:"▸ "}
+.tarjeta.plegada .cuerpo{padding:10px 17px}
+.tarjeta.plegada .cuerpo > :not(.fila-tit){display:none}
 .modal p.conf-error{color:var(--alerta);background:var(--alerta-bg);border:1px solid var(--alerta);border-radius:8px;padding:8px 10px;font-weight:600}
 </style>
 </head>
@@ -155,8 +177,8 @@ details.plegable[open] > summary .titulo-sec::after{content:" ▾"}
 </header>
 
 <div class="contenedor">
-  <div id="avisoGlobal"></div>
-  <div id="resultado"></div>
+  <!-- Bandeja flotante: avisos y "Lo que hizo Luca" (no mueven la página) -->
+  <div class="bandeja" id="bandeja"><div id="avisoGlobal"></div><div id="resultado"></div></div>
 
   <!-- Control: subir CFDIs + volver a correr -->
   <div class="control">
@@ -243,8 +265,7 @@ async function llamar(ruta, cuerpo){
 }
 
 function avisar(html, tipo){
-  document.getElementById('avisoGlobal').innerHTML = html ? `<div class="mensaje mensaje-${tipo}">${html}</div>` : '';
-  if(html) window.scrollTo({top:0, behavior:'smooth'});
+  document.getElementById('avisoGlobal').innerHTML = html ? `<div class="mensaje mensaje-${tipo}" role="status"><button class="cerrar" onclick="avisar('', '')" aria-label="Cerrar">×</button>${html}</div>` : '';
 }
 /* Después de cada salida: lo que hizo Luca y lo que le toca al operador (los textos vienen del backend). */
 function mostrarResultado(r){
@@ -255,10 +276,33 @@ function mostrarResultado(r){
   z.innerHTML = `<div class="resultado${r.atencion ? ' atencion' : ''}" role="status"><div class="res-tit">Lo que hizo Luca</div><p class="res-hecho">${esc(r.hecho)}</p>`
     + `<div class="res-tit">Lo que te toca</div>` + (nada ? `<p class="res-nada">Nada más.</p>` : `<ol>${pasos.map(x => `<li>${esc(x)}</li>`).join('')}</ol>`)
     + `<button class="btn primaria" onclick="mostrarResultado(null)">Entendido</button></div>`;
-  window.scrollTo({top:0, behavior:'smooth'});
 }
 /** Respuesta de una salida: pinta el tablero nuevo y lo que hizo Luca. */
-function aplicar(d){ TABLERO = d.tablero; pintar(); avisar('', ''); mostrarResultado(d.resultado); }
+function aplicar(d){ TABLERO = d.tablero; pintarEnSuLugar(); avisar('', ''); mostrarResultado(d.resultado); }
+
+/* ================= CONSERVAR EL LUGAR (18-nov) =================
+   Al decidir en una tarjeta, la página no regresa arriba: después de repintar se queda en esa tarjeta
+   o, si ya se fue, en la que seguía (o la anterior). */
+let TOCADA = null;   // clave de la tarjeta donde fue el último clic
+document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('.tarjeta[data-clave]'); TOCADA = t ? t.dataset.clave : null; }, true);
+const tarjetaDe = k => document.querySelector(`#tablero .tarjeta[data-clave="${CSS.escape(k)}"]`);
+function anclaActual(){
+  const tarjetas = [...document.querySelectorAll('#tablero .tarjeta[data-clave]')].filter(t => t.offsetParent !== null);
+  const orden = tarjetas.map(t => t.dataset.clave);
+  let clave = TOCADA && orden.includes(TOCADA) ? TOCADA : null;
+  if(!clave){ const vista = tarjetas.find(t => t.getBoundingClientRect().bottom > 0); clave = vista ? vista.dataset.clave : null; }
+  if(!clave) return null;
+  return { clave, orden, top: tarjetas[orden.indexOf(clave)].getBoundingClientRect().top };
+}
+function volverAlAncla(a){
+  if(!a) return;
+  const i = a.orden.indexOf(a.clave);
+  for(const k of [a.clave, ...a.orden.slice(i + 1), ...a.orden.slice(0, i).reverse()]){
+    const el = tarjetaDe(k);
+    if(el && el.offsetParent !== null){ window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - a.top }); return; }
+  }
+}
+function pintarEnSuLugar(){ const a = anclaActual(); pintar(); volverAlAncla(a); }
 function cargando(txt){
   const z = document.getElementById('zonaCargando');
   if(txt){ document.getElementById('textoCargando').textContent = txt; z.style.display='block'; } else z.style.display='none';
@@ -272,10 +316,12 @@ let ACCIONES = [];           // acciones pintadas, por índice
 
 async function conCarga(texto, fn){
   mostrarResultado(null);
+  const tarjeta = TOCADA ? tarjetaDe(TOCADA) : null;   // la tarjeta donde se picó: atenuada y sin más clics mientras Luca trabaja
+  if(tarjeta) tarjeta.classList.add('trabajando');
   cargando(texto);
   try { return await fn(); }
   catch(e){ avisar(esc(e.message), 'error'); }
-  finally { cargando(null); }
+  finally { cargando(null); if(tarjeta) tarjeta.classList.remove('trabajando'); }
 }
 
 /* ================= ARRANQUE / VOLVER A CORRER ================= */
@@ -301,7 +347,7 @@ async function arrancar(){
 async function volverACorrer(){
   await conCarga('Volviendo a leer Odoo y el banco…', async () => {
     TABLERO = await llamar('/api/corrida', {});
-    pintar();
+    pintarEnSuLugar();
     const m = avisoCorrida(TABLERO.corrida);
     avisar(m || 'Listo. Se re-leyó todo y se recalculó.', TABLERO.corrida && (TABLERO.corrida.sinConfirmar.length || TABLERO.corrida.inciertas.length) ? 'error' : 'exito');
   });
@@ -605,6 +651,7 @@ function pintar(){
   if(avisos.length) html += `<div class="banner-avisos"><span>🔔 Hay ${avisos.length} aviso${avisos.length!==1?'s':''} de ventas para atender en Odoo.</span><a class="enlace" href="#avisos">Ver</a></div>`;
   html += `<datalist id="dl-productos">${(PRODUCTOS || []).map(p => `<option value="${esc(p.nombre + ' · #' + p.id)}"></option>`).join('')}</datalist>`;
 
+  html += barraFiltro([...activos, ...enSeguimiento]);
   html += `<div class="titulo-sec">Te necesitan</div>`;
   html += activos.length ? activos.map(tarjeta).join('')
     : `<div class="vacio">Nada te necesita ahora mismo.${t.hayCfdisPendientes ? '' : ' Sube los CFDIs de la semana para empezar.'}</div>`;
@@ -635,6 +682,60 @@ function pintar(){
       + `</div></details>`;
   }
   document.getElementById('tablero').innerHTML = html;
+  aplicarFiltro();
+}
+
+/* ================= FILTRAR Y COMPACTAR (18-nov) =================
+   Solo acomoda lo que ya pintó el backend: buscar por texto, ver un tipo de tarjeta, y plegar tarjetas
+   a su encabezado. Se recuerda en este navegador. */
+function leerPref(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function guardarPref(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+const FILTRO = { texto: leerPref('luca_filtro_texto') || '', tipo: leerPref('luca_filtro_tipo') || '' };
+let COMPACTAS = leerPref('luca_compactas') === '1';
+const ABIERTAS = new Set(), CERRADAS = new Set();   // excepciones al modo (abiertas en compacto / cerradas en normal)
+const estaPlegada = k => COMPACTAS ? !ABIERTAS.has(k) : CERRADAS.has(k);
+function plegar(el){
+  const t = el.closest('.tarjeta'); const k = t.dataset.clave;
+  const plegada = t.classList.toggle('plegada');
+  if(COMPACTAS){ if(plegada) ABIERTAS.delete(k); else ABIERTAS.add(k); }
+  else { if(plegada) CERRADAS.add(k); else CERRADAS.delete(k); }
+}
+function cambiarCompactas(v){
+  COMPACTAS = v; guardarPref('luca_compactas', v ? '1' : '0'); ABIERTAS.clear(); CERRADAS.clear();
+  document.querySelectorAll('#tablero .tarjeta[data-clave]').forEach(t => t.classList.toggle('plegada', v));
+}
+function barraFiltro(tarjetas){
+  const tipos = {};
+  for(const c of tarjetas) tipos[c.titulo] = (tipos[c.titulo] || 0) + 1;
+  if(FILTRO.tipo && !tipos[FILTRO.tipo]){ FILTRO.tipo = ''; guardarPref('luca_filtro_tipo', ''); }   // ya no hay de ese tipo
+  const chip = (tit, txt) => `<button class="chip${FILTRO.tipo === tit ? ' on' : ''}" data-tit="${esc(tit)}" onclick="cambiarFiltro('tipo', this.dataset.tit)">${esc(txt)}</button>`;
+  return `<div class="barra"><div class="fila-filtro">
+      <input type="text" id="filtroTexto" placeholder="Buscar: proveedor, OC, producto, mes…" value="${esc(FILTRO.texto)}" oninput="cambiarFiltro('texto', this.value)">
+      <label class="compactar"><input type="checkbox" ${COMPACTAS ? 'checked' : ''} onchange="cambiarCompactas(this.checked)"> Compactas</label></div>
+    <div class="chips">${chip('', 'Todas')}${Object.entries(tipos).sort((a, b) => b[1] - a[1]).map(([tit, n]) => chip(tit, `${tit} · ${n}`)).join('')}</div>
+    <div class="cuenta" id="filtroCuenta"></div></div>`;
+}
+function cambiarFiltro(campo, valor){
+  FILTRO[campo] = valor || ''; guardarPref('luca_filtro_' + campo, FILTRO[campo]);
+  if(campo === 'tipo') document.querySelectorAll('.barra .chip').forEach(b => b.classList.toggle('on', (b.dataset.tit || '') === FILTRO.tipo));
+  aplicarFiltro();
+}
+function quitarFiltro(){
+  const campo = document.getElementById('filtroTexto'); if(campo) campo.value = '';
+  cambiarFiltro('texto', ''); cambiarFiltro('tipo', '');
+}
+function aplicarFiltro(){
+  const palabras = sinAcentos(FILTRO.texto).split(/\s+/).filter(Boolean);
+  let total = 0, visibles = 0;
+  document.querySelectorAll('#tablero .tarjeta[data-clave]').forEach(t => {
+    total++;
+    const texto = sinAcentos([...t.querySelectorAll('.fila-tit, .porque, .detalle, .seguimiento')].map(x => x.textContent).join(' '));
+    const ok = (!FILTRO.tipo || t.dataset.tit === FILTRO.tipo) && palabras.every(p => texto.includes(p));
+    t.style.display = ok ? '' : 'none';
+    if(ok) visibles++;
+  });
+  const z = document.getElementById('filtroCuenta');
+  if(z) z.innerHTML = (FILTRO.texto || FILTRO.tipo) ? `Mostrando ${visibles} de ${total} tarjetas · <button class="enlace" onclick="quitarFiltro()">Quitar filtro</button>` : '';
 }
 
 function pintarCobertura(cob){
@@ -659,8 +760,10 @@ function tarjeta(c){
       <input type="text" id="notaseg-${k}" placeholder="Nota (opcional): qué estás revisando"><button class="btn primaria" onclick="investigar(${k})"><span>Marcar</span></button></div></details>`;
   }
   const acciones = (c.acciones || []).map(boton).join('') + investigar;
-  return `<div class="tarjeta ${CLASE[c.tipo] || 't-esp'}"><div class="cuerpo">
-    <div class="fila-tit"><div><div class="titp">${esc(c.titulo)}</div><div class="quien">${esc(c.quien)}</div></div><span class="etq">${esc(c.etiqueta)}</span></div>
+  const ident = c.clave ? ` data-clave="${esc(c.clave)}" data-tit="${esc(c.titulo)}"` : '';
+  const plegada = c.clave && estaPlegada(c.clave) ? ' plegada' : '';
+  return `<div class="tarjeta ${CLASE[c.tipo] || 't-esp'}${plegada}"${ident}><div class="cuerpo">
+    <div class="fila-tit"${c.clave ? ' onclick="plegar(this)" title="Plegar o abrir"' : ''}><div><div class="titp">${esc(c.titulo)}</div><div class="quien">${esc(c.quien)}</div></div><span class="etq">${esc(c.etiqueta)}</span></div>
     ${porque}${seg}${c.detalle ? detalle(c.detalle) : ''}${c.movimientos ? movimientos(c.movimientos) : ''}
     ${acciones ? `<div class="acciones">${acciones}</div>` : ''}
   </div></div>`;
