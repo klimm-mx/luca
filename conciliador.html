@@ -538,17 +538,24 @@ async function ejecutarIdentidad(i, a){
     const id = Number(valor('ident-' + i));
     if(!id){ avisar('Elige a quién corresponde.', 'error'); return; }
     cuerpo.identidadId = id;
-  } else if(que === 'proveedor' || que === 'gasto' || que === 'persona'){
-    cuerpo.tipo = que; cuerpo.nombre = valor('nom-' + i);
-    if(!cuerpo.nombre){ avisar('Escribe un nombre para reconocerlo.', 'error'); return; }
-    if(que === 'proveedor'){ cuerpo.rfc = valor('rfc-' + i).toUpperCase(); if(!cuerpo.rfc){ avisar('Falta el RFC del proveedor (el de su CFDI).', 'error'); return; } }
-    if(que === 'gasto'){
-      cuerpo.partnerId = Number(valor('prov-' + i)); cuerpo.productoId = Number(valor('prod-' + i));
-      if(!cuerpo.partnerId || !cuerpo.productoId){ avisar('Elige el proveedor equivalente y el producto de gasto.', 'error'); return; }
-      const iva = valor('iva-' + i);
-      if(!iva){ avisar('Di si el cargo incluye IVA.', 'error'); return; }
-      cuerpo.conIva = iva === 'si';
-    }
+  } else if(que === 'proveedor'){
+    cuerpo.tipo = 'proveedor'; cuerpo.partnerId = idDeTexto(valor('contacto-' + i));
+    if(!cuerpo.partnerId || !cat().proveedoresOdoo.some(x => x.id === cuerpo.partnerId)){ avisar('Elige el contacto de Odoo de la lista.', 'error'); return; }
+    const caja = document.getElementById('crfc-' + i);
+    if(caja && caja.checked && (a.propuesta || {}).partnerId === cuerpo.partnerId) cuerpo.completarRfc = caja.value;
+  } else if(que === 'emisor'){
+    cuerpo.tipo = 'emisor'; cuerpo.rfc = valor('emisor-' + i);
+    if(!cuerpo.rfc){ avisar('Elige el emisor de sus CFDIs.', 'error'); return; }
+  } else if(que === 'persona'){
+    cuerpo.tipo = 'persona'; cuerpo.partnerId = Number(valor('persona-' + i));
+    if(!cuerpo.partnerId){ avisar('Elige a la persona.', 'error'); return; }
+  } else if(que === 'gasto'){
+    cuerpo.tipo = 'gasto';
+    cuerpo.partnerId = Number(valor('prov-' + i)); cuerpo.productoId = Number(valor('prod-' + i));
+    if(!cuerpo.partnerId || !cuerpo.productoId){ avisar('Elige el proveedor equivalente y el producto de gasto.', 'error'); return; }
+    const iva = valor('iva-' + i);
+    if(!iva){ avisar('Di si el cargo incluye IVA.', 'error'); return; }
+    cuerpo.conIva = iva === 'si';
   } else { avisar('Primero elige qué es.', 'error'); return; }
   await conCarga('Guardando…', async () => { aplicar(await llamar('/api/identidad', cuerpo)); });
 }
@@ -620,7 +627,6 @@ async function ejecutarGasto(i, a, ruta, base){
   if(!iva){ avisar('Di si el cargo incluye IVA.', 'error'); return; }
   const cuerpo = { ...base, partnerId, productoId, conIva: iva === 'si' };
   if(document.getElementById('nota-' + i)) cuerpo.nota = valor('nota-' + i);
-  if(document.getElementById('nom-' + i)) cuerpo.nombre = valor('nom-' + i);
   await conCarga('Guardando…', async () => { aplicar(await llamar(ruta, cuerpo)); });
 }
 
@@ -848,7 +854,10 @@ function teclaCombo(ev, i){
 }
 
 /* Formularios (las listas llegan del backend una sola vez, en TABLERO.catalogos) */
-const cat = () => TABLERO.catalogos || { tipos:[], identidades:[], emisores:[], proveedoresOdoo:[], productosGasto:[] };
+const cat = () => TABLERO.catalogos || { tipos:[], identidades:[], emisores:[], proveedoresOdoo:[], productosGasto:[], personas:[] };
+/* Contacto de Odoo en una lista buscable: cada opción termina en " · #<id>" (se identifica por su número, no por su nombre). */
+const textoContacto = p => p.nombre + (p.rfc ? ' · ' + p.rfc : ' · sin RFC') + ' · #' + p.id;
+const idDeTexto = t => { const m = /· #(\d+)$/.exec(String(t || '').trim()); return m ? Number(m[1]) : 0; };
 const opcionesDe = (lista, texto, valorSel) => lista.map(x => `<option value="${esc(x.id)}"${String(x.id) === String(valorSel) ? ' selected' : ''}>${esc(texto(x))}</option>`).join('');
 function selectProveedorProducto(i){
   const c = cat();
@@ -859,16 +868,25 @@ function selectProveedorProducto(i){
 }
 function mostrarCampos(i){
   const que = valor('que-' + i);
-  for(const [id, ver] of [['c-exist-' + i, que === 'existente'], ['c-nom-' + i, ['proveedor','gasto','persona'].includes(que)], ['c-rfc-' + i, que === 'proveedor'], ['c-gasto-' + i, que === 'gasto']]){
+  for(const [id, ver] of [['c-exist-' + i, que === 'existente'], ['c-prov-' + i, que === 'proveedor'], ['c-emisor-' + i, que === 'emisor'],
+    ['c-gasto-' + i, que === 'gasto'], ['c-persona-' + i, que === 'persona']]){
     const el = document.getElementById(id); if(el) el.style.display = ver ? '' : 'none';
   }
 }
+/* La casilla "ponerle el RFC" es solo para el contacto que propuso Luca: si eligen otro, se quita y se desmarca. */
+function casillaRfc(i, propuesto){
+  const l = document.getElementById('crfc-l-' + i), c = document.getElementById('crfc-' + i);
+  if(!l || !c) return;
+  const es = idDeTexto(valor('contacto-' + i)) === propuesto;
+  l.style.display = es ? '' : 'none';
+  if(!es) c.checked = false;
+}
+/* "¿Quién es?": nada se escribe a mano. El nombre y el RFC salen de Odoo (contacto) o del SAT (emisor de un CFDI). */
 function formIdentidad(i, a){
   const c = cat(), p = a.propuesta || {};
   const pre = p.identidadId ? 'existente' : (p.tipo || '');
-  const rfcs = [...c.emisores.map(e => ({ rfc: e.rfc, nombre: e.nombre })), ...c.proveedoresOdoo.filter(x => x.rfc).map(x => ({ rfc: x.rfc, nombre: x.nombre }))];
-  const unicos = [...new Map(rfcs.map(r => [r.rfc, r])).values()];
-  setTimeout(() => mostrarCampos(i), 0);
+  const contactoPre = p.partnerId ? c.proveedoresOdoo.find(x => x.id === p.partnerId) : null;
+  setTimeout(() => { mostrarCampos(i); casillaRfc(i, Number(p.partnerId) || 0); }, 0);
   return `<div class="form">
     <select id="que-${i}" onchange="mostrarCampos(${i})">
       <option value=""${pre ? '' : ' selected'}>— ¿Qué es? —</option>
@@ -876,10 +894,14 @@ function formIdentidad(i, a){
       ${c.tipos.map(t => `<option value="${esc(t.tipo)}"${pre === t.tipo ? ' selected' : ''}>${esc(t.texto)}</option>`).join('')}
     </select>
     <div id="c-exist-${i}"><select id="ident-${i}"><option value="">— ¿Quién? —</option>${opcionesDe(c.identidades, x => x.nombre, p.identidadId)}</select></div>
-    <div id="c-nom-${i}"><input type="text" id="nom-${i}" placeholder="Nombre para reconocerlo (ej. Ferretería Chrisa, Renta oficina)" value="${esc(p.nombre || '')}"></div>
-    <div id="c-rfc-${i}"><input type="text" id="rfc-${i}" list="rfcs-${i}" placeholder="RFC del proveedor (el de su CFDI)" value="${esc(p.rfc || '')}">
-      <datalist id="rfcs-${i}">${unicos.map(r => `<option value="${esc(r.rfc)}">${esc(r.nombre)}</option>`).join('')}</datalist></div>
+    <div id="c-prov-${i}"><input type="text" id="contacto-${i}" list="dl-contactos-${i}" placeholder="Contacto de Odoo (escribe para buscar)" value="${esc(contactoPre ? textoContacto(contactoPre) : '')}"
+      oninput="casillaRfc(${i}, ${Number(p.partnerId) || 0})">
+      <datalist id="dl-contactos-${i}">${c.proveedoresOdoo.map(x => `<option value="${esc(textoContacto(x))}"></option>`).join('')}</datalist>
+      ${p.rfc && p.partnerId ? `<label id="crfc-l-${i}"><input type="checkbox" id="crfc-${i}" value="${esc(p.rfc)}"><span>Ponerle en Odoo el RFC ${esc(p.rfc)} (el de su CFDI): solo si no tiene</span></label>` : ''}
+      <p class="ayuda">¿No está en Odoo? Dalo de alta en Contactos y vuelve a correr, o elige "Proveedor ocasional".</p></div>
+    <div id="c-emisor-${i}"><select id="emisor-${i}"><option value="">— Emisor de sus CFDIs —</option>${c.emisores.map(e => `<option value="${esc(e.rfc)}"${e.rfc === p.emisorRfc ? ' selected' : ''}>${esc(e.nombre + ' · ' + e.rfc)}</option>`).join('')}</select></div>
     <div id="c-gasto-${i}">${selectProveedorProducto(i)}</div>
+    <div id="c-persona-${i}"><select id="persona-${i}"><option value="">— Persona (usuario o empleado en Odoo) —</option>${opcionesDe(c.personas || [], x => x.nombre)}</select></div>
     <button class="btn primaria" onclick="ejecutar(${i})"><span>Guardar · se recuerda para la próxima</span></button></div>`;
 }
 function formLigar(i, a){
@@ -898,15 +920,14 @@ function formLigar(i, a){
   return `<div class="form">${lista}${dif}<button class="btn ${prop.size ? 'primaria' : 'secundaria'}" onclick="ejecutar(${i})"><span>${texto} <span class="money">· ${nota}</span></span></button></div>`;
 }
 function formGasto(i, a){
-  const nombre = a.tipo === 'gasto-cfdi' ? `<input type="text" id="nom-${i}" placeholder="Nombre para reconocerlo" value="${esc(a.nombre || '')}">` : '';
   const nota = a.tipo === 'gasto' ? `<input type="text" id="nota-${i}" placeholder="Nota (opcional): qué fue">` : '';
-  return `<details><summary class="btn secundaria"><span>${esc(a.texto)}</span></summary><div class="form" style="margin-top:8px">${nombre}${selectProveedorProducto(i)}${nota}
+  return `<details><summary class="btn secundaria"><span>${esc(a.texto)}</span></summary><div class="form" style="margin-top:8px">${selectProveedorProducto(i)}${nota}
     <button class="btn primaria" onclick="ejecutar(${i})"><span>Guardar</span></button></div></details>`;
 }
 
-function selectProveedor(i, rfc){
+function selectProveedor(i, rfc, partnerId){
   const c = cat();
-  const pre = rfc ? (c.proveedoresOdoo.find(p => p.rfc === rfc) || {}).id : null;
+  const pre = (partnerId && c.proveedoresOdoo.some(p => p.id === partnerId)) ? partnerId : rfc ? (c.proveedoresOdoo.find(p => p.rfc === rfc) || {}).id : null;
   return `<select id="prov-${i}"><option value="">— Proveedor en Odoo —</option>${opcionesDe(c.proveedoresOdoo, p => p.nombre + (p.rfc ? ' · ' + p.rfc : ''), pre)}</select>`;
 }
 /* La lista de productos se pide al abrir el formulario (una vez); lo sugerido se completa con su número. */
@@ -988,7 +1009,7 @@ function formReclasificar(i, a){
     ? `<select id="socio-${i}"><option value="">— ¿Qué socio? —</option>${opcionesDe(socios, p => p.nombre)}</select>`
     : `<p class="ayuda">No hay socios: en Odoo, ponle la etiqueta "Socio" al contacto de cada socio y vuelve a correr.</p>`) : '';
   const nota = a.conNota ? `<input type="text" id="nota-${i}" placeholder="Nota (opcional): ${a.elegirSocio ? 'retiro o reembolso, de qué' : 'responsable o qué pasó'}">` : '';
-  const campo = a.elegirProveedor ? selectProveedor(i, a.rfc) : elegirSocio + nota;
+  const campo = a.elegirProveedor ? selectProveedor(i, a.rfc, a.partnerId) : elegirSocio + nota;
   return `<details><summary class="btn secundaria"><span>${esc(a.texto)} <span class="money">· ${esc(a.nota)}</span></span></summary><div class="form" style="margin-top:8px">${campo}
     <button class="btn primaria" onclick="ejecutar(${i})"><span>Guardar</span></button></div></details>`;
 }
